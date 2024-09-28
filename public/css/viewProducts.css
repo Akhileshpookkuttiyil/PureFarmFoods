@@ -1,0 +1,78 @@
+.search-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.search-bar input[type="text"],
+.search-bar select,
+.search-bar button,
+.search-bar input[type="number"] {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    margin: 5px 0;
+}
+.search-bar input[type="text"] {
+    width: 200px;
+}
+.search-bar input[type="number"] {
+    width: 100px;
+}
+.search-button {
+    display: flex;
+    align-items: center;
+}
+.search-button button {
+    padding: 10px;
+    margin-left: 5px;
+}
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+.product-card {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+.product-card img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+.product-card h3 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+.product-card p {
+    font-size: 16px;
+    color: #28a745;
+    margin-bottom: 10px;
+}
+.product-card .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.product-card .actions button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+.product-card .actions button i {
+    margin-right: 5px;
+}
+.product-card .actions button.delete {
+    color: #dc3545;
+}

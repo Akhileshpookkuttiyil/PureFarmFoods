@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        height: 100%;
+      }
+
+      .wrapper {
+        display: flex;
+        width: 100%;
+        align-items: stretch;
+      }
+
+      #sidebar {
+        width: 250px;
+        background: #2f4050;
+        color: #fff;
+        transition: all 0.3s;
+        min-height: 100vh;
+        overflow-y: auto;
+      }
+
+      #sidebar.active {
+        margin-left: -250px;
+      }
+
+      #sidebar .sidebar-header {
+        padding: 13px;
+      }
+
+      #sidebar ul.components {
+        padding: 0 14px;
+      }
+
+      #sidebar ul li a {
+        padding: 8px;
+        font-size: 1.1em;
+        display: block;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      #sidebar ul li a:hover {
+        color: #7386d5;
+        background-color: #c71616;
+      }
+
+      #sidebar ul li.active > a,
+      #sidebar ul li > a[aria-expanded="true"] {
+        background: rgba(211, 115, 5, 0.55);
+      }
+
+      #content {
+        width: 100%;
+        padding: 20px;
+        height: 100%;
+      }
+
+      .navbar {
+        background: #fff;
+        padding: 15px 10px;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-profile {
+        text-align: center;
+      }
+
+      .user-profile img {
+        width: 50px;
+        border-radius: 50%;
+      }
+
+      .user-profile h3 {
+        margin-top: 10px;
+      }
+
+      .card {
+        border: none;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #categories-subcategories,
+      #users-types {
+        font-size: 15px;
+        padding-left: 15px;
+      }
+
+      #categories-subcategories li a:hover {
+        background-color: #c71616;
+      }
+
+      #sidebarCollapse {
+        margin-right: 10px;
+      }
+
+      .active {
+        background-color: rgba(211, 115, 5, 0.55);
+      }
+
+      @media (max-width: 768px) {
+        #sidebar {
+          margin-left: -250px;
+        }
+
+        #sidebar.active {
+          margin-left: 0;
+        }
+
+        #sidebarCollapse {
+          display: block;
+        }
+
+        #content {
+          padding: 20px 10px;
+        }
+
+        .navbar-brand {
+          display: none;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .card-text {
+          font-size: 0.9em;
+        }
+
+        .card-title {
+          font-size: 1.2em;
+        }
+
+        .user-profile h3 {
+          font-size: 1em;
+        }
+
+        .user-profile img {
+          width: 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <nav id="sidebar">
+        <div class="sidebar-header">
+          <div class="user-profile">
+            <img
+              src="/images/<%= user && user.imageUrl ? user.imageUrl : 'admin_demo.webp' %>"
+              alt="User"
+              class="img-thumbnail"
+            />
+            <h3><%=user.firstName %></h3>
+            <p><i class="fa fa-circle text-success"></i> Online</p>
+          </div>
+        </div>
+        <ul class="list-unstyled components">
+          <li>
+            <a
+              href="#dashboardSubmenu"
+              data-toggle="collapse"
+              aria-expanded="false"
+              class="dropdown-toggle"
+            >
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <ul class="collapse list-unstyled" id="dashboardSubmenu">
+              <li>
+                <a href="/admin" id="homeLink"
+                  ><i class="fas fa-home"></i> Home</a
+                >
+              </li>
+              <li>
+                <a href="/admin/adminProfile" class="ajax-link"
+                  ><i class="fas fa-user"></i> Profile</a
+                >
+              </li>
+              <li>
+                <a href="#" class="users-link"
+                  ><i class="fas fa-user"></i> Users</a
+                >
+                <ul
+                  class="list-unstyled"
+                  id="users-types"
+                  style="display: none"
+                  class="toggle-element"
+                >
+                  <li>
+                    <a href="/view-Users" class="ajax-link"
+                      ><i class="fas fa-users"></i> End Users</a
+                    >
+                  </li>
+                  <li>
+                    <a href="/view-Sellers" class="ajax-link"
+                      ><i class="fas fa-users"></i> Sellers</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="/view-Products" class="ajax-link"
+                  ><i class="fas fa-box"></i> Products</a
+                >
+              </li>
+              <li>
+                <a href="orders.html" class="ajax-link"
+                  ><i class="fas fa-shopping-cart"></i> Orders</a
+                >
+              </li>
+              <li>
+                <a href="#" class="categories-link"
+                  ><i class="fas fa-list"></i> Categories</a
+                >
+                <ul
+                  class="list-unstyled"
+                  id="categories-subcategories"
+                  style="display: none"
+                  class="toggle-element"
+                >
+                  <li>
+                    <a href="/categoriesPage" class="ajax-link"
+                      >Categories (<%= categoryCount %>)</a
+                    >
+                  </li>
+                  <li>
+                    <a href="/add-Category" class="ajax-link">Add Category</a>
+                  </li>
+                  <li>
+                    <a href="/add-Subcategory" class="ajax-link"
+                      >Add Subcategory</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="reviews.html" class="ajax-link"
+                  ><i class="fas fa-star"></i> Reviews</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <!-- Page Content -->
+      <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <div class="container-fluid">
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+              <i class="fas fa-align-left"></i>
+            </button>
+            <a class="navbar-brand" href="#">Admin Dashboard</a>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="#"
+                  ><i class="fas fa-bell"></i>
+                  <span class="badge badge-pill badge-danger">2</span></a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#"
+                  ><i class="fas fa-envelope"></i>
+                  <span class="badge badge-pill badge-danger">3</span></a
+                >
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                >
+                  <img
+                    style="margin-right: 5px"
+                    src="/images/<%= user && user.imageUrl ? user.imageUrl : 'admin_demo.webp' %>"
+                    alt="User"
+                    class="rounded-circle"
+                    width="30"
+                  /><%=user.firstName %>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item ajax-link" href="/admin/adminProfile"
+                    >Profile</a
+                  >
+                  <a class="dropdown-item" href="#">Settings</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div id="main-content" class="container-fluid">
+          <div class="row mt-3">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-user fa-2x text-warning"></i>
+                  <h5 class="card-title mt-2">2500</h5>
+                  <p class="card-text">Welcome</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-user fa-2x text-warning"></i>
+                  <h5 class="card-title mt-2">2500</h5>
+                  <p class="card-text">End Users</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-user fa-2x text-warning"></i>
+                  <h5 class="card-title mt-2">120</h5>
+                  <p class="card-text">Sellers</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-shopping-cart fa-2x text-success"></i>
+                  <h5 class="card-title mt-2">656</h5>
+                  <p class="card-text">Products</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-users fa-2x text-info"></i>
+                  <h5 class="card-title mt-2">656</h5>
+                  <p class="card-text">Sales</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-star fa-2x text-info"></i>
+                  <h5 class="card-title mt-2">156</h5>
+                  <p class="card-text">Reviews</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card text-center">
+                <div class="card-body">
+                  <i class="fas fa-user fa-2x text-warning"></i>
+                  <h5 class="card-title mt-2">120</h5>
+                  <p class="card-text">Sellers</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#sidebarCollapse").on("click", function () {
+          $("#sidebar").toggleClass("active");
+        });
+
+        $(".users-link").on("click", function () {
+          $("#users-types").toggle("active");
+        });
+
+        $(".categories-link").on("click", function () {
+          $("#categories-subcategories").toggle("active");
+        });
+
+        $(".ajax-link").on("click", function (e) {
+          e.preventDefault();
+          $(".list-unstyled a").removeClass("active"); // Remove active class from all links
+          $(this).addClass("active"); // Add active class to the clicked link
+          var url = $(this).attr("href");
+          $("#main-content").load(url);
+        });
+      });
+    </script>
+  </body>
+</html>

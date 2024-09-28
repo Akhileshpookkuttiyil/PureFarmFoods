@@ -1,0 +1,52 @@
+.welcome {
+    text-align: center;
+    margin: 10px 0;
+}
+.welcome h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+.welcome p {
+    font-size: 1.2em;
+    color: #666;
+}
+.quick-links, .summary {
+    display: flex;
+    justify-content:space-evenly;
+    margin: 20px 0;
+}
+.quick-links a, .summary .card {
+    flex: 1;
+    margin: 10px;
+    padding: 20px;
+    background: #f5f5f5;
+    text-align: center;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s ease;
+}
+.quick-links a:hover, .summary .card:hover {
+    background: #e0e0e0;
+}
+.quick-links i, .summary i {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+.submenu {
+    display: none;
+    margin-left: 20px;
+}
+
+.submenu a {
+    display: block;
+    margin-top: 5px;
+    padding-left: 10px;
+    color: #444;
+    text-decoration: none;
+}
+
+.submenu a:hover {
+    color: red; /* Change text color to red on hover */
+}

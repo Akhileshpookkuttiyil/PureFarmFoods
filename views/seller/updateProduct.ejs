@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/sellerpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Edit Product</title>
+</head>
+<body>
+    <form action="/seller/update-product/<%= product._id %>" method="post" enctype="multipart/form-data">
+        <div class="header">
+            <h1>Edit Product</h1>
+            <div class="actions">
+                <!-- Update Button -->
+                <button type="submit" class="update"><i class="fas fa-save"></i> Update</button>
+                <!-- Delete Button -->
+                <button type="button" class="delete"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+        </div>
+        <div class="form">
+            <div class="left">
+                <div class="section general-info">
+                    <h2>General Information</h2>
+                    <div class="section">
+                        <label for="productName">Name Product</label>
+                        <input type="text" id="productName" name="name" value="<%= product.name %>" required>
+                    </div>
+                    <div class="section">
+                        <label for="productDescription">Description Product</label>
+                        <textarea id="productDescription" name="description" rows="4" required><%= product.description %></textarea>
+                    </div>
+                    <h2>Size</h2>
+                    <div class="section sizes">
+                        <label><input type="checkbox" name="size" value="Small" <%= product.size.includes('Small') ? 'checked' : '' %>>Small</label>
+                        <label><input type="checkbox" name="size" value="Medium" <%= product.size.includes('Medium') ? 'checked' : '' %>>Medium</label>
+                        <label><input type="checkbox" name="size" value="Big" <%= product.size.includes('Big') ? 'checked' : '' %>>Big</label>
+                    </div>
+                </div>
+                <div class="section pricing-stock">
+                    <h2>Pricing And Stock</h2>
+                    <div class="section">
+                        <label for="basePricing">Base Pricing</label>
+                        <input type="text" id="basePricing" name="price" value="<%= product.price %>" required>
+                    </div>
+                    <div class="section">
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock" value="<%= product.stock %>" required>
+                    </div>
+                    <div class="section">
+                        <label for="discount">Discount</label>
+                        <input type="text" id="discount" name="discount" value="<%= product.discount %>">
+                    </div>
+                    <div class="section">
+                        <label for="discountType">Discount Type</label>
+                        <input type="text" id="discountType" name="discountType" value="<%= product.discountType %>">
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="section upload-img">
+                    <h2>Upload Image</h2>
+                    <img src="<%= product.images.length > 0 ? `/images/${product.images[0]}` : 'https://via.placeholder.com/300' %>" alt="Product Image" id="mainImage">
+                    <div class="additional-images" id="additionalImagesContainer">
+                        <% product.images.forEach((image, index) => { %>
+                            <img src="/images/<%= image %>" alt="Image <%= index + 1 %>" onclick="triggerFileInput('fileInput<%= index + 1 %>')" class="<%= index < 3 ? 'image-icon' : 'hidden' %>">
+                        <% }); %>
+                        <% for (let i = product.images.length; i < 3; i++) { %>
+                            <i class="fas fa-plus-circle image-icon" id="icon<%= i + 1 %>" onclick="triggerFileInput('fileInput<%= i + 1 %>')"></i>
+                        <% } %>
+                    </div>
+                    <input type="file" id="fileInput1" name="images" class="hidden" onchange="displayImage(this, 'icon1')">
+                    <input type="file" id="fileInput2" name="images" class="hidden" onchange="displayImage(this, 'icon2')">
+                    <input type="file" id="fileInput3" name="images" class="hidden" onchange="displayImage(this, 'icon3')">
+                </div>
+                <div class="section category">
+                    <h2>Category</h2>
+                    <select id="parent-category-select" name="category" class="form-select" onchange="fetchSubcategories()" required>
+                        <option value="">Select Category</option>
+                        <% if (categories) { %>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category._id %>" <%= product.category && product.category._id.equals(category._id) ? 'selected' : '' %>><%= category.name %></option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                    <select id="Subcategory-select" name="subcategory" class="form-select" style="margin-top: 10px;" required>
+                        <% if (subcategories) { %>
+                            <% subcategories.forEach(subcategory => { %>
+                                <option value="<%= subcategory._id %>" <%= product.subcategory && product.subcategory._id.equals(subcategory._id) ? 'selected' : '' %>><%= subcategory.name %></option>
+                            <% }); %>
+                        <% } %>
+                        <% if (product.category && product.category.subcategories) { %>
+                            <% product.category.subcategories.forEach(subcategory => { %>
+                                <option value="<%= subcategory._id %>" <%= product.subcategory && product.subcategory._id.equals(subcategory._id) ? 'selected' : '' %>><%= subcategory.name %></option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                    <button style="margin-top: 15px;" type="button">Add Category</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        function triggerFileInput(id) {
+            document.getElementById(id).click();
+        }
+
+        function displayImage(input, iconId) {
+            const icon = document.getElementById(iconId);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                icon.className = 'fas fa-image';
+                icon.style.backgroundImage = 'url(' + e.target.result + ')';
+                icon.style.backgroundSize = 'cover'; // Ensure image covers the icon
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function fetchSubcategories() {
+            const categoryId = document.getElementById('parent-category-select').value;
+            // Fetch subcategories based on the selected category and populate the subcategory select element
+        }
+    </script>
+</body>
+</html>

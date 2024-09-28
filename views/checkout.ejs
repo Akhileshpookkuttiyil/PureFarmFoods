@@ -1,0 +1,225 @@
+<%- include('layout') %>
+
+<!-- Modal Search Start -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="input-group w-75 mx-auto d-flex">
+                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search End -->
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Checkout</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active text-white">Checkout</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Checkout Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <h1 class="mb-4">Billing details</h1>
+        <form action="#">
+            <div class="row g-5">
+                <div class="col-md-12 col-lg-6 col-xl-7">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label class="form-label my-3">First Name<sup>*</sup></label>
+                                <input type="text" class="form-control" value="<%= user ? user.firstName : '' %>">
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label class="form-label my-3">Last Name<sup>*</sup></label>
+                                <input type="text" class="form-control" value="<%= user ? user.lastName : '' %>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Company Name<sup>*</sup></label>
+                        <input type="text" class="form-control" value="">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Address <sup>*</sup></label>
+                        <input type="text" class="form-control" placeholder="House Number Street Name" value="">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Town/City<sup>*</sup></label>
+                        <input type="text" class="form-control" value="">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Country<sup>*</sup></label>
+                        <input type="text" class="form-control" value="">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
+                        <input type="text" class="form-control" value="">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Mobile<sup>*</sup></label>
+                        <input type="tel" class="form-control" value="<%= user ? user.phone : '' %>">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Email Address<sup>*</sup></label>
+                        <input type="email" class="form-control" value="<%= user ? user.email : '' %>">
+                    </div>
+                    <div class="form-check my-3">
+                        <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
+                        <label class="form-check-label" for="Account-1">Create an account?</label>
+                    </div>
+                    <hr>
+                    <div class="form-check my-3">
+                        <input class="form-check-input" type="checkbox" id="Address-1" name="Address" value="Address">
+                        <label class="form-check-label" for="Address-1">Ship to a different address?</label>
+                    </div>
+                    <div class="form-item">
+                        <textarea name="text" class="form-control" spellcheck="false" cols="30" rows="11" placeholder="Order Notes (Optional)"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-5">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Products</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cart.products.forEach(item => { %>
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center mt-2">
+                                                <img src="images/<%= item.product.images[0] %>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="<%= item.product.name %>">
+                                            </div>
+                                        </th>
+                                        <td class="py-5"><%= item.product.name %></td>
+                                        <td class="py-5">$<%= item.product.price %></td>
+                                        <td class="py-5"><%= item.quantity %></td>
+                                        <td class="py-5">$<%= item.product.price * item.quantity %></td>
+                                    </tr>
+                                <% }) %>
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5">
+                                        <p class="mb-0 text-dark py-3">Subtotal</p>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="py-3 border-bottom border-top">
+                                            <p class="mb-0 text-dark">$<%= cart.totalPrice %></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5">
+                                        <p class="mb-0 text-dark py-4">Shipping</p>
+                                    </td>
+                                    <td colspan="3" class="py-5">
+                                        <div class="form-check text-start">
+                                            <input type="radio" class="form-check-input bg-primary border-0" id="Shipping-1" name="shippingOption" value="Free" checked>
+                                            <label class="form-check-label" for="Shipping-1">Free Shipping</label>
+                                        </div>
+                                        <div class="form-check text-start">
+                                            <input type="radio" class="form-check-input bg-primary border-0" id="Shipping-2" name="shippingOption" value="Flat Rate">
+                                            <label class="form-check-label" for="Shipping-2">Flat rate: $15.00</label>
+                                        </div>
+                                        <div class="form-check text-start">
+                                            <input type="radio" class="form-check-input bg-primary border-0" id="Shipping-3" name="shippingOption" value="Local Pickup">
+                                            <label class="form-check-label" for="Shipping-3">Local Pickup: $8.00</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5">
+                                        <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
+                                    </td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5">
+                                        <div class="py-3 border-bottom border-top">
+                                            <p class="mb-0 text-dark total-amount">$<%= cart.totalPrice %></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>                            
+                        </table>
+                    </div>
+                    <hr>
+                    <h6 class="text-dark mb-3">Select Payment Method</h6>
+                    <div class="form-check mb-3">
+                        <input type="radio" class="form-check-input bg-primary border-0" id="Payment-1" name="Payment" value="Payment" checked>
+                        <label class="form-check-label" for="Payment-1">Direct Bank Transfer</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="radio" class="form-check-input bg-primary border-0" id="Payment-2" name="Payment" value="Payment">
+                        <label class="form-check-label" for="Payment-2">Cheque Payment</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="radio" class="form-check-input bg-primary border-0" id="Payment-3" name="Payment" value="Payment">
+                        <label class="form-check-label" for="Payment-3">Cash on Delivery</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="radio" class="form-check-input bg-primary border-0" id="Payment-4" name="Payment" value="Payment">
+                        <label class="form-check-label" for="Payment-4">PayPal</label>
+                    </div>
+                    <hr>
+                    <div class="form-check my-3">
+                        <input class="form-check-input" type="checkbox" id="Privacy-1" name="Privacy" value="Privacy">
+                        <label class="form-check-label" for="Privacy-1">I have read and agree to the website terms and conditions</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary py-2 px-4">PLACE ORDER</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Checkout Page End -->
+
+<script>
+    document.querySelectorAll('input[name="shippingOption"]').forEach(option => {
+        option.addEventListener('change', function() {
+            let shippingCost = 0;
+            switch (this.value) {
+                case 'Free':
+                    shippingCost = 0;
+                    break;
+                case 'Flat Rate':
+                    shippingCost = 15;
+                    break;
+                case 'Local Pickup':
+                    shippingCost = 8;
+                    break;
+            }
+            
+            // Update the total amount
+            const totalPriceElement = document.querySelector('.total-amount');
+            const subtotal = parseFloat('<%= cart.totalPrice %>');
+            const total = subtotal + shippingCost;
+            totalPriceElement.innerText = `$${total.toFixed(2)}`;
+        });
+    });
+</script>
+
+<%- include('footer') %>

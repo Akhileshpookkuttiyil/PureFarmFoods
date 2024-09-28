@@ -1,0 +1,77 @@
+<form action="/seller/add-products" method="post" enctype="multipart/form-data">
+    <div class="header">
+        <h1>Add New Product</h1>
+        <div class="actions">
+            <button class="save-draft" type="button">Save Draft</button>
+            <button type="submit" class="add-product">Add Product</button>
+        </div>
+    </div>
+    <div class="form">
+        <div class="left">
+            <div class="section general-info">
+                <h2>General Information</h2>
+                <div class="section">
+                    <label for="productName">Name Product</label>
+                    <input type="text" id="productName" name="name" placeholder="Product name" required>
+                </div>
+                <div class="section">
+                    <label for="productDescription">Description Product</label>
+                    <textarea id="productDescription" name="description" rows="4" placeholder="product description" minlength="100" maxlength="500" required></textarea>
+                </div>
+                <h2>Size</h2>
+                <div class="section sizes">
+                    <label><input type="checkbox" name="size" value="Small">Small</label>
+                    <label><input type="checkbox" name="size" value="Medium">Medium</label>
+                    <label><input type="checkbox" name="size" value="Big">Big</label>
+                </div>
+            </div>
+            <div class="section pricing-stock">
+                <h2>Pricing And Stock</h2>
+                <div class="section">
+                    <label for="basePricing">Base Pricing</label>
+                    <input type="text" id="basePricing" name="price" placeholder="$47.55" required>
+                </div>
+                <div class="section">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stock" name="stock" placeholder="77" required>
+                </div>
+                <div class="section">
+                    <label for="discount">Discount</label>
+                    <input type="text" id="discount" name="discount" placeholder="10%">
+                </div>
+                <div class="section">
+                    <label for="discountType">Discount Type</label>
+                    <input type="text" id="discountType" name="discountType" placeholder="New Year Discount">
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="section upload-img">
+                <h2>Upload Image</h2>
+                <img src="https://via.placeholder.com/300" alt="Product Image" id="mainImage">
+                <div class="additional-images" id="additionalImagesContainer">
+                    <i class="fas fa-plus-circle" id="icon1" onclick="triggerFileInput('fileInput1')"></i>
+                    <i class="fas fa-plus-circle" id="icon2" onclick="triggerFileInput('fileInput2')"></i>
+                    <i class="fas fa-plus-circle" id="icon3" onclick="triggerFileInput('fileInput3')"></i>
+                </div>
+                <input type="file" id="fileInput1" name="images" class="hidden" onchange="displayImage(this, 'icon1')">
+                <input type="file" id="fileInput2" name="images" class="hidden" onchange="displayImage(this, 'icon2')">
+                <input type="file" id="fileInput3" name="images" class="hidden" onchange="displayImage(this, 'icon3')">
+            </div>
+            <div class="section category">
+                <h2>Category</h2>
+                <select id="parent-category-select" name="category" class="form-select" onchange="fetchSubcategories()" required>
+                    <option value="">Select Category</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>"><%= category.name %></option>
+                    <% }); %>
+                </select>
+                <select id="Subcategory-select" name="Subcategory" class="form-select" style="margin-top: 10px;" required>
+                </select>
+                <button style="margin-top: 15px;" type="button">Add Category</button>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="/css/userSettings.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        #public-profile-form {
+            margin: 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #public-profile-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #public-profile-form input[type="text"],
+        #public-profile-form input[type="email"],
+        #public-profile-form input[type="tel"],
+        #public-profile-form input[type="file"],
+        #public-profile-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        #public-profile-form input[type="text"]:focus,
+        #public-profile-form input[type="email"]:focus,
+        #public-profile-form input[type="tel"]:focus,
+        #public-profile-form input[type="file"]:focus,
+        #public-profile-form select:focus {
+            border-color: #2980b9;
+            outline: none;
+        }
+
+        #public-profile-form select {
+            appearance: none;
+            background: #fff;
+        }
+
+        #public-profile-form select:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('layout') %> <!-- Include your header -->
+    <div class="containers">
+        <div class="side-nav">
+            <h2>Settings</h2>
+            <a href="#" id="public-profile-link">Public profile</a>
+            <a href="#" id="account-settings-link" class="active">Account settings</a>
+            <a href="#" id="notifications-link">Notifications</a>
+            <a href="#" id="address-link">Manage Addresses</a>
+            <a href="#" id="orders-link">My Orders</a>
+        </div>
+        <div class="main-contents">
+            <div id="account-settings-content">
+                <h2>Account settings</h2>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <p>Your email address is <strong>emailis@private.com</strong> <a href="#" id="change-email-link">Change</a></p>
+                    <form id="update-email-form" action="/update-email" method="POST" style="display: none;">
+                        <input type="email" name="new-email" id="new-email" placeholder="New email address" required>
+                        <button type="submit" id="update-email-btn" class="btn btn-primary">Update Email</button>
+                    </form>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New password</label>
+                    <form id="update-password-form" action="/user/change-password" method="POST">
+                        <input type="password" name="newPassword" id="new-password" placeholder="New password" required>
+                        <label for="current-password">Current password</label>
+                        <input type="password" name="oldPassword" id="current-password" placeholder="Current password" required>
+                        <button type="submit" class="btn btn-primary">Save password</button>
+                    </form>
+                </div>
+                <div class="form-group">
+                    <p>Can't remember your current password? <a href="#">Reset your password</a></p>
+                </div>
+                <div class="form-group" style="margin-top: 25px;">
+                    <h3>Delete account</h3>
+                    <p>Deleting your account will remove all associated content and cannot be undone. If you need assistance or have concerns, please <a href="#">contact our support team</a>.</p>
+                    <p>To proceed, please confirm your intention to delete your account:</p>
+                    <p><a href="/user/delete-Account" class="remove-hover" id="delete-account-link" style="color: red; cursor: pointer;">I want to delete my account</a></p>
+                </div>
+            </div>
+            <div id="public-profile-content" style="display: none;">
+                <h2>Public profile</h2>
+                <form id="public-profile-form" action="/user/update-profile" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" name="firstName" placeholder="First Name" value="<%= user.firstName %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="lastName" placeholder="Last Name" value="<%= user.lastName %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled>Select Gender</option>
+                            <option value="male" <% if (user.gender === 'male') { %>selected<% } %>>Male</option>
+                            <option value="female" <% if (user.gender === 'female') { %>selected<% } %>>Female</option>
+                            <option value="other" <% if (user.gender === 'other') { %>selected<% } %>>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Phone" value="<%= user.phone %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-picture">Profile Picture</label>
+                        <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+            <div id="notifications-content" style="display: none;">
+                <h2>Notifications</h2>
+                <p>Notifications content goes here...</p>
+            </div>
+            <div id="address-content" style="display: none;">
+                <h2>Manage Addresses</h2>
+                <p>Addresses content goes here...</p>
+            </div>
+            <div id="orders-content" style="display: none;">
+                <h2>Manage Orders</h2>
+                <p>Orders content goes here...</p>
+            </div>
+        </div>
+    </div>
+    <%- include('footer') %> <!-- Include your footer -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.side-nav a');
+            const contents = document.querySelectorAll('.main-contents > div');
+
+            links.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    showContent(this.id.replace('-link', '-content'), this);
+                });
+            });
+
+            document.getElementById('change-email-link').addEventListener('click', function (event) {
+                event.preventDefault();
+                document.getElementById('update-email-form').style.display = 'block';
+            });
+
+            document.getElementById('delete-account-link').addEventListener('click', async function (event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Deleting your account will remove all associated content and cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch('/user/delete-Account', {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your account has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href = '/'; // Redirect to home page or login page after deletion
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: result.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error deleting account:', error);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'An error occurred while trying to delete your account. Please try again later.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }
+                });
+            });
+
+            function showContent(contentId, clickedLink) {
+                contents.forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(contentId).style.display = 'block';
+
+                links.forEach(link => {
+                    link.classList.remove('active');
+                });
+                clickedLink.classList.add('active');
+            }
+
+            // Handle password update form submission
+            const passwordForm = document.getElementById('update-password-form');
+            passwordForm.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const newPassword = document.getElementById('new-password').value;
+                const oldPassword = document.getElementById('current-password').value;
+
+                try {
+                    const response = await fetch('/user/change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ newPassword, oldPassword })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Your password has been changed successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        passwordForm.reset();
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: result.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        passwordForm.reset();
+                    }
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while changing your password. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="/js/user/updateProfile.js"></script>
+</body>
+
+</html>
