@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+        }
+
+        .container-fluid {
+            padding: 15px;
+            padding-bottom: 0px;
+        }
+
+        .profile-card {
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5px;
+        }
+
+        .profile-card .card-header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-card .card-body {
+            padding: 10px;
+        }
+
+        .profile-picture {
+            width: 105px;
+            height: 85px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #007bff;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card profile-card">
+                    <div class="card-header">
+                        <h5 class="card-title">Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="profile-form">
+                            <div class="form-group">
+                                <label for="firstname"><i class="fas fa-user"></i> First Name</label>
+                                <input type="text" class="form-control" id="firstname" value="<%= user.firstName %>">
+                            </div>
+                            <div class="form-group">
+                                <label for="secondname"><i class="fas fa-user"></i> Second Name</label>
+                                <input type="text" class="form-control" id="secondname" value="<%= user.lastName %>">
+                            </div>
+                            <div class="form-group">
+                                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" class="form-control" id="email" value="<%= user.email %>">
+                            </div>
+                            <div class="text-center">
+                                <% if (user.imageUrl) { %>
+                                    <img src="/images/<%= user.imageUrl %>" alt="Profile Picture" class="profile-picture img-thumbnail" id="profile-picture">
+                                <% } else { %>
+                                    <img src="/images/admin_demo.webp" alt="Profile Picture" class="profile-picture img-thumbnail" id="profile-picture">
+                                <% } %>
+                                <input type="file" id="profile-picture-input" style="display: none;">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block mt-4">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card profile-card">
+                    <div class="card-header">
+                        <h5 class="card-title">Change Password</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="password-form">
+                            <div class="form-group">
+                                <label for="old-password"><i class="fas fa-lock"></i> Old Password</label>
+                                <input type="password" class="form-control" id="old-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password"><i class="fas fa-key"></i> New Password</label>
+                                <input type="password" class="form-control" id="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password"><i class="fas fa-key"></i> Confirm Password</label>
+                                <input type="password" class="form-control" id="confirm-password">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block mt-4">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>  
+    <script>
+        document.getElementById('profile-picture').addEventListener('click', function() {
+            document.getElementById('profile-picture-input').click();
+        });
+
+        document.getElementById('profile-picture-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-picture').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('firstName', document.getElementById('firstname').value);
+            formData.append('secondName', document.getElementById('secondname').value);
+            formData.append('email', document.getElementById('email').value);
+            const fileInput = document.getElementById('profile-picture-input');
+            if (fileInput.files[0]) {
+                formData.append('profilePicture', fileInput.files[0]);
+            }
+
+            fetch('/admin/update-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href="/admin"
+                    alert('Profile updated successfully');
+                } else {
+                    alert('Failed to update profile');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('password-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const form = document.getElementById('password-form')
+
+            if (newPassword !== confirmPassword) {
+                alert('New password and confirm password do not match');
+                form.reset()
+                return;
+            }
+
+            fetch('/admin/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password changed successfully');
+                    window.location.href="/admin"
+                } else {
+                    alert('Failed to change password');
+                    form.reset()
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

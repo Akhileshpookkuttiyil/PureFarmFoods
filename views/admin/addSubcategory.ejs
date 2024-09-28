@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Subcategory</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            padding-bottom: 0px;
+            margin: 0px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0px;
+            padding-bottom: 0px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-control, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .btns {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btns-primary {
+            background-color: #007bff;
+        }
+        .file-input-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+        }
+        .file-input-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-input-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Add New Subcategory</h1>
+            <button type="button" class="btn btn-primary" onclick="$('#main-content').load('/add-Category');">Add Category</button>
+        </div>
+        <div class="content">
+            <div class="main-content">
+                <form id="subcategoryForm">
+                    <div class="form-group">
+                        <label for="subcategory-image" class="form-label">Subcategory Image</label>
+                        <div class="file-input-container">
+                            <input type="file" id="subcategory-image" name="subcategoryImage" accept="image/*" onchange="previewImage(event)">
+                            <img id="imagePreview" src="\img\camera.png" alt="Camera Icon">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategory-name" class="form-label">Subcategory Name <span class="text-danger">*</span></label>
+                        <input type="text" id="subcategory-name" name="subcategoryName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="parent-category" class="form-label">Parent Category <span class="text-danger">*</span></label>
+                        <select id="parent-category-select" name="parentCategory" class="form-select" required>
+                            <option value="">Select Parent Category</option>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category._id %>"><%= category.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btns btns-primary" onclick="submitForm()">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById('imagePreview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function submitForm() {
+            var formData = new FormData();
+            var subcategoryImageInput = document.getElementById('subcategory-image');
+            var subcategoryNameInput = document.getElementById('subcategory-name');
+            var parentCategorySelect = document.getElementById('parent-category-select');
+
+            formData.append('subcategoryImage', subcategoryImageInput.files[0]);
+            formData.append('subcategoryName', subcategoryNameInput.value);
+            formData.append('parentCategory', parentCategorySelect.value);
+
+            console.log('Submitting subcategory form data:', formData);
+
+            // Send form data to the server via AJAX
+            fetch('/insert-Subcategory', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (response.status === 200) {
+                    console.log('Subcategory added successfully.');
+                    document.getElementById('subcategoryForm').reset();
+                    document.getElementById('imagePreview').src = '\img\camera.png';
+                    $('#main-content').load("/categoriesPage");
+                } else {
+                    return response.json(); // Parse the JSON response for error handling
+                }
+            })
+            .then(data => {
+                if (data && data.message) {
+                    console.error('Error:', data.message);
+                    alert('Error: ' + data.message); // Display error message to the user
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again later.');
+            });
+        }
+    </script>
+        <!-- Bootstrap JS, Popper.js, and jQuery -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

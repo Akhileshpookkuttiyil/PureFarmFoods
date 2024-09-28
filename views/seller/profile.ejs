@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="/css/sellerProfile.css">
+</head>
+
+<body>
+    <form id="sellerForm" action="/seller/seller-info" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+                        <img id="profileImage" class="img-account-profile rounded-circle mb-2" 
+                            src="/img/seller.png" alt="Profile Picture">
+                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                        <input type="file" id="uploadImage" style="display: none;" name="image" accept="image/*"
+                            onchange="previewImage(event)">
+                        <button class="btn btn-primary" type="button"
+                            onclick="document.getElementById('uploadImage').click();">Upload new image</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <div class="card mb-4">
+                    <div class="card-header">Account Details</div>
+                    <div class="card-body">
+                        <input type="hidden" name="userId" value="<%=user._id%>">
+                        <!-- Replace USER_ID with the actual user ID -->
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputUsername">Username (how your name will appear to other
+                                users on the site)</label>
+                            <input class="form-control" id="inputUsername" name="username" type="text"
+                                placeholder="Enter your username" value="username">
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6 form-group">
+                                <label class="small mb-1" for="inputFirstName">First name</label>
+                                <input class="form-control" id="inputFirstName" name="firstName" type="text"
+                                    placeholder="Enter your first name" value="Valerie">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="small mb-1" for="inputLastName">Last name</label>
+                                <input class="form-control" id="inputLastName" name="lastName" type="text"
+                                    placeholder="Enter your last name" value="Luna">
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6 form-group">
+                                <label class="small mb-1" for="inputOrgName">Organization name</label>
+                                <input class="form-control" id="inputOrgName" name="organizationName" type="text"
+                                    placeholder="Enter your organization name" value="Start Bootstrap">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="small mb-1" for="inputLocation">Location</label>
+                                <input class="form-control" id="inputLocation" name="location" type="text"
+                                    placeholder="Enter your location" value="San Francisco, CA">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                            <input class="form-control" id="inputEmailAddress" name="email" type="email"
+                                placeholder="Enter your email address" value="name@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputGSTNumber">GST Number</label>
+                            <input class="form-control" id="inputGSTNumber" name="gstNumber" type="text"
+                                placeholder="Enter your GST number" value="22AAAAA0000A1Z5">
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputPhone">Phone number</label>
+                            <div class="input-group">
+                                <select class="form-control" id="countryCode" name="countryCode">
+                                    <option value="+1">+1</option>
+                                    <option value="+91">+91</option>
+                                    <option value="+44">+44</option>
+                                </select>
+                                <input class="form-control" id="inputPhone" name="phone" type="tel"
+                                    placeholder="Enter your phone number" value="555-123-4567">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputBankName">Bank Name</label>
+                            <input class="form-control" id="inputBankName" name="bankName" type="text"
+                                placeholder="Enter your bank name" value="Bank of America">
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputAccountNumber">Account Number</label>
+                            <input class="form-control" id="inputAccountNumber" name="accountNumber" type="text"
+                                placeholder="Enter your account number" value="1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-1" for="inputIFSC">IFSC Code</label>
+                            <input class="form-control" id="inputIFSC" name="ifscCode" type="text"
+                                placeholder="Enter your IFSC code" value="BOFA0XXXXXX">
+                        </div>
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+    </form>
+    </div>
+    </div>
+    </div>
+    </div>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('profileImage');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+
+</html>

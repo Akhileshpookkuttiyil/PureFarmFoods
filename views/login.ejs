@@ -1,0 +1,108 @@
+<%- include('layout') %> 
+
+<style>
+    .input-large {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s;
+        padding: 10px;
+    }
+
+    .login-container {
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: calc(100% - 40px);
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #374151;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .login-error {
+        color: red;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: bold;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .btn-login {
+        background-color: #81c408;
+        color: #ffffff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-login:hover {
+        background-color: #66a30d;
+    }
+
+    .signup-link {
+        text-align: center;
+        margin-top: 25px;
+    }
+</style>
+
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="p-5 bg-light rounded">
+            <div class="text mx-auto" style="max-width: 800px;">
+                <div class="container-fluid py-5" style="min-height: 100vh; position: relative; background-color: #f3f4f6;">
+                    <div class="login-container">
+                        <h2 class="login-title">Login</h2>
+                        
+                        <% if (error && error.loginError) { %>
+                            <div class="login-error">
+                                <%= error.loginError %>
+                            </div>
+                        <% } %>
+
+                        <form action="/check-user" method="POST" class="form-group">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" required class="input-large">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" name="password" required class="input-large">
+                            </div>
+                            <button type="submit" class="btn-login">Log In</button>
+                        </form>
+                        <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Products</title>
+    <link rel="stylesheet" href="/css/viewProducts.css" />
+    <style>
+      .product-card {
+        width: 250px;
+        height: auto;
+        border: 2px solid white;
+        background-color: #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+      }
+
+      .prod-img {
+        object-fit: cover;
+        max-height: 200px;
+      }
+
+      .description-limit {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-around;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-bar">
+      <div class="search-button">
+        <input type="text" placeholder="Search" />
+        <button><i class="fas fa-search"></i> Search</button>
+      </div>
+      <select>
+        <option>Category</option>
+      </select>
+      <div>
+        <label for="min-price">Min Price:</label>
+        <input type="number" id="min-price" placeholder="Min" />
+      </div>
+      <div>
+        <label for="max-price">Max Price:</label>
+        <input type="number" id="max-price" placeholder="Max" />
+      </div>
+      <button id="filter-btn"><i class="fas fa-filter"></i> Filter</button>
+      <button><i class="fas fa-plus"></i> Create new</button>
+    </div>
+    <div class="product-grid" id="product-grid">
+      <% products.forEach(product => { %>
+      <div class="product-card" id="product-<%= product._id %>">
+        <img
+          class="prod-img"
+          src="images/<%= product.images[0] || 'https://via.placeholder.com/200' %>"
+          alt="<%= product.name %>"
+        />
+        <h3><%= product.name %></h3>
+        <h5 class="description-limit"><%= product.description %></h5>
+        <p>$<%= product.price.toFixed(2) %></p>
+        <div class="actions">
+          <a
+            href="#"
+            style="text-decoration: none"
+            onclick="loadPage('/seller/edit-product/<%= product._id %>')"
+            class="button-link"
+          >
+            <button type="button"><i class="fas fa-edit"></i> Edit</button>
+          </a>
+          <button class="delete" onclick="deleteProduct('<%= product._id %>')">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </body>
+</html>
