@@ -23,10 +23,6 @@ app.use((req, res, next) => {
     next();
 });
 
-const accountSid=process.env.TWILIO_ACCOUNT_SID;
-const authToken=process.env.TWILIO_AUTH_TOKEN;
-
-const client = new twilio(accountSid,authToken)
 // Middleware
 app.use(express.json());
 app.use(session({

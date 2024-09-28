@@ -2,6 +2,12 @@ const express = require('express');
 const userController=require("../controller/userController")
 const upload = require("../util/multer")
 const isAuthenticated = require('../middleware/authMiddleware');
+const Router = express.Router();
+require('dotenv').config();
+const twilio = require('twilio');
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const twilioController = require('../controller/twilioController'); // Import Twilio controller
+
 
 const router=express.Router()
 router.get("/",userController.getHome)
@@ -12,7 +18,7 @@ router.get("/cart",isAuthenticated,userController.getCart)
 router.get("/cart/cartByUserId",isAuthenticated,userController.getCartDetails)
 router.get('/cart/item-count',isAuthenticated,userController.getCartCount)
 router.get('/search-results', userController.searchResults);
-router.get("/checkout",userController.getcheckOut);
+router.get("/checkout",isAuthenticated,userController.getcheckOut);
 
 
 router.get("/contact",userController.getContact)
@@ -36,7 +42,9 @@ router.get('/get-All-products/:id?', userController.getAllProducts);
 router.get("/product-detail/:name", userController.getProductdetail);
 router.get('/get-All-vegetables', userController.getVegetables);
 
-
+// Twilio phone verification routes
+router.post('/send-verification', twilioController.sendVerification); // Route to send verification code
+router.post('/verify-code', twilioController.verifyCode); // Route to verify the code
 
 module.exports=router
 
