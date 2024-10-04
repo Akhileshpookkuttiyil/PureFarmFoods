@@ -6,6 +6,8 @@ const Category = require("../model/categories"); // Corrected model name
 const SubCategory = require("../model/subCategories"); // Corrected model name
 const Wishlist = require("../model/wishlist");
 const { none } = require("../util/multer");
+const crypto = require("crypto");
+
 module.exports = {
   getLogin: (req, res) => {
     const error = req.session.error || {};
@@ -22,44 +24,52 @@ module.exports = {
 
   getHome: async (req, res) => {
     try {
-        // Fetch the vegetable category
-        const vegetableCategory = await Category.findOne({ name: "vegetables" });
-        if (!vegetableCategory) {
-            return res.status(404).json({ message: "Vegetable category not found" });
+      // Fetch the vegetable category
+      const vegetableCategory = await Category.findOne({ name: "vegetables" });
+      if (!vegetableCategory) {
+        return res
+          .status(404)
+          .json({ message: "Vegetable category not found" });
+      }
+
+      // Fetch products in the vegetable category
+      const products = await Product.find({
+        category: vegetableCategory._id,
+      }).populate("category");
+
+      // Initialize wishlistProductIds
+      let wishlistProductIds = [];
+
+      // If the user is logged in, get their wishlist
+      const user = req.session.user;
+      if (user) {
+        const wishlist = await Wishlist.findOne({ user: user._id });
+        if (wishlist) {
+          wishlistProductIds = wishlist.products.map((productId) =>
+            productId.toString()
+          );
         }
+      }
 
-        // Fetch products in the vegetable category
-        const products = await Product.find({ category: vegetableCategory._id }).populate("category");
+      // Add wishlist status to each product
+      const productsWithWishlistStatus = products.map((product) => ({
+        ...product.toObject(),
+        isProductInWishlist: wishlistProductIds.includes(
+          product._id.toString()
+        ),
+      }));
 
-        // Initialize wishlistProductIds
-        let wishlistProductIds = [];
-
-        // If the user is logged in, get their wishlist
-        const user = req.session.user;
-        if (user) {
-            const wishlist = await Wishlist.findOne({ user: user._id });
-            if (wishlist) {
-                wishlistProductIds = wishlist.products.map(productId => productId.toString());
-            }
-        }
-
-        // Add wishlist status to each product
-        const productsWithWishlistStatus = products.map(product => ({
-            ...product.toObject(),
-            isProductInWishlist: wishlistProductIds.includes(product._id.toString())
-        }));
-
-        // Render the view with updated products
-        res.render("index", {
-            title: "Home",
-            user: req.session.user,
-            products: productsWithWishlistStatus
-        });
+      // Render the view with updated products
+      res.render("index", {
+        title: "Home",
+        user: req.session.user,
+        products: productsWithWishlistStatus,
+      });
     } catch (error) {
-        console.error("Error fetching products by category:", error);
-        res.status(500).json({ message: "Internal server error" });
+      console.error("Error fetching products by category:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-},
+  },
 
   getShop: (req, res) => {
     res.render("shop", { title: "Shop by category", user: req.session.user });
