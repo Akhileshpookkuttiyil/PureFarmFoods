@@ -1,5 +1,6 @@
 const express = require('express');
 const userController=require("../controller/userController")
+const nodemailerController = require('../controller/nodemailerController');
 const upload = require("../util/multer")
 const isAuthenticated = require('../middleware/authMiddleware');
 const Router = express.Router();
@@ -45,6 +46,20 @@ router.get('/get-All-vegetables', userController.getVegetables);
 // Twilio phone verification routes
 router.post('/send-verification', twilioController.sendVerification); // Route to send verification code
 router.post('/verify-code', twilioController.verifyCode); // Route to verify the code
+
+// Route to send OTP
+router.post('/user/send-otp', nodemailerController.sendOTP);
+
+// Route to verify OTP
+router.post('/user/verify-otp', nodemailerController.verifyOTP);
+
+// Route to send email verification token
+router.post('/user/send-verification-email', nodemailerController.sendVerificationEmail);
+
+// Route to verify email from token
+router.get('/user/verify-email/:token', nodemailerController.verifyEmailToken);
+
+
 
 module.exports=router
 

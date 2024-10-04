@@ -45,7 +45,20 @@ const userSchema = new mongoose.Schema({
   blocked: {
     type: Boolean,
     default: false
-}
+},
+ // Add these fields for email verification
+ emailVerificationToken: {
+  type: String,
+  required: false,
+},
+isEmailVerified: {
+  type: Boolean,
+  default: false,
+},
+emailVerificationTokenExpiresAt: {
+  type: Date,
+  required: false // Not required until the token is created
+},
 });
 
 // Middleware to update the `updatedAt` field before saving the document

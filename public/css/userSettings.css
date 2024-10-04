@@ -58,6 +58,94 @@ input[type="email"], input[type="password"] {
     flex: 1;
     padding: 15px;
 }
+#public-profile-form {
+    margin: 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#public-profile-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#public-profile-form input[type="text"],
+#public-profile-form input[type="email"],
+#public-profile-form input[type="tel"],
+#public-profile-form input[type="file"],
+#public-profile-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+#public-profile-form input[type="text"]:focus,
+#public-profile-form input[type="email"]:focus,
+#public-profile-form input[type="tel"]:focus,
+#public-profile-form input[type="file"]:focus,
+#public-profile-form select:focus {
+    border-color: #2980b9;
+    outline: none;
+}
+
+#public-profile-form select {
+    appearance: none;
+    background: #fff;
+}
+
+#public-profile-form select:focus {
+    outline: none;
+}
+
+.containers {
+    display: flex;
+    width: 100%;
+}
+
+.side-nav {
+    width: 250px; /* Fixed width for the side navigation */
+    background-color: #f8f8f8;
+    border-right: 1px solid #ccc;
+}
+
+.main-contents {
+    flex-grow: 1;
+    background-color: #fff;
+    min-height: 100vh; /* Ensures the content takes up at least full height */
+}
+
+.side-nav a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+}
+
+.side-nav a.active {
+    font-weight: bold;
+    background-color: #eee;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+}
+
+.input-container input,
+.input-container select {
+    flex: 1;
+}
+
+.edit-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #006eff; /* Bootstrap primary color */
+    font-size: 1.2em; /* Adjust size as needed */
+}
 @media (max-width: 768px) {
     .side-nav {
         width: 100%;
@@ -68,3 +156,4 @@ input[type="email"], input[type="password"] {
         width: 100%;
     }
 }
+
