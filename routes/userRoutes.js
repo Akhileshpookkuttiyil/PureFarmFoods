@@ -35,6 +35,7 @@ router.post('/cart/add/',isAuthenticated,userController.addToCart);
 router.post('/cart/update',isAuthenticated,userController.updateCart)
 router.post('/cart/delete',isAuthenticated,userController.deleteCart)
 router.post('/user/wishlist',isAuthenticated,userController.addToWishlist);
+router.get('/user/wishlist', isAuthenticated, userController.getWishlist);
 
 router.get("/users/get-categories",userController.getCategories);
 router.get('/user/profile-data',userController.getUserProfile);

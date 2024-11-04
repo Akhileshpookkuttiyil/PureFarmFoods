@@ -18,27 +18,31 @@ function generateOTP() {
 }
 
 // Send OTP email
+// Send OTP email
 exports.sendOTP = async (req, res) => {
     const { email } = req.body;
 
     try {
         const otp = generateOTP();
-        otpStore[email] = otp; // Save OTP for the email in memory
+        const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes validity
+        otpStore[email] = { otp, expiresAt }; // Save OTP and expiration
 
         // Email details
         const mailOptions = {
-            from: process.env.SMTP_USER, // Use the SMTP_USER for the "from" field
+            from: `"PureFarmFoods-TM Support" <${process.env.SMTP_USER}>`,
             to: email,
-            subject: 'Your OTP for Email Verification',
+            subject: 'PureFarmFoods-TM: Your OTP for Email Verification',
             text: `Your OTP is: ${otp}. It is valid for 10 minutes.`,
         };
+        
+        
 
         // Send the email
         await transporter.sendMail(mailOptions);
         res.status(200).json({ success: true, message: 'OTP sent to email.' });
     } catch (error) {
         console.error('Error sending OTP:', error);
-        res.status(500).json({ success: false, message: 'Failed to send OTP.' });
+        res.status(500).json({ success: false, message: 'Unable to process request.' });
     }
 };
 
@@ -47,8 +51,8 @@ exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
 
     try {
-        // Check if the OTP exists and matches
-        if (otpStore[email] && otpStore[email].toString() === otp.toString()) {
+        const storedData = otpStore[email];
+        if (storedData && Date.now() < storedData.expiresAt && storedData.otp.toString() === otp.toString()) {
             delete otpStore[email]; // OTP verified, remove it from the store
             res.status(200).json({ success: true, message: 'OTP verified successfully.' });
         } else {
@@ -56,9 +60,10 @@ exports.verifyOTP = async (req, res) => {
         }
     } catch (error) {
         console.error('Error verifying OTP:', error);
-        res.status(500).json({ success: false, message: 'Failed to verify OTP.' });
+        res.status(500).json({ success: false, message: 'Unable to process request.' });
     }
 };
+
 
 // Send Email Verification Token
 exports.sendVerificationEmail = async (req, res) => {
@@ -76,11 +81,12 @@ exports.sendVerificationEmail = async (req, res) => {
         const verificationLink = `${req.protocol}://${req.get('host')}/user/verify-email/${token}`;
 
         const mailOptions = {
-            from: process.env.EMAIL,
+            from: `"PureFarmFoods-TM Support" <${process.env.EMAIL}>`,
             to: email,
-            subject: 'Email Verification',
+            subject: 'PureFarmFoods-TM: Email Verification',
             html: `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`,
         };
+                
 
         await transporter.sendMail(mailOptions);
         res.status(200).json({ success: true, message: 'Verification email sent.' });

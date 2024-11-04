@@ -8,19 +8,25 @@
         outline: none;
         transition: border-color 0.3s;
         padding: 10px;
+        font-size: 1rem;
+    }
+
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f3f4f6;
+        margin-top: 10vh;
     }
 
     .login-container {
-        position: absolute;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
         background-color: #ffffff;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         max-width: 500px;
-        width: calc(100% - 40px);
+        width: 90%;
     }
 
     .login-title {
@@ -35,6 +41,7 @@
         color: red;
         text-align: center;
         margin-bottom: 15px;
+        font-size: 0.9rem;
     }
 
     .form-group {
@@ -58,6 +65,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s;
+        font-size: 1rem;
+        width: 100%;
     }
 
     .btn-login:hover {
@@ -66,40 +75,60 @@
 
     .signup-link {
         text-align: center;
-        margin-top: 25px;
+        margin-top: 15px;
+        font-size: 0.875rem;
+    }
+
+    /* Responsive styling */
+    @media (max-width: 768px) {
+        .login-title {
+            font-size: 1.3rem;
+        }
+
+        .input-large,
+        .btn-login {
+            padding: 8px;
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-title {
+            font-size: 1.2rem;
+        }
+
+        .btn-login {
+            font-size: 0.9rem;
+        }
+
+        .signup-link {
+            font-size: 0.8rem;
+        }
     }
 </style>
 
-<div class="container-fluid contact py-5">
-    <div class="container py-5">
-        <div class="p-5 bg-light rounded">
-            <div class="text mx-auto" style="max-width: 800px;">
-                <div class="container-fluid py-5" style="min-height: 100vh; position: relative; background-color: #f3f4f6;">
-                    <div class="login-container">
-                        <h2 class="login-title">Login</h2>
-                        
-                        <% if (error && error.loginError) { %>
-                            <div class="login-error">
-                                <%= error.loginError %>
-                            </div>
-                        <% } %>
-
-                        <form action="/check-user" method="POST" class="form-group">
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" required class="input-large">
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" required class="input-large">
-                            </div>
-                            <button type="submit" class="btn-login">Log In</button>
-                        </form>
-                        <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
-                    </div>
-                </div>
+<div class="login-wrapper">
+    <div class="login-container">
+        <h2 class="login-title">Login</h2>
+        
+        <% if (error && error.loginError) { %>
+            <div class="login-error">
+                <%= error.loginError %>
             </div>
-        </div>
+        <% } %>
+
+        <form action="/check-user" method="POST" class="form-group">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" required class="input-large">
+            </div>
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" required class="input-large">
+            </div>
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
+        <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
     </div>
 </div>
 

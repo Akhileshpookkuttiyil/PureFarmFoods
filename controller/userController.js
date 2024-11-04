@@ -736,33 +736,78 @@ module.exports = {
       .catch((error) => res.status(500).json({ error: error.message }));
   },
 
-  addToWishlist: async (req, res) => {
-    const { productId, action } = req.body;
-    const userId = req.session.user._id; // Assuming you're using Passport.js
-    try {
-      let wishlist = await Wishlist.findOne({ user: userId });
+    // Add or remove a product from the wishlist
+    addToWishlist: async (req, res) => {
+      const { productId, action } = req.body;
+      const userId = req.session.user._id; // Assuming the user ID is stored in session
 
-      if (!wishlist) {
-        wishlist = new Wishlist({ user: userId, products: [] });
+      if (!userId) {
+          return res.status(401).json({ message: "Unauthorized. Please log in." });
       }
 
-      if (action === "add") {
-        if (!wishlist.products.includes(productId)) {
-          wishlist.products.push(productId);
-        }
-      } else if (action === "remove") {
-        wishlist.products = wishlist.products.filter(
-          (id) => id.toString() !== productId
-        );
-      }
+      try {
+          let wishlist = await Wishlist.findOne({ user: userId });
 
-      await wishlist.save();
-      res.json({ message: `Product ${action}ed to wishlist successfully!` });
-    } catch (error) {
-      console.error("Error updating wishlist:", error);
-      res.status(500).json({ message: "Error updating wishlist" });
-    }
+          // Create a new wishlist if one doesn't exist
+          if (!wishlist) {
+              wishlist = new Wishlist({ user: userId, products: [] });
+          }
+
+          if (action === "add") {
+              // Add product if not already in wishlist
+              if (!wishlist.products.includes(productId)) {
+                  wishlist.products.push(productId);
+              } else {
+                  return res.status(400).json({ message: "Product is already in the wishlist." });
+              }
+          } else if (action === "remove") {
+              // Remove product from wishlist
+              wishlist.products = wishlist.products.filter(id => id.toString() !== productId);
+          } else {
+              return res.status(400).json({ message: "Invalid action. Use 'add' or 'remove'." });
+          }
+
+          // Save the updated wishlist
+          await wishlist.save();
+          res.json({ message: `Product ${action}ed to wishlist successfully!` });
+      } catch (error) {
+          console.error("Error updating wishlist:", error);
+          res.status(500).json({ message: "Error updating wishlist" });
+      }
   },
+
+// Get the user's wishlist
+getWishlist: async (req, res) => {
+  const userId = req.session.user._id; // Assuming the user ID is stored in session
+
+  if (!userId) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+  }
+
+  try {
+      const wishlist = await Wishlist.findOne({ user: userId }).populate('products');
+      
+      if (!wishlist) {
+          // If no wishlist found, render with empty wishlist
+          return res.render("wishlist", {
+              title: "My Wishlist",
+              user: req.session.user,
+              wishlistItems: [], // Pass an empty array if no wishlist found
+          });
+      }
+      
+      // Render the wishlist view and pass the wishlist items
+      res.render("wishlist", {
+          title: "My Wishlist",
+          user: req.session.user,
+          wishlistItems: wishlist.products, // Pass the products in the wishlist
+      });
+  } catch (error) {
+      console.error("Error fetching wishlist:", error);
+      res.status(500).json({ message: "Error fetching wishlist" });
+  }
+},
+
 
   getLogout: (req, res) => {
     req.session.destroy((err) => {

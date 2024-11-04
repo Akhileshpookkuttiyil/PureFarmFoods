@@ -1,0 +1,126 @@
+<%- include('layout') %>
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+  <h1 class="text-center text-white display-6">My Wishlist</h1>
+  <ol class="breadcrumb justify-content-center mb-0">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active text-white">Wishlist</li>
+  </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Wishlist Page Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="table-responsive">
+      <table class="table text-center">
+        <thead>
+          <tr>
+            <th scope="col" class="col-width text-start">Products</th> <!-- Left aligned -->
+            <th scope="col" class="col-width">Name</th>
+            <th scope="col" class="col-width">Price</th>
+            <th scope="col" class="col-width">Stock Status</th>
+            <th scope="col" class="col-width">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            <% if (wishlistItems && wishlistItems.length > 0) { %>
+              <% wishlistItems.forEach(item => { %>
+                <tr data-product-id="<%= item._id %>">
+                  <th scope="row" class="col-width text-start">
+                    <div class="d-flex align-items-center justify-content-start" style="height: 100%;">
+                      <img
+                        src="/images/<%= item.images[0] %>"
+                        class="img-fluid rounded-circle"
+                        style="width: 60px; height: 60px"
+                        alt=""
+                      />
+                    </div>
+                  </th>
+                  <td class="col-width">
+                    <p class="mb-0 mt-4"><%= item.name %></p>
+                  </td>
+                  <td class="col-width">
+                    <p class="mb-0 mt-4">$<%= item.price.toFixed(2) %></p>
+                  </td>
+                  <td class="col-width">
+                    <p class="stock-status mb-0 mt-4">
+                      <%= item.inStock ? 'In Stock' : 'Out of Stock' %>
+                    </p>
+                  </td>
+                  <td class="col-width text-center">
+                    <div class="d-flex align-items-center justify-content-center mt-3" style="gap: 10px;">
+                      <button
+                        class="btn btn-md d-flex align-items-center justify-content-center rounded-circle bg-light p-2"
+                        style="width: 40px; height: 40px;"
+                        onclick="addToCart('<%= item._id %>')"
+                      >
+                        <i class="fa fa-cart-plus text-primary"></i>
+                      </button>
+                      <span
+                        class="remove-item ms-2"
+                        style="font-size: 1.5em; cursor: pointer;"
+                        onclick="removeFromWishlist('<%= item._id %>')"
+                      >×</span>
+                    </div>
+                  </td>                                   
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center">
+                  Your wishlist is currently empty.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>          
+      </table>
+    </div>
+  </div>
+</div>
+<!-- Wishlist Page End -->
+
+<%- include('footer') %>
+
+<style>
+  .col-width {
+    width: 16.68%;
+  }
+
+  .remove-item {
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 1.2em;
+  }
+</style>
+
+<script>
+  function addToCart(productId) {
+    fetch("/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(data.message);
+      })
+      .catch((error) => console.error("Error adding to cart:", error));
+  }
+
+  function removeFromWishlist(productId) {
+    fetch("/user/wishlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, action: "remove" }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        alert(data.message);
+        // Optionally refresh the wishlist or remove the item from the DOM
+        location.reload();
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+</script>
