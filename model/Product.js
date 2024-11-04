@@ -54,6 +54,15 @@ const productSchema = new mongoose.Schema({
     totalSold: { type: Number, default: 0 }, // New field to track sales
 }, { timestamps: true });
 
+// Adding the inStock virtual property
+productSchema.virtual('inStock').get(function() {
+    return this.stock > 0; // Returns true if stock is greater than 0, otherwise false
+});
+
+// Ensure virtuals are included when converting to JSON
+productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toObject', { virtuals: true });
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;
