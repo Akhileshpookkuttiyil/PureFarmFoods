@@ -96,31 +96,51 @@
 </style>
 
 <script>
-  function addToCart(productId) {
-    fetch("/cart/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(data.message);
-      })
-      .catch((error) => console.error("Error adding to cart:", error));
-  }
+function addToCart(productId) {
+  fetch("/cart/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      alert(data.message);
 
-  function removeFromWishlist(productId) {
-    fetch("/user/wishlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, action: "remove" }),
+      // Update cart item count
+      const cartCountElement = document.querySelector('.cart-item-count'); // Ensure you have the correct class or id for the cart item count element.
+      if (cartCountElement) {
+        let cartCount = parseInt(cartCountElement.textContent) || 0; // Get the current cart count and ensure it's a number
+        cartCount += 1; // Increment the cart count
+        cartCountElement.textContent = cartCount; // Update the UI with the new count
+      }
     })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(data.message);
-        // Optionally refresh the wishlist or remove the item from the DOM
-        location.reload();
-      })
-      .catch((error) => console.error("Error:", error));
-  }
+    .catch((error) => console.error("Error adding to cart:", error));
+}
+
+
+function removeFromWishlist(productId) {
+  fetch("/user/wishlist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId, action: "remove" }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      alert(data.message);
+      // Remove the item from the DOM to reflect the change immediately
+      const itemRow = document.querySelector(`[data-product-id="${productId}"]`);
+      if (itemRow) {
+        itemRow.remove();
+      }
+
+      // Optionally, if you want to display an empty wishlist message
+      const wishlistTable = document.querySelector('table tbody');
+      if (!wishlistTable.querySelector('tr')) {
+        const emptyMessage = document.createElement('tr');
+        emptyMessage.innerHTML = `<td colspan="5" class="text-center">Your wishlist is currently empty.</td>`;
+        wishlistTable.appendChild(emptyMessage);
+      }
+    })
+    .catch((error) => console.error("Error removing from wishlist:", error));
+}
 </script>
