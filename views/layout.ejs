@@ -154,7 +154,12 @@
                 <div class="dropdown-menu dropdown-menu-end">
                   <a href="/user/wishlist" class="dropdown-item">Wishlist</a>
                   <a href="/settings" class="dropdown-item">Settings</a>
-                  <a href="#" class="dropdown-item" onclick="confirmLogout(event)">Logout</a>
+                  <a
+                    href="#"
+                    class="dropdown-item"
+                    onclick="confirmLogout(event)"
+                    >Logout</a
+                  >
                 </div>
               </div>
               <% } %>
@@ -210,6 +215,30 @@
     <!-- JavaScript for highlighting active nav link -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
+      // Wrap the code inside an async function
+      (async () => {
+        console.log("async");
+        try {
+          const newCartItemCountResponse = await fetch("/cart/item-count");
+          if (newCartItemCountResponse.ok) {
+            const data = await newCartItemCountResponse.json(); // Parse the response as JSON
+            const newCartItemCount = data; // Access totalCount from the response object
+            console.log(newCartItemCount);
+            const cartItemCountElement =
+              document.querySelector(".cart-item-count");
+            if (cartItemCountElement) {
+              cartItemCountElement.textContent = newCartItemCount; // Update the text content with the new count
+            }
+          } else {
+            console.error("Failed to fetch updated cart item count");
+          }
+        } catch (error) {
+          console.error("Error fetching cart item count:", error);
+        }
+      })();
+    </script>
+
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
         var path = window.location.pathname;
         document
@@ -242,23 +271,6 @@
           }
         });
       }
-    </script>
-    <script>
-      function updateCartItemCount() {
-        fetch("/cart/item-count")
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            const cartItemCountElement =
-              document.querySelector(".cart-item-count");
-            cartItemCountElement.textContent = data;
-          })
-          .catch((error) =>
-            console.error("Error fetching cart item count:", error)
-          );
-      }
-      // Call the function to update the cart item count when the page loads
-      document.addEventListener("DOMContentLoaded", updateCartItemCount);
     </script>
     <script>
       async function handleHeartClick(event, productId) {

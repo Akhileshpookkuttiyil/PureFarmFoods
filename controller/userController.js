@@ -384,10 +384,15 @@ module.exports = {
   },
 
   deleteAccount: async (req, res) => {
-    console.log("delete");
     try {
+      if (!req.session || !req.session.user) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Unauthorized access" });
+      }
+  
       const userId = req.session.user._id; // Get user ID from session
-
+  
       // Find the user by ID
       const user = await User.findById(userId);
       if (!user) {
@@ -395,11 +400,14 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "User not found" });
       }
-
+  
+      // Delete the user's cart and wishlist
+      await Cart.deleteOne({ user: userId });
+      await Wishlist.deleteOne({ user: userId });
+  
       // Delete the user
       const deleteResult = await User.deleteOne({ _id: userId });
-
-      // Check if deletion was successful
+  
       if (deleteResult.deletedCount > 0) {
         // Clear session data after deletion
         req.session.destroy((err) => {
@@ -414,9 +422,7 @@ module.exports = {
             .json({ success: true, message: "Account deleted successfully" });
         });
       } else {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found" });
+        res.status(404).json({ success: false, message: "User not found" });
       }
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -424,7 +430,7 @@ module.exports = {
         .status(500)
         .json({ success: false, message: "Internal server error" });
     }
-  },
+  },  
 
   getCategories: async (req, res) => {
     try {
@@ -690,6 +696,9 @@ module.exports = {
     try {
       const userId = req.session.user._id;
       let cart = await Cart.findOne({ user: userId });
+      if (!cart) {
+        return res.status(404).json({ message: 'Cart not found', CartCount: 0 });
+      }
       const CartCount = cart.totalCount;
       res.json(CartCount);
     } catch (err) {
@@ -736,78 +745,85 @@ module.exports = {
       .catch((error) => res.status(500).json({ error: error.message }));
   },
 
-    // Add or remove a product from the wishlist
-    addToWishlist: async (req, res) => {
-      const { productId, action } = req.body;
-      const userId = req.session.user._id; // Assuming the user ID is stored in session
+  // Add or remove a product from the wishlist
+  addToWishlist: async (req, res) => {
+    const { productId, action } = req.body;
+    const userId = req.session.user._id; // Assuming the user ID is stored in session
 
-      if (!userId) {
-          return res.status(401).json({ message: "Unauthorized. Please log in." });
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    try {
+      let wishlist = await Wishlist.findOne({ user: userId });
+
+      // Create a new wishlist if one doesn't exist
+      if (!wishlist) {
+        wishlist = new Wishlist({ user: userId, products: [] });
       }
 
-      try {
-          let wishlist = await Wishlist.findOne({ user: userId });
-
-          // Create a new wishlist if one doesn't exist
-          if (!wishlist) {
-              wishlist = new Wishlist({ user: userId, products: [] });
-          }
-
-          if (action === "add") {
-              // Add product if not already in wishlist
-              if (!wishlist.products.includes(productId)) {
-                  wishlist.products.push(productId);
-              } else {
-                  return res.status(400).json({ message: "Product is already in the wishlist." });
-              }
-          } else if (action === "remove") {
-              // Remove product from wishlist
-              wishlist.products = wishlist.products.filter(id => id.toString() !== productId);
-          } else {
-              return res.status(400).json({ message: "Invalid action. Use 'add' or 'remove'." });
-          }
-
-          // Save the updated wishlist
-          await wishlist.save();
-          res.json({ message: `Product ${action}ed to wishlist successfully!` });
-      } catch (error) {
-          console.error("Error updating wishlist:", error);
-          res.status(500).json({ message: "Error updating wishlist" });
+      if (action === "add") {
+        // Add product if not already in wishlist
+        if (!wishlist.products.includes(productId)) {
+          wishlist.products.push(productId);
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Product is already in the wishlist." });
+        }
+      } else if (action === "remove") {
+        // Remove product from wishlist
+        wishlist.products = wishlist.products.filter(
+          (id) => id.toString() !== productId
+        );
+      } else {
+        return res
+          .status(400)
+          .json({ message: "Invalid action. Use 'add' or 'remove'." });
       }
+
+      // Save the updated wishlist
+      await wishlist.save();
+      res.json({ message: `Product ${action}ed to wishlist successfully!` });
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+      res.status(500).json({ message: "Error updating wishlist" });
+    }
   },
 
-// Get the user's wishlist
-getWishlist: async (req, res) => {
-  const userId = req.session.user._id; // Assuming the user ID is stored in session
+  // Get the user's wishlist
+  getWishlist: async (req, res) => {
+    const userId = req.session.user._id; // Assuming the user ID is stored in session
 
-  if (!userId) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized. Please log in." });
-  }
+    }
 
-  try {
-      const wishlist = await Wishlist.findOne({ user: userId }).populate('products');
-      
+    try {
+      const wishlist = await Wishlist.findOne({ user: userId }).populate(
+        "products"
+      );
+
       if (!wishlist) {
-          // If no wishlist found, render with empty wishlist
-          return res.render("wishlist", {
-              title: "My Wishlist",
-              user: req.session.user,
-              wishlistItems: [], // Pass an empty array if no wishlist found
-          });
-      }
-      
-      // Render the wishlist view and pass the wishlist items
-      res.render("wishlist", {
+        // If no wishlist found, render with empty wishlist
+        return res.render("wishlist", {
           title: "My Wishlist",
           user: req.session.user,
-          wishlistItems: wishlist.products, // Pass the products in the wishlist
+          wishlistItems: [], // Pass an empty array if no wishlist found
+        });
+      }
+
+      // Render the wishlist view and pass the wishlist items
+      res.render("wishlist", {
+        title: "My Wishlist",
+        user: req.session.user,
+        wishlistItems: wishlist.products, // Pass the products in the wishlist
       });
-  } catch (error) {
+    } catch (error) {
       console.error("Error fetching wishlist:", error);
       res.status(500).json({ message: "Error fetching wishlist" });
-  }
-},
-
+    }
+  },
 
   getLogout: (req, res) => {
     req.session.destroy((err) => {
