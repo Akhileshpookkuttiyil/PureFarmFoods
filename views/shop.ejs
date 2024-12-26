@@ -135,8 +135,8 @@
                                                 <i class="fa fa-star"></i>
                                             </div>
                                             <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
-                                                <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                                <h5 class="fw-bold me-2">2.99 ₹</h5>
+                                                <h5 class="text-danger text-decoration-line-through">4.11 ₹</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -154,7 +154,7 @@
                                                 <i class="fa fa-star"></i>
                                             </div>
                                             <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
+                                                <h5 class="fw-bold me-2">2.99 ₹</h5>
                                                 <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
                                             </div>
                                         </div>
@@ -173,7 +173,7 @@
                                                 <i class="fa fa-star"></i>
                                             </div>
                                             <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
+                                                <h5 class="fw-bold me-2">2.99 ₹</h5>
                                                 <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
                                             </div>
                                         </div>
@@ -357,7 +357,7 @@ async function fetchProducts(categoryId = '', sortBy = '', maxPrice = '', search
                             <h4>${highlightText(product.name, searchQuery)}</h4>
                             <p>${highlightText(product.description, searchQuery)}</p>
                             <div class="justify-content-between flex-lg-wrap" style="text-align:center">
-                                <p class="text-dark fs-5 fw-bold mb-0">$${product.price} / kg</p>
+                                <p class="text-dark fs-5 fw-bold mb-0">₹${product.price} / kg</p>
                                 <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart-btn" data-product-id="${product._id}">
                                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                 </a> 
@@ -426,7 +426,7 @@ async function fetchProducts(categoryId = '', sortBy = '', maxPrice = '', search
 function highlightText(text, query) {
     if (!query) return text;
     const regex = new RegExp(`(${query})`, 'gi');
-    return text.replace(regex, '<span class="highlight">$1</span>');
+    return text.replace(regex, '<span class="highlight">₹1</span>');
 }
 
 async function updateCartItemCount() {

@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: false // Not required during signup
+    required: false, // Not required during signup
+    unique: true, // Optionally enforce unique phone numbers
   },
   password: {
     type: String,

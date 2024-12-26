@@ -52,7 +52,7 @@
             </div>
             <div id="public-profile-content" style="display: none;">
                 <h2>Public profile</h2>
-                <form id="public-profile-form" action="/user/update-profile" method="POST" enctype="multipart/form-data">
+                <form id="public-profile-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="first-name">First Name</label>
                         <div class="input-container">
@@ -127,13 +127,17 @@
     <%- include('footer') %> <!-- Include your footer -->
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', function () {
         const links = document.querySelectorAll('.side-nav a');
         const contents = document.querySelectorAll('.main-contents > div');
         const passwordForm = document.getElementById('update-password-form');
         const saveButton = document.querySelector('#updatebtn');
-
+        const publicProfileForm = document.getElementById('public-profile-form');
+        
+        // Object to hold changes made to the fields
+        const updatedFields = {};
+    
         // Initialize event listeners for side navigation links
         links.forEach(link => {
             link.addEventListener('click', function (event) {
@@ -141,13 +145,13 @@
                 showContent(this.id.replace('-link', '-content'), this);
             });
         });
-
+    
         // Show email update form
         document.getElementById('change-email-link').addEventListener('click', function (event) {
             event.preventDefault();
             document.getElementById('update-email-form').style.display = 'block';
         });
-
+    
         // Handle account deletion
         document.getElementById('delete-account-link').addEventListener('click', async function (event) {
             event.preventDefault();
@@ -161,12 +165,12 @@
                 confirmButtonText: 'Yes, delete it!',
                 cancelButtonText: 'No, cancel'
             });
-
+    
             if (result.isConfirmed) {
                 await deleteAccount();
             }
         });
-
+    
         // Function to delete account
         async function deleteAccount() {
             try {
@@ -189,7 +193,7 @@
                 showError('An error occurred while trying to delete your account. Please try again later.');
             }
         }
-
+    
         // Function to show error messages
         function showError(message) {
             Swal.fire({
@@ -199,22 +203,22 @@
                 confirmButtonText: 'OK'
             });
         }
-
+    
         // Show specific content based on link clicked
         function showContent(contentId, clickedLink) {
             contents.forEach(content => content.style.display = 'none');
             document.getElementById(contentId).style.display = 'block';
-
+    
             links.forEach(link => link.classList.remove('active'));
             clickedLink.classList.add('active');
         }
-
+    
         // Handle password update form submission
         passwordForm.addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent default form submission
             const newPassword = document.getElementById('new-password').value;
             const oldPassword = document.getElementById('current-password').value;
-
+    
             try {
                 const response = await fetch('/user/change-password', {
                     method: 'POST',
@@ -223,7 +227,7 @@
                     },
                     body: JSON.stringify({ newPassword, oldPassword })
                 });
-
+    
                 const result = await response.json();
                 if (result.success) {
                     Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
@@ -236,30 +240,41 @@
                 showError('An error occurred while changing your password. Please try again.');
             }
         });
-
+    
         // Disable all input fields on page load
         const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
         allFields.forEach(input => input.disabled = true);
         saveButton.style.display = 'none'; // Hide the save changes button initially
-
+    
         // Function to handle field editing
         window.editField = function (fieldId) {
             const field = document.getElementById(fieldId);
             allFields.forEach(input => {
                 if (input.id !== fieldId) input.disabled = true; // Disable all other fields
             });
-
+    
             field.disabled = false; // Enable the clicked field
             field.focus(); // Focus the input field
             field.addEventListener('change', handleChange); // Attach change event to the field
         };
-
+    
         // Function to handle change events
         function handleChange() {
             saveButton.style.display = 'block'; // Show the button when a change is detected
+            const fieldId = this.id;
+            updatedFields[fieldId] = this.value; // Store the updated value
         }
+    
+        // Update the profile form submission logic
+        publicProfileForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            // Ensure all fields are enabled before submission
+            allFields.forEach(input => input.disabled = false);
+        });
     });
 </script>
+    
 <script src="/js/user/updateProfile.js"></script>
 <script src="/js/user/updateEmail.js"></script>
 </body>

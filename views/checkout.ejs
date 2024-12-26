@@ -51,7 +51,7 @@
 <div class="container-fluid py-5">
   <div class="container py-5">
     <h1 class="mb-4">Billing details</h1>
-    <form action="#">
+    <form id="paymentForm" method="POST">
       <div class="row g-5">
         <div class="col-md-12 col-lg-6 col-xl-7">
           <div class="row">
@@ -62,6 +62,7 @@
                   type="text"
                   class="form-control"
                   id="firstName"
+                  name="firstName"
                   value="<%= user ? user.firstName : '' %>"
                 />
               </div>
@@ -72,6 +73,7 @@
                 <input
                   type="text"
                   id="lastName"
+                  name="lastName"
                   class="form-control"
                   value="<%= user ? user.lastName : '' %>"
                 />
@@ -88,21 +90,40 @@
               type="text"
               class="form-control"
               id="address"
+              name="address"
               placeholder="House Number Street Name"
               value=""
             />
           </div>
           <div class="form-item">
             <label class="form-label my-3">Town/City<sup>*</sup></label>
-            <input type="text" class="form-control" id="city" value="" />
+            <input
+              type="text"
+              class="form-control"
+              id="city"
+              name="city"
+              value=""
+            />
           </div>
           <div class="form-item">
-            <label class="form-label my-3">Country<sup>*</sup></label>
-            <input type="text" class="form-control" id="country" value="" />
+            <label class="form-label my-3">State<sup>*</sup></label>
+            <input
+              type="text"
+              class="form-control"
+              id="state"
+              name="state"
+              value=""
+            />
           </div>
           <div class="form-item">
             <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
-            <input type="text" class="form-control" id="zip" value="" />
+            <input
+              type="text"
+              class="form-control"
+              id="zip"
+              name="postcode"
+              value=""
+            />
           </div>
           <div class="form-item">
             <label class="form-label my-3">Mobile<sup>*</sup></label>
@@ -110,6 +131,7 @@
               type="tel"
               class="form-control"
               id="mobile"
+              name="mobile"
               value="<%= user ? user.phone : '' %>"
             />
           </div>
@@ -118,22 +140,12 @@
             <input
               type="email"
               id="email"
+              name="email"
               class="form-control"
               value="<%= user ? user.email : '' %>"
             />
           </div>
-          <div class="form-check my-3">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="Account-1"
-              name="Accounts"
-              value="Accounts"
-            />
-            <label class="form-check-label" for="Account-1"
-              >Create an account?</label
-            >
-          </div>
+          <div class="form-check my-3"></div>
           <hr />
           <div class="form-check my-3">
             <input
@@ -183,11 +195,11 @@
                       />
                     </div>
                   </th>
-                  <td class="py-5"><%= item.product.name %></td>
-                  <td class="py-5">$<%= item.product.price %></td>
-                  <td class="py-5"><%= item.quantity %></td>
-                  <td class="py-5">
-                    $<%= item.product.price * item.quantity %>
+                  <td class="py-5 text-center"><%= item.product.name %></td>
+                  <td class="py-5 text-center">₹<%= item.product.price %></td>
+                  <td class="py-5 text-center"><%= item.quantity %></td>
+                  <td class="py-5 text-center">
+                    ₹<%= item.product.price * item.quantity %>
                   </td>
                 </tr>
                 <% }) %>
@@ -200,7 +212,7 @@
                   </td>
                   <td class="py-5">
                     <div class="py-3 border-bottom border-top">
-                      <p class="mb-0 text-dark">$<%= cart.totalPrice %></p>
+                      <p class="mb-0 text-dark">₹<%= cart.totalPrice %></p>
                     </div>
                   </td>
                 </tr>
@@ -232,7 +244,7 @@
                         value="Flat Rate"
                       />
                       <label class="form-check-label" for="Shipping-2"
-                        >Flat rate: $15.00</label
+                        >Flat rate: ₹15.00</label
                       >
                     </div>
                     <div class="form-check text-start">
@@ -244,7 +256,7 @@
                         value="Local Pickup"
                       />
                       <label class="form-check-label" for="Shipping-3"
-                        >Local Pickup: $8.00</label
+                        >Local Pickup: ₹8.00</label
                       >
                     </div>
                   </td>
@@ -259,7 +271,7 @@
                   <td class="py-5">
                     <div class="py-3 border-bottom border-top">
                       <p class="mb-0 text-dark total-amount">
-                        $<%= cart.totalPrice %>
+                        ₹<%= cart.totalPrice %>
                       </p>
                     </div>
                   </td>
@@ -273,13 +285,12 @@
             <input
               type="radio"
               class="form-check-input bg-primary border-0"
-              id="Payment-1"
+              id="Payment-3"
               name="Payment"
-              value="Payment"
-              checked
+              value="UPI"
             />
-            <label class="form-check-label" for="Payment-1"
-              >Direct Bank Transfer</label
+            <label for="Payment-3" class="form-check-label"
+              >Pay Using UPI</label
             >
           </div>
           <div class="form-check mb-3">
@@ -288,33 +299,23 @@
               class="form-check-input bg-primary border-0"
               id="Payment-2"
               name="Payment"
-              value="Payment"
+              value="Card"
             />
-            <label class="form-check-label" for="Payment-2"
-              >Cheque Payment</label
+            <label for="Payment-2" class="form-check-label"
+              >Pay With Card</label
             >
           </div>
           <div class="form-check mb-3">
             <input
               type="radio"
               class="form-check-input bg-primary border-0"
-              id="Payment-3"
+              id="Payment-1"
               name="Payment"
-              value="Payment"
+              value="COD"
             />
-            <label class="form-check-label" for="Payment-3"
+            <label for="Payment-1" class="form-check-label"
               >Cash on Delivery</label
             >
-          </div>
-          <div class="form-check mb-3">
-            <input
-              type="radio"
-              class="form-check-input bg-primary border-0"
-              id="Payment-4"
-              name="Payment"
-              value="Payment"
-            />
-            <label class="form-check-label" for="Payment-4">PayPal</label>
           </div>
           <hr />
           <div class="form-check my-3">
@@ -326,11 +327,23 @@
               value="Privacy"
               required
             />
+            <input
+              type="hidden"
+              name="cartItems"
+              value="<%= JSON.stringify(cart.products.map(item => ({
+        product: { name: item.product.name, price: item.product.price, images: item.product.images },
+        quantity: item.quantity }))) %>"
+            />
+            <input
+              type="hidden"
+              name="totalPrice"
+              value="<%= cart.totalPrice %>"
+            />
             <label class="form-check-label" for="Privacy-1"
               >I have read and agree to the website terms and conditions</label
             >
           </div>
-          <button type="submit" class="btn btn-primary py-2 px-4">
+          <button id="placeOrderButton" class="btn btn-primary py-2 px-4">
             PLACE ORDER
           </button>
         </div>
@@ -339,88 +352,210 @@
   </div>
 </div>
 <!-- Checkout Page End -->
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  document
-    .querySelectorAll('input[name="shippingOption"]')
-    .forEach((option) => {
-      option.addEventListener("change", function () {
-        let shippingCost = 0;
-        switch (this.value) {
-          case "Free":
-            shippingCost = 0;
-            break;
-          case "Flat Rate":
-            shippingCost = 15;
-            break;
-          case "Local Pickup":
-            shippingCost = 8;
-            break;
+  document.addEventListener("DOMContentLoaded", function () {
+    // Function to update the total price when shipping option is selected
+    document
+      .querySelectorAll('input[name="shippingOption"]')
+      .forEach((option) => {
+        option.addEventListener("change", function () {
+          let shippingCost = 0;
+          switch (this.value) {
+            case "Free":
+              shippingCost = 0;
+              break;
+            case "Flat Rate":
+              shippingCost = 15;
+              break;
+            case "Local Pickup":
+              shippingCost = 8;
+              break;
+          }
+
+          // Update the total amount displayed on the page
+          const totalPriceElement = document.querySelector(".total-amount");
+          const subtotal = parseFloat("<%= cart.totalPrice %>");
+          const total = subtotal + shippingCost;
+          totalPriceElement.innerText = `₹${total.toFixed(2)}`;
+
+          // Update the hidden input field with the new total price
+          const totalPriceInput = document.querySelector(
+            'input[name="totalPrice"]'
+          );
+          totalPriceInput.value = total.toFixed(2); // Set the updated price in the hidden input
+        });
+      });
+
+    // Function to handle "Place Order" button click and form validation
+    document
+      .getElementById("placeOrderButton")
+      .addEventListener("click", async function (event) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+
+        // Get the form and the selected payment method
+        const form = document.getElementById("paymentForm");
+        const paymentMethod = document.querySelector(
+          'input[name="Payment"]:checked'
+        );
+        const terms = document.getElementById("Privacy-1");
+
+        if (!paymentMethod) {
+          alert("Please select a payment method.");
+          return;
         }
 
-        // Update the total amount
-        const totalPriceElement = document.querySelector(".total-amount");
-        const subtotal = parseFloat("<%= cart.totalPrice %>");
-        const total = subtotal + shippingCost;
-        totalPriceElement.innerText = `$${total.toFixed(2)}`;
+        // Validate form fields before submission
+        const fields = [
+          { id: "firstName", message: "First name is required." },
+          { id: "lastName", message: "Last name is required." },
+          { id: "companyName", message: "Company name is required." },
+          { id: "address", message: "Address is required." },
+          { id: "city", message: "City is required." },
+          { id: "state", message: "State is required." },
+          { id: "zip", message: "Zip/Postal code is required." },
+        ];
+
+        const mobile = document.getElementById("mobile");
+        const email = document.getElementById("email");
+
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll(".error-message").forEach((e) => e.remove());
+        document.querySelectorAll("input, select").forEach((field) => {
+          field.classList.remove("is-invalid");
+        });
+
+        // Helper function to add error message
+        function showError(input, message) {
+          if (!input.parentNode.querySelector(".error-message")) {
+            const error = document.createElement("div");
+            error.className = "error-message text-danger";
+            error.innerText = message;
+            input.parentNode.appendChild(error);
+            input.classList.add("is-invalid");
+          }
+          isValid = false;
+        }
+
+        // Validate fields
+        fields.forEach(({ id, message }) => {
+          const input = document.getElementById(id);
+          if (input.value.trim() === "") showError(input, message);
+        });
+
+        // Validate mobile number with country code
+        if (!/^\+(\d{1,4})\d{10}$/.test(mobile.value.trim())) {
+          showError(
+            mobile,
+            "Please enter a valid phone number with country code."
+          );
+        }
+
+        // Validate email (basic email format)
+        if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
+          showError(email, "Please enter a valid email address.");
+        }
+
+        // Check if terms are accepted
+        if (!terms.checked) {
+          showError(terms, "You must agree to the terms and conditions.");
+        }
+
+        const cartItems = JSON.parse(
+          document.querySelector('input[name="cartItems"]').value
+        ); // Hidden input
+        const payment_Method = document.querySelector(
+          'input[name="Payment"]:checked'
+        ).value;
+        const shippingOption = document.querySelector(
+          'input[name="shippingOption"]:checked'
+        ).value;
+        const totalPrice = parseFloat(
+          document.querySelector('input[name="totalPrice"]').value
+        );
+
+        const requestBody = {
+          cartItems,
+          payment_Method,
+          shippingOption,
+          totalPrice,
+        };
+        const razorpayKey = "rzp_test_nS7Wuqp4MppDIA";
+
+        // If form is valid, update the action and submit
+        if (isValid) {
+          // Update form action based on selected payment method
+          if (paymentMethod.value === "UPI") {
+            try {
+              const response = await fetch("/create-order", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  cartItems,
+                  payment_Method,
+                  shippingOption,
+                  totalPrice,
+                }),
+              });
+
+              const result = await response.json();
+              console.log(result); // Log the result to check the response from the server
+
+              if (result.success) {
+                const razorpayOrder = result.order;
+                const options = {
+                  key: razorpayKey,
+                  amount: razorpayOrder.amount,
+                  currency: "INR",
+                  order_id: razorpayOrder.id,
+                  handler: function (response) {
+                    console.log(response); // Log Razorpay response
+                    fetch("/verify-payment", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ paymentDetails: response }),
+                    })
+                      .then((res) => res.json())
+                      .then((verificationResult) => {
+                        console.log("Verification Result:", verificationResult); 
+                        if (verificationResult.verified) {
+                          alert("Payment successful and verified!");
+                        } else {
+                          alert("Payment verification failed.");
+                        }
+                      });
+                  },
+                  theme: {
+                    color: "#F37254",
+                  },
+                };
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+              } else {
+                alert("Failed to create order.");
+              }
+            } catch (error) {
+              console.error("Error initiating Razorpay payment:", error);
+              alert(error);
+            }
+          } else {
+            // For other payment methods, update the form action
+            if (paymentMethod.value === "Card") {
+              form.action = "/checkout-items";
+            }
+            if (paymentMethod.value === "COD") {
+              form.action = "/pay-with-cod";
+            }
+            form.submit();
+          }
+        }
       });
-    });
-  document.querySelector("form").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent the form from submitting by default
-
-    // Validate each field
-    const firstName = document.getElementById("firstName");
-    const lastName = document.getElementById("lastName");
-    const companyName = document.getElementById("companyName");
-    const address = document.getElementById("address");
-    const city = document.getElementById("city");
-    const country = document.getElementById("country");
-    const zip = document.getElementById("zip");
-    const mobile = document.getElementById("mobile");
-    const email = document.getElementById("email");
-    const terms = document.getElementById("Privacy-1");
-
-    let isValid = true;
-
-    // Clear previous error messages
-    document.querySelectorAll(".error-message").forEach((e) => e.remove());
-
-    // Helper function to add error message
-    function showError(input, message) {
-      const error = document.createElement("div");
-      error.className = "error-message text-danger";
-      error.innerText = message;
-      input.parentNode.appendChild(error);
-      isValid = false;
-    }
-
-    // Validate fields
-    if (firstName.value.trim() === "")
-      showError(firstName, "First name is required.");
-    if (lastName.value.trim() === "")
-      showError(lastName, "Last name is required.");
-    if (companyName.value.trim() === "")
-      showError(companyName, "Company name is required.");
-    if (address.value.trim() === "") showError(address, "Address is required.");
-    if (city.value.trim() === "") showError(city, "City is required.");
-    if (country.value.trim() === "") showError(country, "Country is required.");
-    if (zip.value.trim() === "") showError(zip, "Zip/Postal code is required.");
-
-    // Validate mobile number (simple format check)
-    if (!/^\d{10}$/.test(mobile.value.trim()))
-      showError(mobile, "Please enter a valid 10-digit phone number.");
-
-    // Validate email (basic email format)
-    if (!/^\S+@\S+\.\S+$/.test(email.value.trim()))
-      showError(email, "Please enter a valid email address.");
-
-    // Check if terms are accepted
-    if (!terms.checked)
-      showError(terms, "You must agree to the terms and conditions.");
-
-    // If all validations pass, submit the form
-    if (isValid) this.submit();
   });
 </script>
-
 <%- include('footer') %>
