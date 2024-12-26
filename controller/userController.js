@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto"); // Import crypto module for signature verification
 const User = require("../model/User");
 const Product = require("../model/Product");
 const Cart = require("../model/Cart");
@@ -6,7 +7,9 @@ const Category = require("../model/categories"); // Corrected model name
 const SubCategory = require("../model/subCategories"); // Corrected model name
 const Wishlist = require("../model/wishlist");
 const { none } = require("../util/multer");
-const crypto = require("crypto");
+const Stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const CreateRazorPayInstance = require("../config/razorpay.config");
+const razorpayInstance = CreateRazorPayInstance();
 
 module.exports = {
   getLogin: (req, res) => {
@@ -79,18 +82,185 @@ module.exports = {
     res.render("contact", { title: "Contact Page", user: req.session.user });
   },
 
-  getcheckOut: async (req, res) => {
+  getCheckOut: async (req, res) => {
     try {
+      if (!req.session.user) {
+        return res.redirect("/login"); // Redirect if user is not authenticated
+      }
+
       const userId = req.session.user._id;
       const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).render("error", { message: "User not found." });
+      }
+
       const cart = await Cart.findOne({ user: userId }).populate(
         "products.product"
-      ); // Populate product details
+      );
+
+      if (!cart || cart.products.length === 0) {
+        return res.render("checkout", {
+          title: "Checkout Page",
+          cart: null,
+          user,
+        });
+      }
 
       res.render("checkout", { title: "Checkout Page", cart, user });
     } catch (error) {
       console.error("Error fetching cart data:", error);
-      res.status(500).send("Error fetching cart data");
+      res.status(500).render("error", {
+        message: "Unable to load checkout data. Please try again later.",
+      });
+    }
+  },
+
+  checkoutItems: async (req, res) => {
+    try {
+      let cartItems = req.body.cartItems || [];
+      if (typeof cartItems === "string") {
+        cartItems = JSON.parse(cartItems);
+      }
+
+      if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return res
+          .status(400)
+          .render("error", { message: "No items in the cart to checkout." });
+      }
+
+      const lineItems = cartItems
+        .map((item) => {
+          if (!item.product || !item.product.name || !item.product.price) {
+            console.error("Invalid product data:", item.product);
+            return null;
+          }
+
+          return {
+            price_data: {
+              currency: "inr",
+              product_data: {
+                name: item.product.name,
+                description: item.product.description,
+                images: item.product.images || [],
+              },
+              unit_amount: item.product.price * 100, // Price in paise
+            },
+            quantity: item.quantity,
+          };
+        })
+        .filter((item) => item !== null);
+
+      if (lineItems.length === 0) {
+        return res
+          .status(400)
+          .render("error", { message: "Invalid products in the cart." });
+      }
+
+      const stripeSession = await Stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        customer_email: req.body.email,
+        shipping_address_collection: {
+          allowed_countries: ["IN"], // Specify allowed countries
+        },
+        success_url: "http://localhost:3000/complete",
+        cancel_url: "http://localhost:5000/checkout-items",
+      });
+
+      console.log("Stripe session created:", stripeSession);
+      res.redirect(stripeSession.url);
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      res.status(500).render("error", {
+        message: "Unable to process payment. Please try again later.",
+      });
+    }
+  },
+
+  createOrder: async (req, res) => {
+    try {
+      const cartItems = req.body.cartItems;
+      console.log("Received Cart Items:", cartItems);
+
+      // Validate cart items
+      if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Cart is empty or invalid." });
+      }
+
+      // Calculate total amount
+      const totalAmount = cartItems.reduce((sum, item) => {
+        if (!item.product || !item.product.price || !item.quantity) {
+          console.error("Invalid item in cart:", item);
+          return sum;
+        }
+        return sum + item.product.price * item.quantity;
+      }, 0);
+
+      if (totalAmount <= 0) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid cart total amount." });
+      }
+
+      // Create Razorpay order
+      const options = {
+        amount: totalAmount * 100, // Convert to paise
+        currency: "INR",
+        receipt: `order_rcptid_${Date.now()}`,
+      };
+
+      const order = await razorpayInstance.orders.create(options);
+      console.log("Razorpay Order Created:", order);
+
+      res.json({ success: true, order });
+    } catch (error) {
+      console.error("Error creating Razorpay order:", error.message);
+      res
+        .status(500)
+        .json({ success: false, message: "Unable to create Razorpay order." });
+    }
+  },
+
+  verifyPayment: (req, res) => {
+    console.log("verify");
+    console.log(req.body);
+    try {
+      const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+        req.body.paymentDetails;
+      console.log(razorpay_payment_id, razorpay_order_id, razorpay_signature);
+
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Missing payment details." });
+      }
+
+      const secret = process.env.KEY_SECRET;
+
+      // Generate the signature
+      const generatedSignature = crypto
+        .createHmac("sha256", secret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest("hex");
+      console.log({ generatedSignature: generatedSignature });
+      if (generatedSignature === razorpay_signature) {
+        console.log("Payment verified successfully.");
+        res.json({ verified: true, message: "Payment verified successfully." });
+      } else {
+        console.error("Invalid payment signature.");
+        res
+          .status(400)
+          .json({ verified: false, message: "Invalid payment signature." });
+      }
+    } catch (error) {
+      console.error("Error verifying payment:", error.message);
+      res
+        .status(500)
+        .json({ verified: false, message: "Unable to verify payment." });
     }
   },
 
@@ -228,13 +398,21 @@ module.exports = {
   },
 
   updateUserDetails: async (req, res) => {
-    console.log("update");
+    console.log("Updating user details");
 
     try {
       const userId = req.session.user._id; // Assuming user ID is stored in session
+      if (!userId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "User ID not found in session" });
+      }
 
+      // Destructure data from the request body
       const { firstName, lastName, gender, email, phone } = req.body;
+      console.log("Received data:", firstName, lastName, gender, email, phone);
 
+      // Create an object to store updated data
       const updatedData = {
         firstName,
         lastName,
@@ -247,10 +425,31 @@ module.exports = {
       if (req.file) {
         updatedData.imageUrl = `${req.file.filename}`;
       }
+
       // Find the user by ID and update their profile
-      await User.findByIdAndUpdate(userId, updatedData);
-      // Respond with success
-      res.json({ success: true, message: "Profile updated successfully" });
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+        new: true,
+      });
+
+      if (!updatedUser) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found or update failed" });
+      }
+
+      // Respond with success and the updated user data
+      res.json({
+        success: true,
+        message: "Profile updated successfully",
+        user: {
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          gender: updatedUser.gender,
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          imageUrl: updatedUser.imageUrl || null, // Include image URL if updated
+        },
+      });
     } catch (error) {
       console.error("Error updating profile:", error);
       res.json({ success: false, message: "Error updating profile" });
@@ -276,6 +475,7 @@ module.exports = {
           .json({ success: false, message: "User not found" });
       }
 
+      // Respond with the user data
       res.json({
         success: true,
         firstName: user.firstName,
@@ -283,6 +483,7 @@ module.exports = {
         gender: user.gender,
         email: user.email,
         phone: user.phone,
+        imageUrl: user.imageUrl || null, // Include the image URL if it exists
       });
     } catch (err) {
       console.error("Error fetching user data:", err);
@@ -390,9 +591,9 @@ module.exports = {
           .status(401)
           .json({ success: false, message: "Unauthorized access" });
       }
-  
+
       const userId = req.session.user._id; // Get user ID from session
-  
+
       // Find the user by ID
       const user = await User.findById(userId);
       if (!user) {
@@ -400,14 +601,14 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "User not found" });
       }
-  
+
       // Delete the user's cart and wishlist
       await Cart.deleteOne({ user: userId });
       await Wishlist.deleteOne({ user: userId });
-  
+
       // Delete the user
       const deleteResult = await User.deleteOne({ _id: userId });
-  
+
       if (deleteResult.deletedCount > 0) {
         // Clear session data after deletion
         req.session.destroy((err) => {
@@ -430,7 +631,7 @@ module.exports = {
         .status(500)
         .json({ success: false, message: "Internal server error" });
     }
-  },  
+  },
 
   getCategories: async (req, res) => {
     try {
@@ -697,7 +898,9 @@ module.exports = {
       const userId = req.session.user._id;
       let cart = await Cart.findOne({ user: userId });
       if (!cart) {
-        return res.status(404).json({ message: 'Cart not found', CartCount: 0 });
+        return res
+          .status(404)
+          .json({ message: "Cart not found", CartCount: 0 });
       }
       const CartCount = cart.totalCount;
       res.json(CartCount);

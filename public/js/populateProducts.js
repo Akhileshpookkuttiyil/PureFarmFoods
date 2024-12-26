@@ -30,7 +30,7 @@ async function populateProducts(url, containerId) {
                         <h4>${product.name}</h4>
                         <p>${product.description}</p>
                         <div class="d-flex justify-content-center flex-lg-wrap">
-                            <p class="text-dark fs-5 fw-bold mb-0">$${product.price} / kg</p>
+                            <p class="text-dark fs-5 fw-bold mb-0">₹${product.price} / kg</p>
                             <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart-btn" data-product-id="${product._id}">
                                 <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                             </a>
