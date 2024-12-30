@@ -1,5 +1,5 @@
 <%- include('layout') %>
-<link rel="stylesheet" href="/css/popper.css" />
+
 <!-- Modal Search Start -->
 <div
   class="modal fade"
@@ -349,36 +349,11 @@
         </div>
       </div>
     </form>
-    <!-- Popper container for success message -->
-    <div id="popper" class="popper hidden">
-      <div class="popper-content">
-        <img src="success-icon.png" alt="Success" class="popper-icon" />
-        <h2>Order Placed!</h2>
-        <p>🎉 Your product is on the way.</p>
-      </div>
-    </div>
   </div>
 </div>
 <!-- Checkout Page End -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-  // Show popper with custom message
-  function showPopper(message, iconUrl) {
-    const popper = document.getElementById("popper");
-    const icon = popper.querySelector(".popper-icon");
-    const text = popper.querySelector("p");
-
-    icon.src = iconUrl || "success-icon.png"; // Default success icon
-    text.textContent = message;
-
-    // Show popper
-    popper.classList.remove("hidden");
-
-    // Hide popper after 3 seconds
-    setTimeout(() => {
-      popper.classList.add("hidden");
-    }, 3000);
-  }
   document.addEventListener("DOMContentLoaded", function () {
     // Function to update the total price when shipping option is selected
     document
@@ -550,17 +525,19 @@
                       .then((verificationResult) => {
                         console.log("Verification Result:", verificationResult);
                         if (verificationResult.verified) {
-                          // Show success popper when payment is verified
-                          showPopper(
-                            "🎉 Your product is on the way!",
-                            "success-icon.png"
-                          );
+                          Swal.fire({
+                            icon: "success",
+                            title: "Order Placed!",
+                            text: "🎉 Your product is on the way.",
+                            timer: 3000,
+                            showConfirmButton: false,
+                          });
                         } else {
-                          // Show error popper if verification fails
-                          showPopper(
-                            "❌ Payment verification failed. Please contact support.",
-                            "error-icon.png"
-                          );
+                          Swal.fire({
+                            icon: "error",
+                            title: "Verification Failed",
+                            text: "❌ Please contact customer support.",
+                          });
                         }
                       });
                   },

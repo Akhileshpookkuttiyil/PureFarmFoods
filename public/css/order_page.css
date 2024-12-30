@@ -1,0 +1,159 @@
+.containr {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.order-section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.order-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.order-header h2 {
+    font-size: 18px; /* Smaller size for the headings */
+    font-weight: 600; /* Slightly bolder for clarity */
+    color: #444;
+    margin: 0;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dispatched {
+    background-color: #4caf50;
+}
+
+.delivered {
+    background-color: #2196f3;
+}
+
+.order-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #f4f8fb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.order-info {
+    display: flex;
+    align-items: center;
+}
+
+.order-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.order-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.order-time {
+    font-size: 14px;
+    color: #666;
+}
+
+.order-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.order-actions button {
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.track-button {
+    background-color:#83bb1a;
+    color: white;
+    width: 12vw;
+}
+
+.track-button:hover {
+    background-color: #8ece17;
+}
+
+.details-button {
+    background-color: #ffffff;
+    color:#83bb1a;
+    width: 12vw;
+}
+
+.details-button:hover {
+    background-color: #f4f8fb;
+}
+
+.order-actions a {
+    color:#83bb1a;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 3px;
+}
+
+.order-actions a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-top: 5px; /* Adjust space if needed */
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    width: 12vw;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.order-actions a:hover {
+    background-color: #f4f8fb;
+    border-color: #4caf50;
+}
+
+
+@media (max-width: 768px) {
+    .order-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-info img {
+        margin-bottom: 10px;
+    }
+
+    .order-actions {
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+    .order-actions button {
+        width: 100%;
+    }
+}
