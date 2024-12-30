@@ -4,6 +4,7 @@
 <head>
     <title>Account Settings</title>
     <link rel="stylesheet" href="/css/userSettings.css">
+    <link rel="stylesheet" href="/css/order_page.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
@@ -119,8 +120,78 @@
                 <p>Addresses content goes here...</p>
             </div>
             <div id="orders-content" style="display: none;">
-                <h2>Manage Orders</h2>
-                <p>Orders content goes here...</p>
+                <div class="containr">
+                    <h2>Order History</h2>
+                    <!-- Dispatched Section -->
+                    <div class="order-section">
+                        <div class="order-header">
+                            <span class="status-dot dispatched"></span>
+                            <h2>Dispatched</h2>
+                        </div>
+                        <div class="order-card">
+                            <div class="order-info">
+                                <img src="/images/item1.jpg" alt="Item Image">
+                                <div>
+                                    <p class="order-title">Arrives tomorrow</p>
+                                    <p class="order-time">7am - 7pm</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="track-button">Track order</button>
+                                <button class="details-button">View order details</button>
+                                <a href="#">Get invoice</a>
+                                <a href="#">Edit order</a>
+                            </div>
+                        </div>
+                        <div class="order-card">
+                            <div class="order-info">
+                                <img src="/images/item2.jpg" alt="Item Image">
+                                <div>
+                                    <p class="order-title">Expected on Mon, 2 July</p>
+                                    <p class="order-time">7am - 7pm</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="track-button">Track order</button>
+                                <button class="details-button">View order details</button>
+                                <a href="#">Get invoice</a>
+                                <a href="#">Edit order</a>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Delivered Section -->
+                    <div class="order-section">
+                        <div class="order-header">
+                            <span class="status-dot delivered"></span>
+                            <h2>Delivered on 23 June</h2>
+                        </div>
+                        <div class="order-card">
+                            <div class="order-info">
+                                <img src="/images/item3.jpg" alt="Item Image">
+                                <div>
+                                    <p class="order-title">Huawei P20 Pro 128GB Smartphone</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="details-button">View order details</button>
+                                <a href="#">Get invoice</a>
+                            </div>
+                        </div>
+                        <div class="order-card">
+                            <div class="order-info">
+                                <img src="/images/item4.jpg" alt="Item Image">
+                                <div>
+                                    <p class="order-title">Microsoft Keyboard Cover for Surface Go</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="details-button">View order details</button>
+                                <a href="#">Get invoice</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -128,169 +199,217 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('.side-nav a');
-            const contents = document.querySelectorAll('.main-contents > div');
-            const passwordForm = document.getElementById('update-password-form');
-            const saveButton = document.querySelector('#updatebtn');
-            const publicProfileForm = document.getElementById('public-profile-form');
-            
-            // Object to hold changes made to the fields
-            const updatedFields = {};
-    
-            // Disable all input fields on page load
-            const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
-            allFields.forEach(input => input.disabled = true);
-            saveButton.style.display = 'none'; // Hide the save changes button initially
-            
-            // Initialize event listeners for side navigation links
-            links.forEach(link => {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    showContent(this.id.replace('-link', '-content'), this);
-                });
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        const links = document.querySelectorAll('.side-nav a');
+        const contents = document.querySelectorAll('.main-contents > div');
+        const passwordForm = document.getElementById('update-password-form');
+        const saveButton = document.querySelector('#updatebtn');
+        const publicProfileForm = document.getElementById('public-profile-form');
         
-            // Show email update form
-            document.getElementById('change-email-link').addEventListener('click', function (event) {
+        // Object to hold changes made to the fields
+        const updatedFields = {};
+    
+        // Initialize event listeners for side navigation links
+        links.forEach(link => {
+            link.addEventListener('click', function (event) {
                 event.preventDefault();
-                document.getElementById('update-email-form').style.display = 'block';
-            });
-    
-            // Handle account deletion
-            document.getElementById('delete-account-link').addEventListener('click', async function (event) {
-                event.preventDefault();
-                const result = await Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Deleting your account will remove all associated content and cannot be undone.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, cancel'
-                });
-    
-                if (result.isConfirmed) {
-                    await deleteAccount();
-                }
-            });
-    
-            // Function to delete account
-            async function deleteAccount() {
-                try {
-                    const response = await fetch('/user/delete-Account', {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-    
-                    const result = await response.json();
-    
-                    if (result.success) {
-                        Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
-                            window.location.href = '/'; // Redirect to home page or login page after deletion
-                        });
-                    } else {
-                        showError(result.message);
-                    }
-                } catch (error) {
-                    console.error('Error deleting account:', error);
-                    showError('An error occurred while trying to delete your account. Please try again later.');
-                }
-            }
-    
-            // Function to show error messages
-            function showError(message) {
-                Swal.fire({
-                    title: 'Error',
-                    text: message,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-    
-            // Retrieve the last active tab from localStorage
-            const activeTab = localStorage.getItem('activeTab');
-            if (activeTab) {
-                const activeLink = document.getElementById(activeTab);
-                if (activeLink) {
-                    showContent(activeLink.id.replace('-link', '-content'), activeLink);
-                }
-            } else {
-                // Default to the first tab if none is stored
-                showContent('account-settings-content', document.getElementById('account-settings-link'));
-            }
-    
-            // Function to handle tab switching
-            function showContent(contentId, clickedLink) {
-                contents.forEach(content => content.style.display = 'none');
-                document.getElementById(contentId).style.display = 'block';
-    
-                links.forEach(link => link.classList.remove('active'));
-                clickedLink.classList.add('active');
-    
-                // Store the active tab in localStorage
-                localStorage.setItem('activeTab', clickedLink.id);
-            }
-    
-            // Handle password update form submission
-            passwordForm.addEventListener('submit', async function (event) {
-                event.preventDefault(); // Prevent default form submission
-                const newPassword = document.getElementById('new-password').value;
-                const oldPassword = document.getElementById('current-password').value;
-    
-                try {
-                    const response = await fetch('/user/change-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ newPassword, oldPassword })
-                    });
-    
-                    const result = await response.json();
-                    if (result.success) {
-                        Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
-                        passwordForm.reset();
-                    } else {
-                        showError(result.message);
-                    }
-                } catch (error) {
-                    console.error('Error changing password:', error);
-                    showError('An error occurred while changing your password. Please try again.');
-                }
-            });
-    
-            // Function to handle field editing
-            window.editField = function (fieldId) {
-                const field = document.getElementById(fieldId);
-                allFields.forEach(input => {
-                    if (input.id !== fieldId) input.disabled = true; // Disable all other fields
-                });
-    
-                field.disabled = false; // Enable the clicked field
-                field.focus(); // Focus the input field
-                field.addEventListener('change', handleChange); // Attach change event to the field
-            };
-    
-            // Function to handle change events
-            function handleChange() {
-                saveButton.style.display = 'block'; // Show the button when a change is detected
-                const fieldId = this.id;
-                updatedFields[fieldId] = this.value; // Store the updated value
-            }
-    
-            // Update the profile form submission logic
-            publicProfileForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-    
-                // Ensure all fields are enabled before submission
-                allFields.forEach(input => input.disabled = false);
+                showContent(this.id.replace('-link', '-content'), this);
             });
         });
-    </script>       
+    
+        // Show email update form
+        document.getElementById('change-email-link').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('update-email-form').style.display = 'block';
+        });
+    
+        // Retrieve the last active tab from localStorage
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            const activeLink = document.getElementById(activeTab);
+            if (activeLink) {
+                showContent(activeLink.id.replace('-link', '-content'), activeLink);
+            }
+        } else {
+            // Default to the first tab if none is stored
+            showContent('account-settings-content', document.getElementById('account-settings-link'));
+        }
+    
+        // Function to handle tab switching
+        function showContent(contentId, clickedLink) {
+            contents.forEach(content => content.style.display = 'none');
+            document.getElementById(contentId).style.display = 'block';
+    
+            links.forEach(link => link.classList.remove('active'));
+            clickedLink.classList.add('active');
+    
+            // Store the active tab in localStorage
+            localStorage.setItem('activeTab', clickedLink.id);
+        }
+    
+        // Handle password update form submission
+        passwordForm.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+            const newPassword = document.getElementById('new-password').value;
+            const oldPassword = document.getElementById('current-password').value;
+    
+            try {
+                const response = await fetch('/user/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newPassword, oldPassword })
+                });
+    
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
+                    passwordForm.reset();
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showError('An error occurred while changing your password. Please try again.');
+            }
+        });
+
+         // Handle account deletion
+
+         document.getElementById('delete-account-link').addEventListener('click', async function (event) {
+
+event.preventDefault();
+
+const result = await Swal.fire({
+
+    title: 'Are you sure?',
+
+    text: "Deleting your account will remove all associated content and cannot be undone.",
+
+    icon: 'warning',
+
+    showCancelButton: true,
+
+    confirmButtonColor: '#d33',
+
+    cancelButtonColor: '#3085d6',
+
+    confirmButtonText: 'Yes, delete it!',
+
+    cancelButtonText: 'No, cancel'
+
+});
+
+
+
+if (result.isConfirmed) {
+
+    await deleteAccount();
+
+}
+
+});
+
+
+
+// Function to delete account
+
+async function deleteAccount() {
+
+try {
+
+    const response = await fetch('/user/delete-Account', {
+
+        method: 'DELETE',
+
+        headers: {
+
+            'Content-Type': 'application/json'
+
+        }
+
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+
+        Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
+
+            window.location.href = '/'; // Redirect to home page or login page after deletion
+
+        });
+
+    } else {
+
+        showError(result.message);
+
+    }
+
+} catch (error) {
+
+    console.error('Error deleting account:', error);
+
+    showError('An error occurred while trying to delete your account. Please try again later.');
+
+}
+
+}
+
+
+
+// Function to show error messages
+
+function showError(message) {
+
+Swal.fire({
+
+    title: 'Error',
+
+    text: message,
+
+    icon: 'error',
+
+    confirmButtonText: 'OK'
+
+});
+
+}
+    
+        // Disable all input fields on page load
+        const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
+        allFields.forEach(input => input.disabled = true);
+        saveButton.style.display = 'none'; // Hide the save changes button initially
+    
+        // Function to handle field editing
+        window.editField = function (fieldId) {
+            const field = document.getElementById(fieldId);
+            allFields.forEach(input => {
+                if (input.id !== fieldId) input.disabled = true; // Disable all other fields
+            });
+    
+            field.disabled = false; // Enable the clicked field
+            field.focus(); // Focus the input field
+            field.addEventListener('change', handleChange); // Attach change event to the field
+        };
+    
+        // Function to handle change events
+        function handleChange() {
+            saveButton.style.display = 'block'; // Show the button when a change is detected
+            const fieldId = this.id;
+            updatedFields[fieldId] = this.value; // Store the updated value
+        }
+    
+        // Update the profile form submission logic
+        publicProfileForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            // Ensure all fields are enabled before submission
+            allFields.forEach(input => input.disabled = false);
+        });
+    });
+</script>    
     
 <script src="/js/user/updateProfile.js"></script>
 <script src="/js/user/updateEmail.js"></script>

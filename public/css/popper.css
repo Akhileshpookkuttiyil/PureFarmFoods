@@ -1,55 +1,20 @@
-.hidden {
-    display: none;
-  }
-  
-  .popper {
+#popper {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px; /* Increase the width for a larger popper */
-    padding: 30px; /* Increase padding for more space inside */
-    background-color: #fff;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-    border-radius: 15px; /* Rounded corners for a smoother look */
-    text-align: center;
-    z-index: 1000;
-    animation: fadeInOut 4s ease-in-out forwards; /* Adjust animation time */
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    display: none; /* Initially hidden */
   }
   
-  .popper-icon {
-    width: 80px; /* Make the icon larger */
-    margin-bottom: 20px; /* More space between the icon and text */
+  #popper.hidden {
+    display: none; /* This class hides the popper */
   }
   
-  .popper-content h2 {
-    font-size: 2rem; /* Make the title larger */
-    color: #4CAF50; /* Green color for success */
-    margin-bottom: 10px; /* More space under the title */
-  }
-  
-  .popper-content p {
-    font-size: 1.2rem; /* Increase the font size for description */
-    color: #555;
-  }
-  
-  /* Animation for the popper */
-  @keyframes fadeInOut {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, -60%);
-    }
-    10% {
-      opacity: 1;
-      transform: translate(-50%, -50%);
-    }
-    90% {
-      opacity: 1;
-      transform: translate(-50%, -50%);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -40%);
-    }
+  .popper-icon img {
+    width: 100px; /* Adjust the size of the GIF */
+    height: auto;
   }
   
