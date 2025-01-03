@@ -180,6 +180,7 @@ module.exports = {
   },
 
   createOrder: async (req, res) => {
+    console.log(req.body)
     try {
       const cartItems = req.body.cartItems;
       console.log("Received Cart Items:", cartItems);
@@ -270,8 +271,49 @@ module.exports = {
 
   getSettings: (req, res) => {
     res.render("userSettings", {
-      title: "user-Setting Page",
-      user: req.session.user,
+      title: "User Settings Page",
+      user: req.session.user, // Pass the user session data here if needed
+      activePage: "account-settings", // Default active page
+    });
+  },
+
+  getAccountSettings: (req, res) => {
+    res.render("userSettings", {
+      title: "Account Settings",
+      user: req.session.user, // Pass user data
+      activePage: "account-settings",
+    });
+  },
+
+  getPublicProfile: (req, res) => {
+    res.render("userSettings", {
+      title: "Public Profile",
+      user: req.session.user, // Pass user data
+      activePage: "public-profile",
+    });
+  },
+
+  getNotifications: (req, res) => {
+    res.render("userSettings", {
+      title: "Notifications",
+      user: req.session.user, // Pass user data
+      activePage: "notifications",
+    });
+  },
+
+  getAddress: (req, res) => {
+    res.render("userSettings", {
+      title: "Manage Addresses",
+      user: req.session.user, // Pass user data
+      activePage: "manage-addresses",
+    });
+  },
+
+  getOrders: (req, res) => {
+    res.render("userSettings", {
+      title: "My Orders",
+      user: req.session.user, // Pass user data
+      activePage: "my-orders",
     });
   },
 

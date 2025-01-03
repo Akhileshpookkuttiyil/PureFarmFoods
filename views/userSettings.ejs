@@ -1,252 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/userSettings.css" />
+    <link rel="stylesheet" href="/css/order_page.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
 
-<head>
-    <title>Account Settings</title>
-    <link rel="stylesheet" href="/css/userSettings.css">
-    <link rel="stylesheet" href="/css/order_page.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
+  <body>
+    <%- include('layout') %>
+    <!-- Include your header -->
 
-<body>
-    <%- include('layout') %> <!-- Include your header -->
     <div class="containers">
-        <div class="side-nav">
-            <h2>Settings</h2>
-            <a href="#" id="public-profile-link">Public profile</a>
-            <a href="#" id="account-settings-link" class="active">Account settings</a>
-            <a href="#" id="notifications-link">Notifications</a>
-            <a href="#" id="address-link">Manage Addresses</a>
-            <a href="#" id="orders-link">My Orders</a>
-        </div>
-        <div class="main-contents">
-            <div id="account-settings-content">
-                <h2>Account settings</h2>
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <p>Your email address is <strong id="current-email">emailis@private.com</strong> <a href="#" id="change-email-link">Change</a></p>
-                    <form id="update-email-form" action="/update-email" method="POST" style="display: none;">
-                        <input type="email" name="new-email" id="new-email" placeholder="New email address" required>
-                        <button type="button" id="update-email-btn" class="btn btn-primary">Update Email</button>
-                    </form>
-                    <input type="text" id="otp" placeholder="Enter OTP" style="display: none;" required>
-                    <button id="verify-otp-btn" class="btn btn-secondary" style="display: none;">Verify OTP</button>
-                </div>                
-                <div class="form-group">
-                    <label for="new-password">New password</label>
-                    <form id="update-password-form" action="/user/change-password" method="POST">
-                        <input type="password" name="newPassword" id="new-password" placeholder="New password" required>
-                        <label for="current-password">Current password</label>
-                        <input type="password" name="oldPassword" id="current-password" placeholder="Current password" required>
-                        <button type="submit" class="btn btn-primary">Save password</button>
-                    </form>
-                </div>
-                <div class="form-group">
-                    <p>Can't remember your current password? <a href="#">Reset your password</a></p>
-                </div>
-                <div class="form-group" style="margin-top: 25px;">
-                    <h3>Delete account</h3>
-                    <p>Deleting your account will remove all associated content and cannot be undone. If you need assistance or have concerns, please <a href="#">contact our support team</a>.</p>
-                    <p>To proceed, please confirm your intention to delete your account:</p>
-                    <p><a href="/user/delete-Account" class="remove-hover" id="delete-account-link" style="color: red; cursor: pointer;">I want to delete my account</a></p>
-                </div>
-            </div>
-            <div id="public-profile-content" style="display: none;">
-                <h2>Public profile</h2>
-                <form id="public-profile-form" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="first-name">First Name</label>
-                        <div class="input-container">
-                            <input type="text" id="first-name" name="firstName" placeholder="First Name" value="<%= user.firstName %>" required>
-                            <span class="edit-icon" onclick="editField('first-name')"><i class="fas fa-edit"></i></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="last-name">Last Name</label>
-                        <div class="input-container">
-                            <input type="text" id="last-name" name="lastName" placeholder="Last Name" value="<%= user.lastName %>" required>
-                            <span class="edit-icon" onclick="editField('last-name')"><i class="fas fa-edit"></i></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <div class="input-container">
-                            <select id="gender" name="gender" required>
-                                <option value="" disabled>Select Gender</option>
-                                <option value="male" <% if (user.gender === 'male') { %>selected<% } %>>Male</option>
-                                <option value="female" <% if (user.gender === 'female') { %>selected<% } %>>Female</option>
-                                <option value="other" <% if (user.gender === 'other') { %>selected<% } %>>Other</option>
-                            </select>
-                            <span class="edit-icon" onclick="editField('gender')"><i class="fas fa-edit"></i></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profile-picture">Profile Picture</label>
-                        <div class="input-container">
-                            <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
-                            <span class="edit-icon" onclick="editField('profile-picture')"><i class="fas fa-edit"></i></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <div class="input-container">
-                            <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>" required>
-                            <span><i class="fas fa-check-circle" style="color: rgb(55, 247, 55); font-size: 1.2em;margin-left: 10px;"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <div class="input-container">
-                            <input type="tel" id="phone" name="phone" placeholder="Phone" value="<%= user.phone %>" required>
-                            <span class="edit-icon" id="phone-edit-icon" onclick="editField('phone')">
-                                <% if (!user.phone) { %>
-                                    <i class="fas fa-edit"></i>
-                                <% } else { %>
-                                    <i class="fas fa-check-circle" style="color: rgb(55, 247, 55);"></i>
-                                <% } %>
-                            </span>                  
-                        </div>
-                    </div>
-                    <button type="submit" id="updatebtn" class="btn btn-primary">Update Profile</button>
-                </form>
-            </div>
-            <div id="notifications-content" style="display: none;">
-                <h2>Notifications</h2>
-                <p>Notifications content goes here...</p>
-            </div>
-            <div id="address-content" style="display: none;">
-                <h2>Manage Addresses</h2>
-                <p>Addresses content goes here...</p>
-            </div>
-            <div id="orders-content" style="display: none;">
-                <div class="containr">
-                    <h2>Order History</h2>
-                    <!-- Dispatched Section -->
-                    <div class="order-section">
-                        <div class="order-header">
-                            <span class="status-dot dispatched"></span>
-                            <h2>Dispatched</h2>
-                        </div>
-                        <div class="order-card">
-                            <div class="order-info">
-                                <img src="/images/item1.jpg" alt="Item Image">
-                                <div>
-                                    <p class="order-title">Arrives tomorrow</p>
-                                    <p class="order-time">7am - 7pm</p>
-                                </div>
-                            </div>
-                            <div class="order-actions">
-                                <button class="track-button">Track order</button>
-                                <button class="details-button">View order details</button>
-                                <a href="#">Get invoice</a>
-                                <a href="#">Edit order</a>
-                            </div>
-                        </div>
-                        <div class="order-card">
-                            <div class="order-info">
-                                <img src="/images/item2.jpg" alt="Item Image">
-                                <div>
-                                    <p class="order-title">Expected on Mon, 2 July</p>
-                                    <p class="order-time">7am - 7pm</p>
-                                </div>
-                            </div>
-                            <div class="order-actions">
-                                <button class="track-button">Track order</button>
-                                <button class="details-button">View order details</button>
-                                <a href="#">Get invoice</a>
-                                <a href="#">Edit order</a>
-                            </div>
-                        </div>
-                    </div>
-            
-                    <!-- Delivered Section -->
-                    <div class="order-section">
-                        <div class="order-header">
-                            <span class="status-dot delivered"></span>
-                            <h2>Delivered on 23 June</h2>
-                        </div>
-                        <div class="order-card">
-                            <div class="order-info">
-                                <img src="/images/item3.jpg" alt="Item Image">
-                                <div>
-                                    <p class="order-title">Huawei P20 Pro 128GB Smartphone</p>
-                                </div>
-                            </div>
-                            <div class="order-actions">
-                                <button class="details-button">View order details</button>
-                                <a href="#">Get invoice</a>
-                            </div>
-                        </div>
-                        <div class="order-card">
-                            <div class="order-info">
-                                <img src="/images/item4.jpg" alt="Item Image">
-                                <div>
-                                    <p class="order-title">Microsoft Keyboard Cover for Surface Go</p>
-                                </div>
-                            </div>
-                            <div class="order-actions">
-                                <button class="details-button">View order details</button>
-                                <a href="#">Get invoice</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <%- include('footer') %> <!-- Include your footer -->
+      <div class="side-nav">
+        <h2>Settings</h2>
+        <!-- Add dynamic classes based on active page -->
+        <a
+          href="/public-profile"
+          class="<%= activePage === 'public-profile' ? 'active' : '' %>"
+        >
+          Public Profile
+        </a>
+        <a
+          href="/account-settings"
+          class="<%= activePage === 'account-settings' ? 'active' : '' %>"
+        >
+          Account Settings
+        </a>
+        <a
+          href="/notifications"
+          class="<%= activePage === 'notifications' ? 'active' : '' %>"
+        >
+          Notifications
+        </a>
+        <a
+          href="/manage-addresses"
+          class="<%= activePage === 'manage-addresses' ? 'active' : '' %>"
+        >
+          Manage Addresses
+        </a>
+        <a
+          href="/my-orders"
+          class="<%= activePage === 'my-orders' ? 'active' : '' %>"
+        >
+          My Orders
+        </a>
+      </div>
 
+      <!-- Main content sections for different settings -->
+      <div class="main-contents">
+        <!-- Account Settings Section -->
+        <div
+          id="account-settings-content"
+          class="settings-content"
+          style="display: <%= activePage === 'account-settings' ? 'block' : 'none' %>"
+        >
+          <h2>Account settings</h2>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <p>
+              Your email address is
+              <strong id="current-email">emailis@private.com</strong>
+              <a href="#" id="change-email-link">Change</a>
+            </p>
+            <form
+              id="update-email-form"
+              action="/update-email"
+              method="POST"
+              style="display: none"
+            >
+              <input
+                type="email"
+                name="new-email"
+                id="new-email"
+                placeholder="New email address"
+                required
+              />
+              <button
+                type="button"
+                id="update-email-btn"
+                class="btn btn-primary"
+              >
+                Update Email
+              </button>
+            </form>
+            <input
+              type="text"
+              id="otp"
+              placeholder="Enter OTP"
+              style="display: none"
+              required
+            />
+            <button
+              id="verify-otp-btn"
+              class="btn btn-secondary"
+              style="display: none"
+            >
+              Verify OTP
+            </button>
+          </div>
+          <div class="form-group">
+            <label for="new-password">New password</label>
+            <form
+              id="update-password-form"
+              action="/user/change-password"
+              method="POST"
+            >
+              <input
+                type="password"
+                name="newPassword"
+                id="new-password"
+                placeholder="New password"
+                required
+              />
+              <label for="current-password">Current password</label>
+              <input
+                type="password"
+                name="oldPassword"
+                id="current-password"
+                placeholder="Current password"
+                required
+              />
+              <button type="submit" class="btn btn-primary">
+                Save password
+              </button>
+            </form>
+          </div>
+          <div class="form-group">
+            <p>
+              Can't remember your current password?
+              <a href="#">Reset your password</a>
+            </p>
+          </div>
+          <div class="form-group" style="margin-top: 25px">
+            <h3>Delete account</h3>
+            <p>
+              Deleting your account will remove all associated content and
+              cannot be undone. If you need assistance or have concerns, please
+              <a href="#">contact our support team</a>.
+            </p>
+            <p>
+              To proceed, please confirm your intention to delete your account:
+            </p>
+            <p>
+              <a
+                href="/user/delete-Account"
+                class="remove-hover"
+                id="delete-account-link"
+                style="color: red; cursor: pointer"
+                >I want to delete my account</a
+              >
+            </p>
+          </div>
+        </div>
+
+        <!-- Public Profile Section -->
+        <div
+          id="public-profile-content"
+          class="settings-content"
+          style="display: <%= activePage === 'public-profile' ? 'block' : 'none' %>"
+        >
+        <h2>Public profile</h2>
+        <form id="public-profile-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="first-name">First Name</label>
+                <div class="input-container">
+                    <input type="text" id="first-name" name="firstName" placeholder="First Name" value="<%= user.firstName %>" required>
+                    <span class="edit-icon" onclick="editField('first-name')"><i class="fas fa-edit"></i></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="last-name">Last Name</label>
+                <div class="input-container">
+                    <input type="text" id="last-name" name="lastName" placeholder="Last Name" value="<%= user.lastName %>" required>
+                    <span class="edit-icon" onclick="editField('last-name')"><i class="fas fa-edit"></i></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <div class="input-container">
+                    <select id="gender" name="gender" required>
+                        <option value="" disabled>Select Gender</option>
+                        <option value="male" <% if (user.gender === 'male') { %>selected<% } %>>Male</option>
+                        <option value="female" <% if (user.gender === 'female') { %>selected<% } %>>Female</option>
+                        <option value="other" <% if (user.gender === 'other') { %>selected<% } %>>Other</option>
+                    </select>
+                    <span class="edit-icon" onclick="editField('gender')"><i class="fas fa-edit"></i></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="profile-picture">Profile Picture</label>
+                <div class="input-container">
+                    <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+                    <span class="edit-icon" onclick="editField('profile-picture')"><i class="fas fa-edit"></i></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-container">
+                    <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>" required>
+                    <span><i class="fas fa-check-circle" style="color: rgb(55, 247, 55); font-size: 1.2em;margin-left: 10px;"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <div class="input-container">
+                    <input type="tel" id="phone" name="phone" placeholder="Phone" value="<%= user.phone %>" required>
+                    <span class="edit-icon" id="phone-edit-icon" onclick="editField('phone')">
+                        <% if (!user.phone) { %>
+                            <i class="fas fa-edit"></i>
+                        <% } else { %>
+                            <i class="fas fa-check-circle" style="color: rgb(55, 247, 55);"></i>
+                        <% } %>
+                    </span>                  
+                </div>
+            </div>
+            <button type="submit" id="updatebtn" class="btn btn-primary">Update Profile</button>
+        </form>
+        </div>
+
+        <!-- Notifications Section -->
+        <div
+          id="notifications-content"
+          class="settings-content"
+          style="display: <%= activePage === 'notifications' ? 'block' : 'none' %>"
+        >
+          <h3>Notifications</h3>
+          <p>Set your notification preferences here.</p>
+        </div>
+
+        <!-- Manage Addresses Section -->
+        <div
+          id="manage-addresses-content"
+          class="settings-content"
+          style="display: <%= activePage === 'manage-addresses' ? 'block' : 'none' %>"
+        >
+          <h3>Manage Addresses</h3>
+          <p>Manage your saved addresses here.</p>
+        </div>
+
+        <!-- My Orders Section -->
+        <div
+          id="my-orders-content"
+          class="settings-content"
+          style="display: <%= activePage === 'my-orders' ? 'block' : 'none' %>"
+        >
+        <div class="containr">
+            <h2>Order History</h2>
+            <!-- Dispatched Section -->
+            <div class="order-section">
+                <div class="order-header">
+                    <span class="status-dot dispatched"></span>
+                    <h2>Dispatched</h2>
+                </div>
+                <div class="order-card">
+                    <div class="order-info">
+                        <img src="/images/item1.jpg" alt="Item Image">
+                        <div>
+                            <p class="order-title">Arrives tomorrow</p>
+                            <p class="order-time">7am - 7pm</p>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="track-button">Track order</button>
+                        <button class="details-button">View order details</button>
+                        <a href="#">Get invoice</a>
+                        <a href="#">Edit order</a>
+                    </div>
+                </div>
+                <div class="order-card">
+                    <div class="order-info">
+                        <img src="/images/item2.jpg" alt="Item Image">
+                        <div>
+                            <p class="order-title">Expected on Mon, 2 July</p>
+                            <p class="order-time">7am - 7pm</p>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="track-button">Track order</button>
+                        <button class="details-button">View order details</button>
+                        <a href="#">Get invoice</a>
+                        <a href="#">Edit order</a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Delivered Section -->
+            <div class="order-section">
+                <div class="order-header">
+                    <span class="status-dot delivered"></span>
+                    <h2>Delivered on 23 June</h2>
+                </div>
+                <div class="order-card">
+                    <div class="order-info">
+                        <img src="/images/item3.jpg" alt="Item Image">
+                        <div>
+                            <p class="order-title">Huawei P20 Pro 128GB Smartphone</p>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="details-button">View order details</button>
+                        <a href="#">Get invoice</a>
+                    </div>
+                </div>
+                <div class="order-card">
+                    <div class="order-info">
+                        <img src="/images/item4.jpg" alt="Item Image">
+                        <div>
+                            <p class="order-title">Microsoft Keyboard Cover for Surface Go</p>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="details-button">View order details</button>
+                        <a href="#">Get invoice</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('footer') %>
+    <!-- Include your footer -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const links = document.querySelectorAll('.side-nav a');
-        const contents = document.querySelectorAll('.main-contents > div');
+      // JavaScript for handling the active tab based on user selection (if needed)
+      document.addEventListener("DOMContentLoaded", function () {
+        const links = document.querySelectorAll(".side-nav a");
         const passwordForm = document.getElementById('update-password-form');
         const saveButton = document.querySelector('#updatebtn');
         const publicProfileForm = document.getElementById('public-profile-form');
-        
-        // Object to hold changes made to the fields
-        const updatedFields = {};
-    
-        // Initialize event listeners for side navigation links
-        links.forEach(link => {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
-                showContent(this.id.replace('-link', '-content'), this);
-            });
+        const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
+
+        // Set click events on all tabs to trigger navigation
+        links.forEach((link) => {
+          link.addEventListener("click", function (event) {
+            // Prevent the default behavior and navigate to the correct page
+            event.preventDefault();
+            window.location.href = link.getAttribute("href");
+          });
         });
-    
-        // Show email update form
-        document.getElementById('change-email-link').addEventListener('click', function (event) {
+        const updatedFields = {};
+                // Show email update form
+                document.getElementById('change-email-link').addEventListener('click', function (event) {
             event.preventDefault();
             document.getElementById('update-email-form').style.display = 'block';
         });
-    
-        // Retrieve the last active tab from localStorage
-        const activeTab = localStorage.getItem('activeTab');
-        if (activeTab) {
-            const activeLink = document.getElementById(activeTab);
-            if (activeLink) {
-                showContent(activeLink.id.replace('-link', '-content'), activeLink);
-            }
-        } else {
-            // Default to the first tab if none is stored
-            showContent('account-settings-content', document.getElementById('account-settings-link'));
-        }
-    
-        // Function to handle tab switching
-        function showContent(contentId, clickedLink) {
-            contents.forEach(content => content.style.display = 'none');
-            document.getElementById(contentId).style.display = 'block';
-    
-            links.forEach(link => link.classList.remove('active'));
-            clickedLink.classList.add('active');
-    
-            // Store the active tab in localStorage
-            localStorage.setItem('activeTab', clickedLink.id);
-        }
-    
         // Handle password update form submission
         passwordForm.addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent default form submission
@@ -256,9 +360,7 @@
             try {
                 const response = await fetch('/user/change-password', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ newPassword, oldPassword })
                 });
     
@@ -274,111 +376,58 @@
                 showError('An error occurred while changing your password. Please try again.');
             }
         });
-
-         // Handle account deletion
-
-         document.getElementById('delete-account-link').addEventListener('click', async function (event) {
-
-event.preventDefault();
-
-const result = await Swal.fire({
-
-    title: 'Are you sure?',
-
-    text: "Deleting your account will remove all associated content and cannot be undone.",
-
-    icon: 'warning',
-
-    showCancelButton: true,
-
-    confirmButtonColor: '#d33',
-
-    cancelButtonColor: '#3085d6',
-
-    confirmButtonText: 'Yes, delete it!',
-
-    cancelButtonText: 'No, cancel'
-
-});
-
-
-
-if (result.isConfirmed) {
-
-    await deleteAccount();
-
-}
-
-});
-
-
-
-// Function to delete account
-
-async function deleteAccount() {
-
-try {
-
-    const response = await fetch('/user/delete-Account', {
-
-        method: 'DELETE',
-
-        headers: {
-
-            'Content-Type': 'application/json'
-
-        }
-
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-
-        Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
-
-            window.location.href = '/'; // Redirect to home page or login page after deletion
-
-        });
-
-    } else {
-
-        showError(result.message);
-
-    }
-
-} catch (error) {
-
-    console.error('Error deleting account:', error);
-
-    showError('An error occurred while trying to delete your account. Please try again later.');
-
-}
-
-}
-
-
-
-// Function to show error messages
-
-function showError(message) {
-
-Swal.fire({
-
-    title: 'Error',
-
-    text: message,
-
-    icon: 'error',
-
-    confirmButtonText: 'OK'
-
-});
-
-}
+        // Handle account deletion
+        document.getElementById('delete-account-link').addEventListener('click', async function (event) {
+            event.preventDefault();
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Deleting your account will remove all associated content and cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel'
+            });
     
+            if (result.isConfirmed) {
+                await deleteAccount();
+            }
+        });
+    
+        // Function to delete account
+        async function deleteAccount() {
+            try {
+                const response = await fetch('/user/delete-Account', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+    
+                const result = await response.json();
+    
+                if (result.success) {
+                    Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
+                        window.location.href = '/'; // Redirect to home page or login page after deletion
+                    });
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                showError('An error occurred while trying to delete your account. Please try again later.');
+            }
+        }
+    
+        // Function to show error messages
+        function showError(message) {
+            Swal.fire({
+                title: 'Error',
+                text: message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
         // Disable all input fields on page load
-        const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
         allFields.forEach(input => input.disabled = true);
         saveButton.style.display = 'none'; // Hide the save changes button initially
     
@@ -408,11 +457,9 @@ Swal.fire({
             // Ensure all fields are enabled before submission
             allFields.forEach(input => input.disabled = false);
         });
-    });
-</script>    
-    
-<script src="/js/user/updateProfile.js"></script>
-<script src="/js/user/updateEmail.js"></script>
-</body>
-
+      });
+    </script>
+        <script src="/js/user/updateProfile.js"></script>
+        <script src="/js/user/updateEmail.js"></script>
+  </body>
 </html>

@@ -30,14 +30,6 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true, // Total amount of the order
     },
-    discount: {
-      type: Number,
-      default: 0, // Applied discount on the order
-    },
-    finalAmount: {
-      type: Number,
-      required: true, // Total amount after applying discount
-    },
     paymentStatus: {
       type: String,
       enum: ["pending", "completed", "failed", "refunded"],
