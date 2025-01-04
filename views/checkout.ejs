@@ -299,7 +299,7 @@
               class="form-check-input bg-primary border-0"
               id="Payment-2"
               name="Payment"
-              value="Card"
+              value="CARD"
             />
             <label for="Payment-2" class="form-check-label"
               >Pay With Card</label
@@ -331,7 +331,7 @@
               type="hidden"
               name="cartItems"
               value="<%= JSON.stringify(cart.products.map(item => ({
-        product: { name: item.product.name, price: item.product.price, images: item.product.images },
+        product: { id:item.product.id, name: item.product.name, price: item.product.price, images: item.product.images },
         quantity: item.quantity }))) %>"
             />
             <input
@@ -463,6 +463,16 @@
           showError(terms, "You must agree to the terms and conditions.");
         }
 
+        const shippingAddress = {
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          address: document.getElementById("address").value,
+          city: document.getElementById("city").value,
+          state: document.getElementById("state").value,
+          postalCode: document.getElementById("zip").value,
+          phone: document.getElementById("mobile").value,
+        };
+
         const cartItems = JSON.parse(
           document.querySelector('input[name="cartItems"]').value
         ); // Hidden input
@@ -479,10 +489,11 @@
         const requestBody = {
           cartItems,
           payment_Method,
-          address:{},
+          shippingAddress,
           shippingOption,
           totalPrice,
         };
+
         const razorpayKey = "rzp_test_nS7Wuqp4MppDIA";
 
         // If form is valid, update the action and submit
@@ -495,17 +506,11 @@
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                  cartItems,
-                  payment_Method,
-                  shippingOption,
-                  totalPrice,
-                }),
+                body: JSON.stringify(requestBody), // Include the entire request body here
               });
 
               const result = await response.json();
               console.log(result); // Log the result to check the response from the server
-
               if (result.success) {
                 const razorpayOrder = result.order;
                 const options = {
@@ -545,15 +550,47 @@
                   theme: {
                     color: "#F37254",
                   },
+                  modal: {
+                    ondismiss: function () {
+                      Swal.fire({
+                        icon: "info",
+                        title: "Payment Cancelled",
+                        text: "You closed the payment window. Please try again.",
+                      });
+                    },
+                  },
+                  theme: {
+                    color: "#FF0000",
+                  },
                 };
                 const razorpay = new Razorpay(options);
+                razorpay.on("payment.failed", function (response) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Payment Failed",
+                    text: `Reason: ${
+                      response.error.description || "Unknown error"
+                    }`,
+                  });
+                  console.error("Payment Failed:", response.error);
+                });
+
                 razorpay.open();
               } else {
-                alert("Failed to create order.");
+                Swal.fire({
+                  icon: "error",
+                  title: "Order Creation Failed",
+                  text: "⚠️ Unable to create Razorpay order. Please try again.",
+                });
               }
             } catch (error) {
               console.error("Error initiating Razorpay payment:", error);
-              alert(error);
+              console.error("Error initiating Razorpay payment:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "An error occurred while initiating payment. Please try again later.",
+              });
             }
           } else {
             // For other payment methods, update the form action
