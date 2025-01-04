@@ -1,5 +1,3 @@
-// models/Order.js
-
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
@@ -16,19 +14,18 @@ const orderSchema = new mongoose.Schema(
           ref: "Product", // Reference to the Product model
           required: true,
         },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        }, // The price at the time of order
+        quantity: { type: Number, required: true },
+        price: { type: Number, required: true },
       },
     ],
     totalAmount: {
       type: Number,
       required: true, // Total amount of the order
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["UPI", "CARD", "COD"],
+      required: true,
     },
     paymentStatus: {
       type: String,
@@ -41,30 +38,31 @@ const orderSchema = new mongoose.Schema(
       default: "placed",
     },
     shippingAddress: {
-      fullName: { type: String, required: true },
-      addressLine1: { type: String, required: true },
-      addressLine2: { type: String },
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
+      address: { type: String, required: true },
       city: { type: String, required: true },
       state: { type: String, required: true },
       postalCode: { type: String, required: true },
-      country: { type: String, required: true },
-      phone: { type: String, required: true },
+      phone: {
+        type: String,
+        required: true,
+      },
     },
     trackingInfo: {
-      courierName: { type: String },
-      trackingNumber: { type: String },
+      courierName: { type: String, default: "PureFarmFoods-TM" },
+      trackingNumber: { type: String, default: null },
     },
-    createdAt: {
-      type: Date,
-      default: Date.now, // Timestamp for order creation
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now, // Timestamp for the last update
-    },
+    notes: { type: String }, // Optional notes or additional info
+    deletedAt: { type: Date, default: null }, // Soft delete field
+    razorpayOrderId: { type: String, required: true }, // Razorpay order ID
+    razorpayPaymentId: { type: String }, // Razorpay payment ID (to be updated post-payment verification)
   },
-  { timestamps: true }
-); // Automatically manage createdAt and updatedAt fields
+  { timestamps: true } // Automatically manage createdAt and updatedAt fields
+);
+
+// Indexing for quick lookups
+orderSchema.index({ user: 1, orderStatus: 1, createdAt: -1 });
 
 const Order = mongoose.model("Order", orderSchema);
 

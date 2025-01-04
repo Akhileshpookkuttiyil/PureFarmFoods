@@ -4,6 +4,7 @@ const User = require("../model/User");
 const Product = require("../model/Product");
 const Cart = require("../model/Cart");
 const Category = require("../model/categories"); // Corrected model name
+const Order = require("../model/Order"); // Corrected model name
 const SubCategory = require("../model/subCategories"); // Corrected model name
 const Wishlist = require("../model/wishlist");
 const { none } = require("../util/multer");
@@ -180,10 +181,33 @@ module.exports = {
   },
 
   createOrder: async (req, res) => {
-    console.log(req.body)
     try {
-      const cartItems = req.body.cartItems;
-      console.log("Received Cart Items:", cartItems);
+      // Ensure user is authenticated
+      if (!req.session.user || !req.session.user._id) {
+        return res
+          .status(400)
+          .json({ success: false, message: "User is not authenticated." });
+      }
+
+      const {
+        cartItems,
+        payment_Method: paymentMethod,
+        shippingAddress,
+        shippingOption,
+        totalPrice,
+      } = req.body;
+
+      console.log(
+        "Received Cart Items:",
+        cartItems.map((item) => ({
+          product: item.product?._id || "Missing _id",
+          quantity: item.quantity || "Missing quantity",
+          price: item.product?.price || "Missing price",
+        }))
+      );
+
+      console.log("Shipping Address:", shippingAddress);
+      console.log("payment_Method:", paymentMethod);
 
       // Validate cart items
       if (!Array.isArray(cartItems) || cartItems.length === 0) {
@@ -192,12 +216,31 @@ module.exports = {
           .json({ success: false, message: "Cart is empty or invalid." });
       }
 
+      for (const item of cartItems) {
+        if (
+          !item.product ||
+          !item.product.id ||
+          !item.product.price ||
+          !item.quantity
+        ) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Invalid cart item detected." });
+        }
+      }
+
+      // Validate phone number
+      const phonePattern = /^\+(\d{1,4})\d{10}$/; // Example: +919876543210
+      if (!phonePattern.test(shippingAddress.phone)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid phone number format. Provide a valid phone number with country code.",
+        });
+      }
+
       // Calculate total amount
       const totalAmount = cartItems.reduce((sum, item) => {
-        if (!item.product || !item.product.price || !item.quantity) {
-          console.error("Invalid item in cart:", item);
-          return sum;
-        }
         return sum + item.product.price * item.quantity;
       }, 0);
 
@@ -209,30 +252,65 @@ module.exports = {
 
       // Create Razorpay order
       const options = {
-        amount: totalAmount * 100, // Convert to paise
+        amount: totalAmount * 100,
         currency: "INR",
         receipt: `order_rcptid_${Date.now()}`,
       };
 
-      const order = await razorpayInstance.orders.create(options);
-      console.log("Razorpay Order Created:", order);
+      const razorpayOrder = await razorpayInstance.orders.create(options);
+      console.log("Razorpay Order Created:", razorpayOrder);
 
-      res.json({ success: true, order });
+      const trackingNumber = `TRACK-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      // Create a new order (No checking for existing orders)
+      const order = new Order({
+        user: req.session.user._id,
+        products: cartItems.map((item) => ({
+          product: item.product.id,
+          quantity: item.quantity,
+          price: item.product.price,
+        })),
+        totalAmount,
+        paymentMethod,
+        paymentStatus: "pending",
+        orderStatus: "placed",
+        shippingAddress,
+        trackingInfo: {
+          courierName: "PureFarmFoods-TM", // Fixed courier name
+          trackingNumber: trackingNumber, // Generate a new tracking number for each order
+        },
+        razorpayOrderId: razorpayOrder.id,
+        razorpayPaymentId: null,
+      });
+
+      await order.save();
+      console.log("Order saved to database:", order);
+
+      // Send response
+      return res.json({ success: true, order: razorpayOrder });
     } catch (error) {
       console.error("Error creating Razorpay order:", error.message);
-      res
-        .status(500)
-        .json({ success: false, message: "Unable to create Razorpay order." });
+
+      if (!res.headersSent) {
+        return res.status(500).json({
+          success: false,
+          message: "Unable to create Razorpay order.",
+        });
+      }
     }
   },
-
-  verifyPayment: (req, res) => {
-    console.log("verify");
-    console.log(req.body);
+  verifyPayment: async (req, res) => {
     try {
       const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
         req.body.paymentDetails;
-      console.log(razorpay_payment_id, razorpay_order_id, razorpay_signature);
+      console.log(
+        "Payment Details:",
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature
+      );
 
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
         return res
@@ -247,9 +325,26 @@ module.exports = {
         .createHmac("sha256", secret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest("hex");
-      console.log({ generatedSignature: generatedSignature });
+
       if (generatedSignature === razorpay_signature) {
         console.log("Payment verified successfully.");
+
+        // Find the order by Razorpay order ID
+        const order = await Order.findOne({
+          razorpayOrderId: razorpay_order_id,
+        });
+
+        if (!order) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order not found." });
+        }
+
+        // Update the order with payment ID and payment status
+        order.razorpayPaymentId = razorpay_payment_id;
+        order.paymentStatus = "completed"; // Mark as completed after successful payment
+        await order.save();
+
         res.json({ verified: true, message: "Payment verified successfully." });
       } else {
         console.error("Invalid payment signature.");
