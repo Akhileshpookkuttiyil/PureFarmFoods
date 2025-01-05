@@ -537,6 +537,8 @@
                             text: "🎉 Your product is on the way.",
                             timer: 3000,
                             showConfirmButton: false,
+                          }).then(() => {
+                            window.location.href = "/my-orders";
                           });
                         } else {
                           Swal.fire({
@@ -560,7 +562,7 @@
                     },
                   },
                   theme: {
-                    color: "#FF0000",
+                    color: "#F37254",
                   },
                 };
                 const razorpay = new Razorpay(options);

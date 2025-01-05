@@ -25,10 +25,12 @@ router.get(
 );
 router.get("/cart/item-count", isAuthenticated, userController.getCartCount);
 router.get("/search-results", userController.searchResults);
-router.get("/checkout", isAuthenticated,userController.getCheckOut);
+router.get("/checkout", isAuthenticated, userController.getCheckOut);
 router.post("/checkout-items", isAuthenticated, userController.checkoutItems);
 router.post("/create-order", isAuthenticated, userController.createOrder);
 router.post("/verify-payment", isAuthenticated, userController.verifyPayment);
+
+// router.get('/get-orders',isAuthenticated,userController.getOrdersByUser)
 
 router.get("/contact", userController.getContact);
 router.get("/settings", isAuthenticated, userController.getSettings);
@@ -65,12 +67,12 @@ router.get("/get-All-products/:id?", userController.getAllProducts);
 router.get("/product-detail/:name", userController.getProductdetail);
 router.get("/get-All-vegetables", userController.getVegetables);
 
-router.get('/account-settings',userController.getAccountSettings);
-router.get('/public-profile',userController.getPublicProfile);
-router.get('/notifications',userController.getNotifications);
-router.get('/manage-addresses',userController.getAddress);
-router.get('/my-orders',userController.getOrders);
-
+router.get("/account-settings", userController.getAccountSettings);
+router.get("/public-profile", userController.getPublicProfile);
+router.get("/notifications", userController.getNotifications);
+router.get("/manage-addresses", userController.getAddress);
+router.get("/my-orders", userController.getOrders);
+router.get("/fetch-orders", userController.fetchOrders);
 
 // Twilio phone verification routes
 router.post("/send-verification", twilioController.sendVerification); // Route to send verification code

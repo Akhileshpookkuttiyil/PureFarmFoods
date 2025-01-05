@@ -249,78 +249,19 @@
           class="settings-content"
           style="display: <%= activePage === 'my-orders' ? 'block' : 'none' %>"
         >
-        <div class="containr">
-            <h2>Order History</h2>
-            <!-- Dispatched Section -->
-            <div class="order-section">
-                <div class="order-header">
-                    <span class="status-dot dispatched"></span>
-                    <h2>Dispatched</h2>
-                </div>
-                <div class="order-card">
-                    <div class="order-info">
-                        <img src="/images/item1.jpg" alt="Item Image">
-                        <div>
-                            <p class="order-title">Arrives tomorrow</p>
-                            <p class="order-time">7am - 7pm</p>
-                        </div>
-                    </div>
-                    <div class="order-actions">
-                        <button class="track-button">Track order</button>
-                        <button class="details-button">View order details</button>
-                        <a href="#">Get invoice</a>
-                        <a href="#">Edit order</a>
-                    </div>
-                </div>
-                <div class="order-card">
-                    <div class="order-info">
-                        <img src="/images/item2.jpg" alt="Item Image">
-                        <div>
-                            <p class="order-title">Expected on Mon, 2 July</p>
-                            <p class="order-time">7am - 7pm</p>
-                        </div>
-                    </div>
-                    <div class="order-actions">
-                        <button class="track-button">Track order</button>
-                        <button class="details-button">View order details</button>
-                        <a href="#">Get invoice</a>
-                        <a href="#">Edit order</a>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Delivered Section -->
-            <div class="order-section">
-                <div class="order-header">
-                    <span class="status-dot delivered"></span>
-                    <h2>Delivered on 23 June</h2>
-                </div>
-                <div class="order-card">
-                    <div class="order-info">
-                        <img src="/images/item3.jpg" alt="Item Image">
-                        <div>
-                            <p class="order-title">Huawei P20 Pro 128GB Smartphone</p>
-                        </div>
-                    </div>
-                    <div class="order-actions">
-                        <button class="details-button">View order details</button>
-                        <a href="#">Get invoice</a>
-                    </div>
-                </div>
-                <div class="order-card">
-                    <div class="order-info">
-                        <img src="/images/item4.jpg" alt="Item Image">
-                        <div>
-                            <p class="order-title">Microsoft Keyboard Cover for Surface Go</p>
-                        </div>
-                    </div>
-                    <div class="order-actions">
-                        <button class="details-button">View order details</button>
-                        <a href="#">Get invoice</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="container">
+          <h2>Order History</h2>
+        
+          <!-- Dispatched Section -->
+          <div id="dispatched-orders" class="order-section">
+            <!-- Dynamically populated dispatched orders will appear here -->
+          </div>
+        
+          <!-- Delivered Section -->
+          <div id="delivered-orders" class="order-section">
+            <!-- Dynamically populated delivered orders will appear here -->
+          </div>
+      
         </div>
       </div>
     </div>
@@ -336,6 +277,100 @@
         const saveButton = document.querySelector('#updatebtn');
         const publicProfileForm = document.getElementById('public-profile-form');
         const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
+
+        // Fetch the orders from the server
+    fetch('/fetch-orders')
+      .then(response => response.json())
+      .then(data => {
+        const orders = data.orders;
+
+        // Separate orders by status
+        const dispatchedOrders = orders.filter(order => order.orderStatus === 'placed');
+        const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
+
+        // Function to render an order card
+        function renderOrder(order) {
+          return `
+            <div class="order-card">
+              <div class="order-info">
+                <img src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" alt="Item Image">
+                <p>${order.products[0].product.name}</p>
+                <div class="delivery-info">
+                  <p class="order-title">Arrives tomorrow</p>
+                  <p class="order-time">7am - 7pm</p>
+                </div>
+              </div>
+              <div class="order-actions">
+                <button class="track-button">Track order</button>
+                <button class="details-button">View order details</button>
+                <a href="#">Get invoice</a>
+                <a href="#">Edit order</a>
+              </div>
+            </div>
+          `;
+        }
+
+        // Function to render dispatched orders
+        function renderDispatchedOrders() {
+          const dispatchedSection = document.getElementById('dispatched-orders');
+          if (dispatchedOrders.length > 0) {
+            let dispatchedHTML = `
+              <div class="order-header">
+                <span class="status-dot dispatched"></span>
+                <h2>Dispatched</h2>
+              </div>
+            `;
+            dispatchedOrders.forEach(order => {
+              dispatchedHTML += renderOrder(order);
+            });
+            dispatchedSection.innerHTML = dispatchedHTML;
+          } else {
+            dispatchedSection.innerHTML = '<p>No dispatched orders.</p>';
+          }
+        }
+
+        // Function to render delivered orders
+        function renderDeliveredOrders() {
+          const deliveredSection = document.getElementById('delivered-orders');
+          if (deliveredOrders.length > 0) {
+            let deliveredHTML = `
+              <div class="order-header">
+                <span class="status-dot delivered"></span>
+                <h2>Delivered</h2>
+              </div>
+            `;
+            deliveredOrders.forEach(order => {
+              deliveredHTML += `
+                <div class="order-card">
+                  <div class="order-info">
+                    <img src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" alt="Item Image">
+                    <div class="delivery">
+                      <p class="order-title">${order.products[0].product.name}</p>
+                    </div>
+                    <p class="order-time">Delivered on ${new Date(order.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <div class="order-actions">
+                    <button class="details-button">View order details</button>
+                    <a href="#">Get invoice</a>
+                  </div>
+                </div>
+              `;
+            });
+            deliveredSection.innerHTML = deliveredHTML;
+          } else {
+            deliveredSection.innerHTML = '<p>No delivered orders.</p>';
+          }
+        }
+
+        // Display the dispatched and delivered orders
+        renderDispatchedOrders();
+        renderDeliveredOrders();
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error);
+        document.getElementById('dispatched-orders').innerHTML = '<p>Error loading orders.</p>';
+        document.getElementById('delivered-orders').innerHTML = '<p>Error loading orders.</p>';
+      });
 
         // Set click events on all tabs to trigger navigation
         links.forEach((link) => {

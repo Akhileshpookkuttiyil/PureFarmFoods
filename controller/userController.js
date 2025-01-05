@@ -364,10 +364,13 @@ module.exports = {
     res.render("cart", { title: "cart Page", user: req.session.user });
   },
 
-  getSettings: (req, res) => {
+  getSettings: async (req, res) => {
+    if (!req.session.user) {
+      return res.redirect("/login"); // Redirect to login if user is not authenticated
+    }
     res.render("userSettings", {
       title: "User Settings Page",
-      user: req.session.user, // Pass the user session data here if needed
+      user: req.session.user,
       activePage: "account-settings", // Default active page
     });
   },
@@ -404,12 +407,41 @@ module.exports = {
     });
   },
 
-  getOrders: (req, res) => {
+  getOrders: async (req, res) => {
+    if (!req.session.user) {
+      console.log("User session not found, redirecting to login");
+      return res.redirect("/login");
+    }
+
     res.render("userSettings", {
       title: "My Orders",
-      user: req.session.user, // Pass user data
+      user: req.session.user,
       activePage: "my-orders",
     });
+  },
+
+  fetchOrders: async (req, res) => {
+    try {
+      // Assuming the user is authenticated and their ID is available in req.user.id
+      const userId = req.session.user._id;
+
+      // Fetch orders for the logged-in user, populate product details for better response
+      const orders = await Order.find({ user: userId })
+        .populate("products.product", "name images") // Populate product name and images
+        .sort({ createdAt: -1 }); // Sort orders by newest first
+
+      // Return the orders as a JSON response
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch orders. Please try again later.",
+      });
+    }
   },
 
   createUser: async (req, res) => {
