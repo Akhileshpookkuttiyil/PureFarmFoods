@@ -424,10 +424,11 @@ async function fetchProducts(categoryId = '', sortBy = '', maxPrice = '', search
 }
 
 function highlightText(text, query) {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, 'gi');
-    return text.replace(regex, '<span class="highlight">₹1</span>');
+    if (!query) return text; // Return the original text if no query is provided.
+    const regex = new RegExp(`(${query})`, 'gi'); // Create a regex to match the query, case-insensitive.
+    return text.replace(regex, '<span class="highlight">$1</span>'); // Use $1 to wrap matched text in a span.
 }
+
 
 async function updateCartItemCount() {
     try {

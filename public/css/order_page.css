@@ -24,8 +24,8 @@ h2 {
 }
 
 .order-header h2 {
-    font-size: 18px; /* Smaller size for the headings */
-    font-weight: 600; /* Slightly bolder for clarity */
+    font-size: 18px;
+    font-weight: 600;
     color: #444;
     margin: 0;
 }
@@ -47,18 +47,22 @@ h2 {
 
 .order-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Evenly distribute space between child elements */
+    align-items: center; /* Vertically align items */
     padding: 15px;
     margin-bottom: 10px;
     background-color: #f4f8fb;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    gap: 20px; /* Adds space between flex items */
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
 }
 
 .order-info {
+    flex: 2; /* Takes up more space relative to others */
     display: flex;
     align-items: center;
+    gap: 10px; /* Adds spacing between elements inside order-info */
 }
 
 .order-info img {
@@ -70,7 +74,7 @@ h2 {
 
 .order-title {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: lighter;
     margin-bottom: 5px;
 }
 
@@ -79,10 +83,24 @@ h2 {
     color: #666;
 }
 
+.delivery-info {
+    flex: 1; /* Takes less space but aligns evenly */
+    text-align: center; /* Center text inside delivery-info */
+    margin-top: 25px;
+}
+
+.delivery {
+    flex: 1; /* Takes less space but aligns evenly */
+    text-align: center; /* Center text inside delivery-info */
+    margin-bottom: 10px;
+}
+
 .order-actions {
+    flex: 1; /* Takes equal space as delivery-info */
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    gap: 10px; /* Adds spacing between buttons and links */
 }
 
 .order-actions button {
@@ -94,7 +112,7 @@ h2 {
 }
 
 .track-button {
-    background-color:#83bb1a;
+    background-color: #83bb1a;
     color: white;
     width: 12vw;
 }
@@ -105,7 +123,7 @@ h2 {
 
 .details-button {
     background-color: #ffffff;
-    color:#83bb1a;
+    color: #83bb1a;
     width: 12vw;
 }
 
@@ -114,46 +132,38 @@ h2 {
 }
 
 .order-actions a {
-    color:#83bb1a;
-    font-size: 14px;
-    text-decoration: none;
-    margin-top: 3px;
-}
-
-.order-actions a {
     display: inline-block;
     padding: 8px 12px;
-    margin-top: 5px; /* Adjust space if needed */
+    margin-top: 5px;
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
     width: 12vw;
     background-color: #fff;
+    color: #83bb1a;
+    font-size: 14px;
+    text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
 .order-actions a:hover {
     background-color: #f4f8fb;
-    border-color: #4caf50;
 }
-
 
 @media (max-width: 768px) {
     .order-card {
-        flex-direction: column;
+        flex-direction: column; /* Stack items vertically on smaller screens */
         align-items: flex-start;
-    }
-
-    .order-info img {
-        margin-bottom: 10px;
+        gap: 15px; /* Reduce spacing for smaller layouts */
     }
 
     .order-actions {
-        align-items: flex-start;
-        margin-top: 10px;
+        align-items: flex-start; /* Align buttons to the left */
+        width: 100%; /* Make buttons full width */
     }
 
-    .order-actions button {
+    .order-actions button,
+    .order-actions a {
         width: 100%;
     }
 }
