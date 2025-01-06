@@ -331,7 +331,7 @@
               type="hidden"
               name="cartItems"
               value="<%= JSON.stringify(cart.products.map(item => ({
-        product: { id:item.product.id, name: item.product.name, price: item.product.price, images: item.product.images },
+        product: { id:item.product.id, name: item.product.name, price: item.product.price, size:item.product.size[0], images: item.product.images },
         quantity: item.quantity }))) %>"
             />
             <input

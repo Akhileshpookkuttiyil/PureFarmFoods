@@ -200,9 +200,10 @@ module.exports = {
       console.log(
         "Received Cart Items:",
         cartItems.map((item) => ({
-          product: item.product?._id || "Missing _id",
+          product: item.product?.id || "Missing _id",
           quantity: item.quantity || "Missing quantity",
           price: item.product?.price || "Missing price",
+          size: item.product?.size || "Missing size",
         }))
       );
 
@@ -269,6 +270,7 @@ module.exports = {
         user: req.session.user._id,
         products: cartItems.map((item) => ({
           product: item.product.id,
+          size:item.product.size,
           quantity: item.quantity,
           price: item.product.price,
         })),
@@ -427,7 +429,7 @@ module.exports = {
 
       // Fetch orders for the logged-in user, populate product details for better response
       const orders = await Order.find({ user: userId })
-        .populate("products.product", "name images") // Populate product name and images
+        .populate("products.product", "name images size price") // Populate product name and images
         .sort({ createdAt: -1 }); // Sort orders by newest first
 
       // Return the orders as a JSON response
