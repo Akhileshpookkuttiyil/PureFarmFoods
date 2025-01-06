@@ -263,6 +263,8 @@
           </div>
       
         </div>
+        </div>
+        </div>
       </div>
     </div>
 
@@ -290,25 +292,32 @@
 
         // Function to render an order card
         function renderOrder(order) {
-          return `
-            <div class="order-card">
-              <div class="order-info">
-                <img src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" alt="Item Image">
-                <p>${order.products[0].product.name}</p>
-                <div class="delivery-info">
-                  <p class="order-title">Arrives tomorrow</p>
-                  <p class="order-time">7am - 7pm</p>
+            return `
+              <div class="order-card">
+                <div class="order-info">
+                  <img src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" alt="Item Image">
+                  <div class="product-info">
+                    <p>${order.products[0].product.name}</p>
+                    <div class="product-details">
+                      <small>Size: ${order.products[0].product.size}</small> | 
+                      <small>Quantity: ${order.products[0].quantity}</small>
+                    </div>
+                    <p class="product-price">Price: ₹${order.totalAmount}</p>
+                  </div>
+                  <div class="delivery-info">
+                    <p class="order-title">${order.deliveryDate || 'Arrives tomorrow'}</p>
+                    <small class="order-time">${order.deliveryTime || '( 7am - 7pm )'}</small>
+                  </div>
+                </div>
+                <div class="order-actions">
+                  <button class="track-button">Track order</button>
+                  <button class="details-button">View order details</button>
+                  <a href="#">Get invoice</a>
+                  <a href="#">Edit order</a>
                 </div>
               </div>
-              <div class="order-actions">
-                <button class="track-button">Track order</button>
-                <button class="details-button">View order details</button>
-                <a href="#">Get invoice</a>
-                <a href="#">Edit order</a>
-              </div>
-            </div>
-          `;
-        }
+            `;
+          }
 
         // Function to render dispatched orders
         function renderDispatchedOrders() {
@@ -346,6 +355,7 @@
                     <img src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" alt="Item Image">
                     <div class="delivery">
                       <p class="order-title">${order.products[0].product.name}</p>
+                      <p class="product-price">Price: ₹${order.products[0].product.price}</p>
                     </div>
                     <p class="order-time">Delivered on ${new Date(order.createdAt).toLocaleDateString()}</p>
                   </div>
@@ -355,6 +365,7 @@
                   </div>
                 </div>
               `;
+
             });
             deliveredSection.innerHTML = deliveredHTML;
           } else {

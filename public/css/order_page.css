@@ -1,3 +1,4 @@
+/* General Container Styles */
 .containr {
     max-width: 900px;
     margin: 20px auto;
@@ -7,6 +8,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Header Styles */
 h2 {
     font-size: 24px;
     margin-bottom: 10px;
@@ -45,24 +47,26 @@ h2 {
     background-color: #2196f3;
 }
 
+/* Order Card Styles */
 .order-card {
     display: flex;
-    justify-content: space-between; /* Evenly distribute space between child elements */
-    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Ensure even spacing */
+    align-items: center;
     padding: 15px;
     margin-bottom: 10px;
     background-color: #f4f8fb;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    gap: 20px; /* Adds space between flex items */
-    flex-wrap: wrap; /* Allows wrapping for smaller screens */
+    gap: 20px; /* Consistent spacing between items */
+    flex-wrap: wrap; /* Wrap items on smaller screens */
 }
 
+/* Order Info Section */
 .order-info {
-    flex: 2; /* Takes up more space relative to others */
+    flex: 2; /* Occupies more space */
     display: flex;
     align-items: center;
-    gap: 10px; /* Adds spacing between elements inside order-info */
+    gap: 10px; /* Spacing between image and text */
 }
 
 .order-info img {
@@ -72,35 +76,74 @@ h2 {
     margin-right: 15px;
 }
 
-.order-title {
-    font-size: 16px;
-    font-weight: lighter;
-    margin-bottom: 5px;
+/* Product and Delivery Info Styles */
+.product-info,
+.delivery-info {
+    flex: 1; /* Equal space for both sections */
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content */
+    align-items: flex-start; /* Align content to the left */
+    min-height: 100px; /* Consistent height */
+    padding: 10px; /* Add padding */
+    box-sizing: border-box; /* Include padding in size */
 }
 
-.order-time {
-    font-size: 14px;
-    color: #666;
+.product-info p,
+.delivery-info p {
+    font-size: 1rem; /* Uniform font size */
+    margin: 0; /* No extra margins */
+    font-weight: bold;
+    line-height: 1.2; /* Adjusted for better alignment */
 }
+
+.product-info .product-details {
+    font-size: 1rem; /* Consistent font size for details */
+    color: #6c757d; /* Muted secondary color */
+    margin: 0; /* No extra margins */
+}
+
+.delivery-info .order-time {
+    font-size: 1rem; /* Consistent font size for details */
+    color: #6c757d; /* Muted secondary color */
+    margin-left:15px; /* No extra margins */
+    text-align: left; /* Center the text horizontally */
+    width: 100%; /* Ensure the text spans full width for centering */
+}
+
 
 .delivery-info {
-    flex: 1; /* Takes less space but aligns evenly */
-    text-align: center; /* Center text inside delivery-info */
-    margin-top: 25px;
+    margin: 0;
+}
+
+.product-details small {
+    margin-right: 5px; /* Space between size and quantity */
+}
+
+.product-info .product-price {
+    font-size: 0.9rem; /* Larger font */
+    font-weight: bold; /* Emphasize price */
+    color: #4caf50; /* Green color */
+    margin-top: 5px; /* Space from other text */
+}
+
+.delivery-info p {
+    color: #000000e0; /* Clear and visible text */
 }
 
 .delivery {
-    flex: 1; /* Takes less space but aligns evenly */
-    text-align: center; /* Center text inside delivery-info */
+    text-align: center; /* Center-align delivery info */
     margin-bottom: 10px;
 }
 
+/* Order Actions Section */
 .order-actions {
-    flex: 1; /* Takes equal space as delivery-info */
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px; /* Adds spacing between buttons and links */
+    flex-direction: column; /* Stack actions vertically */
+    align-items: flex-end; /* Align actions to the right */
+    justify-content: space-between; /* Even spacing */
+    gap: 10px; /* Spacing between actions */
+    min-width: 150px; /* Prevent the section from shrinking too much */
 }
 
 .order-actions button {
@@ -114,7 +157,7 @@ h2 {
 .track-button {
     background-color: #83bb1a;
     color: white;
-    width: 12vw;
+    width: 100%;
 }
 
 .track-button:hover {
@@ -124,7 +167,7 @@ h2 {
 .details-button {
     background-color: #ffffff;
     color: #83bb1a;
-    width: 12vw;
+    width: 100%;
 }
 
 .details-button:hover {
@@ -138,11 +181,10 @@ h2 {
     border-radius: 5px;
     text-decoration: none;
     text-align: center;
-    width: 12vw;
+    width: 100%;
     background-color: #fff;
     color: #83bb1a;
     font-size: 14px;
-    text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
@@ -150,20 +192,21 @@ h2 {
     background-color: #f4f8fb;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
     .order-card {
-        flex-direction: column; /* Stack items vertically on smaller screens */
-        align-items: flex-start;
-        gap: 15px; /* Reduce spacing for smaller layouts */
+        flex-direction: column; /* Stack items */
+        align-items: flex-start; /* Align to the left */
+        gap: 15px; /* Reduce gap for smaller layouts */
     }
 
     .order-actions {
-        align-items: flex-start; /* Align buttons to the left */
-        width: 100%; /* Make buttons full width */
+        align-items: flex-start; /* Align actions to the left */
+        width: 100%; /* Full-width actions */
     }
 
     .order-actions button,
     .order-actions a {
-        width: 100%;
+        width: 100%; /* Full-width buttons and links */
     }
 }

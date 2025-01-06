@@ -434,4 +434,13 @@ module.exports = {
             res.status(500).json({ message: 'Failed to delete product' });
         }
     },
+    getLogout: (req, res) => {
+        req.session.destroy((err) => {
+          if (err) {
+            console.error("Error during logout:", err);
+            return res.status(500).json({ message: "Internal server error" });
+          }
+          res.redirect("/login");
+        });
+      },
 }    
