@@ -106,11 +106,44 @@ h2 {
 .delivery-info .order-time {
     font-size: 1rem; /* Consistent font size for details */
     color: #6c757d; /* Muted secondary color */
-    margin-left:15px; /* No extra margins */
-    text-align: left; /* Center the text horizontally */
+    margin-left: 29px;
     width: 100%; /* Ensure the text spans full width for centering */
 }
 
+.delivery-info .order-title {
+    font-size: 0.95rem; /* Consistent font size for details */
+    color: #000000; /* Muted secondary color */
+    font-weight:600;
+    margin-left: 15px;
+    text-align: left;
+    width: 100%; /* Ensure the text spans full width for centering */
+}
+
+.delivery-info .order_time {
+    font-size: 0.9rem; /* Consistent font size for details */
+    color: #000000; /* Muted secondary color */
+    font-weight:600;
+    margin-left: 15px;
+    text-align: left;
+    width: 100%; /* Ensure the text spans full width for centering */
+}
+
+.toggle-btn {
+    margin: 10px 0;
+    padding: 8px 15px;
+    color: #83bb1a;
+    background-color: #f4f8fb;
+    border: 1px solid green ;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.toggle-btn:hover {
+    background-color: #6c9422;
+    color:white;
+    border: 1px solid white ;
+}
 
 .delivery-info {
     margin: 0;
