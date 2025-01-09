@@ -72,6 +72,7 @@ router.get("/public-profile", userController.getPublicProfile);
 router.get("/notifications", userController.getNotifications);
 router.get("/manage-addresses", userController.getAddress);
 router.get("/my-orders", userController.getOrders);
+router.get("/track-order/:orderId",userController.trackOrder)
 router.get("/fetch-orders", userController.fetchOrders);
 
 // Twilio phone verification routes

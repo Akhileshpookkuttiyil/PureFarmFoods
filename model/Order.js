@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
           ref: "Product", // Reference to the Product model
           required: true,
         },
-        size:{type: String,required: true},
+        size: { type: String, required: true },
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
       },
@@ -53,7 +53,15 @@ const orderSchema = new mongoose.Schema(
     trackingInfo: {
       courierName: { type: String, default: "PureFarmFoods-TM" },
       trackingNumber: { type: String, default: null },
+      currentLocation: { type: String, default: "Warehouse" }, // Added currentLocation field
     },
+    trackingHistory: [
+      {
+        date: { type: Date, default: Date.now }, // Automatically capture date of update
+        location: { type: String },
+        status: { type: String },
+      },
+    ],
     notes: { type: String }, // Optional notes or additional info
     deletedAt: { type: Date, default: null }, // Soft delete field
     razorpayOrderId: { type: String, required: true }, // Razorpay order ID
@@ -61,6 +69,27 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true } // Automatically manage createdAt and updatedAt fields
 );
+
+// Middleware to capture changes to order status and current location
+orderSchema.pre('save', function(next) {
+  if (this.isModified('orderStatus') || this.isModified('trackingInfo.currentLocation')) {
+    // If orderStatus or currentLocation is modified, push the new event to trackingHistory
+    const newEvent = {
+      date: new Date(),
+      location: this.trackingInfo.currentLocation,
+      status: this.orderStatus,
+    };
+
+    // Ensure trackingHistory exists, then push new event
+    if (!this.trackingHistory) {
+      this.trackingHistory = [];
+    }
+
+    this.trackingHistory.push(newEvent);
+  }
+
+  next();
+});
 
 // Indexing for quick lookups
 orderSchema.index({ user: 1, orderStatus: 1, createdAt: -1 });

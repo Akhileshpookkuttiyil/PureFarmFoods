@@ -272,284 +272,266 @@
     <!-- Include your footer -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
-      // JavaScript for handling the active tab based on user selection (if needed)
       document.addEventListener("DOMContentLoaded", function () {
-        const links = document.querySelectorAll(".side-nav a");
-        const passwordForm = document.getElementById('update-password-form');
-        const saveButton = document.querySelector('#updatebtn');
-        const publicProfileForm = document.getElementById('public-profile-form');
-        const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
-
-        // Fetch the orders from the server
-        fetch('/fetch-orders')
-  .then(response => response.json())
-  .then(data => {
-    const orders = data.orders;
-
-    // Separate orders by status
-    const dispatchedOrders = orders.filter(order => order.orderStatus === 'placed');
-    const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
-
-    // Limit the number of orders displayed initially
-    const initialOrderLimit = 2;
-    let showAllDispatched = false;
-    let showAllDelivered = false;
-
-    // Function to render an order card
-    const renderOrder = (order) => `
-      <div class="order-card">
-        <div class="order-info">
-          <img 
-            src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" 
-            alt="Item Image"
-          >
-          <div class="product-info">
-            <p>${order.products[0].product.name}</p>
-            <div class="product-details">
-              <small>Size: ${order.products[0].product.size}</small> | 
-              <small>Quantity: ${order.products[0].quantity}</small>
-            </div>
-            <p class="product-price">Price: ₹${order.totalAmount}</p>
-          </div>
-          <div class="delivery-info">
-            <p class="order-title">${order.deliveryDate || 'Arrives tomorrow'}</p>
-            <small class="order-time">${order.deliveryTime || '| 7am - 7pm |'}</small>
-          </div>
-        </div>
-        <div class="order-actions">
-          <button class="track-button">Track order</button>
-          <button class="details-button">View order details</button>
-          <a href="#">Get invoice</a>
-          <a href="#">Edit order</a>
-        </div>
-      </div>
-    `;
-
-    // Function to render dispatched orders
-    const renderDispatchedOrders = () => {
-      const dispatchedSection = document.getElementById('dispatched-orders');
-      let visibleOrders = showAllDispatched ? dispatchedOrders : dispatchedOrders.slice(0, initialOrderLimit);
-
-      if (dispatchedOrders.length > 0) {
-        let dispatchedHTML = `
-          <div class="order-header">
-            <span class="status-dot dispatched"></span>
-            <h2>Dispatched</h2>
-          </div>
-        `;
-        visibleOrders.forEach(order => {
-          dispatchedHTML += renderOrder(order);
-        });
-        if (dispatchedOrders.length > initialOrderLimit) {
-          dispatchedHTML += `
-            <button class="toggle-btn" onclick="toggleDispatchedOrders()">
-              ${showAllDispatched ? 'Show Less Orders' : 'Show More Orders'}
-            </button>
-          `;
-        }
-        dispatchedSection.innerHTML = dispatchedHTML;
-      } else {
-        dispatchedSection.innerHTML = '<p>No dispatched orders.</p>';
-      }
-    };
-
-    // Function to render delivered orders
-    const renderDeliveredOrders = () => {
-      const deliveredSection = document.getElementById('delivered-orders');
-      let visibleOrders = showAllDelivered ? deliveredOrders : deliveredOrders.slice(0, initialOrderLimit);
-
-      if (deliveredOrders.length > 0) {
-        let deliveredHTML = `
-          <div class="order-header">
-            <span class="status-dot delivered"></span>
-            <h2>Delivered</h2>
-          </div>
-        `;
-        visibleOrders.forEach(order => {
-          deliveredHTML += `
-            <div class="order-card">
-              <div class="order-info">
-                <img 
-                  src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" 
-                  alt="Item Image"
-                >
-                <div class="product-info">
-                  <p>${order.products[0].product.name}</p>
-                  <div class="product-details">
-                    <small>Size: ${order.products[0].product.size}</small> | 
-                    <small>Quantity: ${order.products[0].quantity}</small>
-                  </div>
-                  <p class="product-price">Price: ₹${order.totalAmount}</p>
-                </div>
-                <div class="delivery-info">
-                  <small class="order_time">Delivered on ${new Date(order.createdAt).toLocaleDateString()}</small>
-                </div>
-              </div>
-              <div class="order-actions">
-                <button class="details-button">View order details</button>
-                <a href="#">Get invoice</a>
-              </div>
-            </div>
-          `;
-        });
-        if (deliveredOrders.length > initialOrderLimit) {
-          deliveredHTML += `
-            <button class="toggle-btn" onclick="toggleDeliveredOrders()">
-              ${showAllDelivered ? 'Show Less Orders' : 'Show More Orders'}
-            </button>
-          `;
-        }
-        deliveredSection.innerHTML = deliveredHTML;
-      } else {
-        deliveredSection.innerHTML = '<p>No delivered orders.</p>';
-      }
-    };
-
-    // Toggle functions
-    window.toggleDispatchedOrders = () => {
-      showAllDispatched = !showAllDispatched;
-      renderDispatchedOrders();
-    };
-
-    window.toggleDeliveredOrders = () => {
-      showAllDelivered = !showAllDelivered;
-      renderDeliveredOrders();
-    };
-
-    // Display the dispatched and delivered orders
-    renderDispatchedOrders();
-    renderDeliveredOrders();
-  })
-  .catch(error => {
-    console.error('Error fetching orders:', error);
-    document.getElementById('dispatched-orders').innerHTML = '<p>Error loading orders.</p>';
-    document.getElementById('delivered-orders').innerHTML = '<p>Error loading orders.</p>';
-  });
-
-
-        // Set click events on all tabs to trigger navigation
-        links.forEach((link) => {
-          link.addEventListener("click", function (event) {
-            // Prevent the default behavior and navigate to the correct page
-            event.preventDefault();
-            window.location.href = link.getAttribute("href");
+          // Initialize variables and elements
+          const links = document.querySelectorAll(".side-nav a");
+          const passwordForm = document.getElementById('update-password-form');
+          const saveButton = document.querySelector('#updatebtn');
+          const publicProfileForm = document.getElementById('public-profile-form');
+          const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
+          const updatedFields = {};
+      
+          // Fetch orders from the server
+          fetch('/fetch-orders')
+              .then(response => response.json())
+              .then(data => {
+                  const orders = data.orders;
+                  const dispatchedOrders = orders.filter(order => order.orderStatus === 'placed');
+                  const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
+                  const initialOrderLimit = 2;
+                  let showAllDispatched = false;
+                  let showAllDelivered = false;
+      
+                  // Function to render an order card (with adjustments for delivered orders)
+                  const renderOrder = (order, isDelivered) => `
+                      <div class="order-card">
+                          <div class="order-info">
+                              <img 
+                                  src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" 
+                                  alt="Item Image">
+                              <div class="product-info">
+                                  <p>${order.products[0].product.name}</p>
+                                  <div class="product-details">
+                                      <small>Size: ${order.products[0].product.size}</small> | 
+                                      <small>Quantity: ${order.products[0].quantity}</small>
+                                  </div>
+                                  <p class="product-price">Price: ₹${order.totalAmount}</p>
+                              </div>
+                              <div class="delivery-info">
+                                  <p class="order-title">
+                                    ${isDelivered ? `Delivered on ${new Date(order.updatedAt).toISOString().split('T')[0]}` : (order.deliveryDate || 'Arrives tomorrow')}
+                                  </p>
+                                  <small class="order-time">${isDelivered ? '' : '| 7am - 7pm |'}</small>
+                              </div>
+                          </div>
+                          <div class="order-actions">
+                              ${isDelivered ? '' : `<button class="track-button" data-order-id="${order._id}">Track Order</button>`}
+                              <button class="details-button">View Order Details</button>
+                              <a href="#">Get Invoice</a>
+                              <a href="#">Edit Order</a>
+                          </div>
+                      </div>
+                  `;
+      
+                  // Function to render dispatched orders
+                  const renderDispatchedOrders = () => {
+                      const dispatchedSection = document.getElementById('dispatched-orders');
+                      let visibleOrders = showAllDispatched ? dispatchedOrders : dispatchedOrders.slice(0, initialOrderLimit);
+      
+                      if (dispatchedOrders.length > 0) {
+                          let dispatchedHTML = `
+                              <div class="order-header">
+                                  <span class="status-dot dispatched"></span>
+                                  <h2>Dispatched</h2>
+                              </div>
+                          `;
+                          visibleOrders.forEach(order => dispatchedHTML += renderOrder(order, false));
+      
+                          if (dispatchedOrders.length > initialOrderLimit) {
+                              dispatchedHTML += `
+                                  <button class="toggle-btn" onclick="toggleDispatchedOrders()">
+                                      ${showAllDispatched ? 'Show Less Orders' : 'Show More Orders'}
+                                  </button>
+                              `;
+                          }
+                          dispatchedSection.innerHTML = dispatchedHTML;
+      
+                          // Now add the event listeners to the track buttons
+                          document.querySelectorAll('.track-button').forEach(button => {
+                              button.addEventListener('click', function () {
+                                  const orderId = this.getAttribute('data-order-id');
+                                  console.log("Order ID: " + orderId);
+                                  alert("Tracking Order ID: " + orderId);
+                                  window.location.href = `/track-order/${orderId}`;
+                              });
+                          });
+                      } else {
+                          dispatchedSection.innerHTML = '<p>No dispatched orders.</p>';
+                      }
+                  };
+      
+                  // Function to render delivered orders
+                  const renderDeliveredOrders = () => {
+                      const deliveredSection = document.getElementById('delivered-orders');
+                      let visibleOrders = showAllDelivered ? deliveredOrders : deliveredOrders.slice(0, initialOrderLimit);
+      
+                      if (deliveredOrders.length > 0) {
+                          let deliveredHTML = `
+                              <div class="order-header">
+                                  <span class="status-dot delivered"></span>
+                                  <h2>Delivered</h2>
+                              </div>
+                          `;
+                          visibleOrders.forEach(order => deliveredHTML += renderOrder(order, true));
+      
+                          if (deliveredOrders.length > initialOrderLimit) {
+                              deliveredHTML += `
+                                  <button class="toggle-btn" onclick="toggleDeliveredOrders()">
+                                      ${showAllDelivered ? 'Show Less Orders' : 'Show More Orders'}
+                                  </button>
+                              `;
+                          }
+                          deliveredSection.innerHTML = deliveredHTML;
+                      } else {
+                          deliveredSection.innerHTML = '<p>No delivered orders.</p>';
+                      }
+                  };
+      
+                  // Toggle functions for showing more or fewer orders
+                  window.toggleDispatchedOrders = () => {
+                      showAllDispatched = !showAllDispatched;
+                      renderDispatchedOrders();
+                  };
+      
+                  window.toggleDeliveredOrders = () => {
+                      showAllDelivered = !showAllDelivered;
+                      renderDeliveredOrders();
+                  };
+      
+                  // Display the dispatched and delivered orders
+                  renderDispatchedOrders();
+                  renderDeliveredOrders();
+              })
+              .catch(error => {
+                  console.error('Error fetching orders:', error);
+                  document.getElementById('dispatched-orders').innerHTML = '<p>Error loading orders.</p>';
+                  document.getElementById('delivered-orders').innerHTML = '<p>Error loading orders.</p>';
+              });
+      
+          // Set click events on all tabs for navigation
+          links.forEach((link) => {
+              link.addEventListener("click", function (event) {
+                  event.preventDefault();
+                  window.location.href = link.getAttribute("href");
+              });
           });
-        });
-        const updatedFields = {};
-                // Show email update form
-                document.getElementById('change-email-link').addEventListener('click', function (event) {
-            event.preventDefault();
-            document.getElementById('update-email-form').style.display = 'block';
-        });
-        // Handle password update form submission
-        passwordForm.addEventListener('submit', async function (event) {
-            event.preventDefault(); // Prevent default form submission
-            const newPassword = document.getElementById('new-password').value;
-            const oldPassword = document.getElementById('current-password').value;
-    
-            try {
-                const response = await fetch('/user/change-password', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ newPassword, oldPassword })
-                });
-    
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
-                    passwordForm.reset();
-                } else {
-                    showError(result.message);
-                }
-            } catch (error) {
-                console.error('Error changing password:', error);
-                showError('An error occurred while changing your password. Please try again.');
-            }
-        });
-        // Handle account deletion
-        document.getElementById('delete-account-link').addEventListener('click', async function (event) {
-            event.preventDefault();
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Deleting your account will remove all associated content and cannot be undone.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel'
-            });
-    
-            if (result.isConfirmed) {
-                await deleteAccount();
-            }
-        });
-    
-        // Function to delete account
-        async function deleteAccount() {
-            try {
-                const response = await fetch('/user/delete-Account', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-    
-                const result = await response.json();
-    
-                if (result.success) {
-                    Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
-                        window.location.href = '/'; // Redirect to home page or login page after deletion
-                    });
-                } else {
-                    showError(result.message);
-                }
-            } catch (error) {
-                console.error('Error deleting account:', error);
-                showError('An error occurred while trying to delete your account. Please try again later.');
-            }
-        }
-    
-        // Function to show error messages
-        function showError(message) {
-            Swal.fire({
-                title: 'Error',
-                text: message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-        // Disable all input fields on page load
-        allFields.forEach(input => input.disabled = true);
-        saveButton.style.display = 'none'; // Hide the save changes button initially
-    
-        // Function to handle field editing
-        window.editField = function (fieldId) {
-            const field = document.getElementById(fieldId);
-            allFields.forEach(input => {
-                if (input.id !== fieldId) input.disabled = true; // Disable all other fields
-            });
-    
-            field.disabled = false; // Enable the clicked field
-            field.focus(); // Focus the input field
-            field.addEventListener('change', handleChange); // Attach change event to the field
-        };
-    
-        // Function to handle change events
-        function handleChange() {
-            saveButton.style.display = 'block'; // Show the button when a change is detected
-            const fieldId = this.id;
-            updatedFields[fieldId] = this.value; // Store the updated value
-        }
-    
-        // Update the profile form submission logic
-        publicProfileForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-    
-            // Ensure all fields are enabled before submission
-            allFields.forEach(input => input.disabled = false);
-        });
+      
+          // Show email update form
+          document.getElementById('change-email-link').addEventListener('click', function (event) {
+              event.preventDefault();
+              document.getElementById('update-email-form').style.display = 'block';
+          });
+      
+          // Handle password update form submission
+          passwordForm.addEventListener('submit', async function (event) {
+              event.preventDefault();
+              const newPassword = document.getElementById('new-password').value;
+              const oldPassword = document.getElementById('current-password').value;
+      
+              try {
+                  const response = await fetch('/user/change-password', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ newPassword, oldPassword })
+                  });
+      
+                  const result = await response.json();
+                  if (result.success) {
+                      Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
+                      passwordForm.reset();
+                  } else {
+                      showError(result.message);
+                  }
+              } catch (error) {
+                  console.error('Error changing password:', error);
+                  showError('An error occurred while changing your password. Please try again.');
+              }
+          });
+      
+          // Handle account deletion
+          document.getElementById('delete-account-link').addEventListener('click', async function (event) {
+              event.preventDefault();
+              const result = await Swal.fire({
+                  title: 'Are you sure?',
+                  text: "Deleting your account will remove all associated content and cannot be undone.",
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#d33',
+                  cancelButtonColor: '#3085d6',
+                  confirmButtonText: 'Yes, delete it!',
+                  cancelButtonText: 'No, cancel'
+              });
+      
+              if (result.isConfirmed) {
+                  await deleteAccount();
+              }
+          });
+      
+          // Function to delete account
+          async function deleteAccount() {
+              try {
+                  const response = await fetch('/user/delete-Account', {
+                      method: 'DELETE',
+                      headers: { 'Content-Type': 'application/json' }
+                  });
+      
+                  const result = await response.json();
+      
+                  if (result.success) {
+                      Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
+                          window.location.href = '/'; // Redirect to home page or login page after deletion
+                      });
+                  } else {
+                      showError(result.message);
+                  }
+              } catch (error) {
+                  console.error('Error deleting account:', error);
+                  showError('An error occurred while trying to delete your account. Please try again later.');
+              }
+          }
+      
+          // Function to show error messages
+          function showError(message) {
+              Swal.fire({
+                  title: 'Error',
+                  text: message,
+                  icon: 'error',
+                  confirmButtonText: 'OK'
+              });
+          }
+      
+          // Disable all input fields on page load
+          allFields.forEach(input => input.disabled = true);
+          saveButton.style.display = 'none'; // Hide the save changes button initially
+      
+          // Function to handle field editing
+          window.editField = function (fieldId) {
+              const field = document.getElementById(fieldId);
+              allFields.forEach(input => {
+                  if (input.id !== fieldId) input.disabled = true; // Disable all other fields
+              });
+      
+              field.disabled = false; // Enable the clicked field
+              field.focus(); // Focus the input field
+              field.addEventListener('change', handleChange); // Attach change event to the field
+          };
+      
+          // Function to handle change events
+          function handleChange() {
+              saveButton.style.display = 'block'; // Show the button when a change is detected
+              const fieldId = this.id;
+              updatedFields[fieldId] = this.value; // Store the updated value
+          }
+      
+          // Update the profile form submission logic
+          publicProfileForm.addEventListener('submit', function (event) {
+              event.preventDefault();
+              allFields.forEach(input => input.disabled = false); // Ensure all fields are enabled before submission
+          });
       });
-    </script>
-        <script src="/js/user/updateProfile.js"></script>
-        <script src="/js/user/updateEmail.js"></script>
+      </script>
+       
+<script src="/js/user/updateProfile.js"></script>
+<script src="/js/user/updateEmail.js"></script>
   </body>
 </html>
