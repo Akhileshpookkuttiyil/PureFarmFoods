@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .order-tracking {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-tracking h2 {
+      margin: 0 0 20px;
+      font-size: 24px;
+      color: #333;
+      text-align: center;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+      margin: 20px 0;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 0;
+      left: 30px;
+      width: 4px;
+      background-color: #ccc;
+      z-index: 1;
+      height: 290px; /* Full height */
+    }
+
+    .timeline-step {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .timeline-step.reached .step-indicator {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    .step-indicator {
+      position: absolute;
+      top: 30%;
+      left: -19px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #fff;
+      border: 4px solid #ccc;
+      z-index: 2;
+      transform: translateY(-50%);
+    }
+
+    .step-content {
+      margin-left: 60px;
+    }
+
+    .step-content h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .step-content p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .step-content p.date {
+      color: #333;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="order-tracking">
+    <h2>Order Tracking</h2>
+    <div class="timeline">
+      <div class="timeline-line" id="timelineLine"></div>
+      <div class="timeline-step" id="orderPlaced">
+        <div class="step-indicator"></div>
+        <div class="step-content">
+          <h3>Order Placed</h3>
+          <p class="date"><%= orderPlacedDate %></p>
+        </div>
+      </div>
+      <div class="timeline-step" id="orderConfirmed">
+        <div class="step-indicator"></div>
+        <div class="step-content">
+          <h3>Order Confirmed</h3>
+          <p class="date"><%= orderConfirmedDate %></p>
+        </div>
+      </div>
+      <div class="timeline-step" id="productPackaging">
+        <div class="step-indicator"></div>
+        <div class="step-content">
+          <h3>Product Packaging</h3>
+          <p class="date"><%= productPackagingDate %></p>
+        </div>
+      </div>
+      <div class="timeline-step" id="productShipped">
+        <div class="step-indicator"></div>
+        <div class="step-content">
+          <h3>Product Shipped</h3>
+          <p class="date"><%= productShippedDate %></p>
+        </div>
+      </div>
+      <div class="timeline-step" id="delivered">
+        <div class="step-indicator"></div>
+        <div class="step-content">
+          <h3>Delivered</h3>
+          <p class="date"><%= deliveredDate %></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer">Order Tracking System &copy; 2025</div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Get the order status passed from the server
+      const orderStatus = "<%= orderStatus %>";
+
+      const timelineLine = document.getElementById("timelineLine");
+
+      const steps = ["Order Placed", "Order Confirmed", "Product Packaging", "Product Shipped", "Delivered"];
+      let reached = false;
+
+      steps.forEach((step) => {
+        const stepElement = document.getElementById(step.toLowerCase().replace(/ /g, ""));
+        if (step === orderStatus) {
+          reached = true;
+        }
+        if (reached) {
+          stepElement.classList.add("reached");
+        }
+      });
+
+      const reachedSteps = document.querySelectorAll(".timeline-step.reached");
+      const reachedHeight = reachedSteps.length * 60;
+      const lineHeight = 290;
+      const percentage = (reachedHeight / lineHeight) * 100;
+
+      timelineLine.style.background = `linear-gradient(to bottom, #28a745 ${percentage}%, #ccc ${percentage}%)`;
+    });
+  </script>
+</body>
+
+</html>
