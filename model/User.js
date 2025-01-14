@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const userSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
-    required: false, // Making this required
+    required: false,
   },
   firstName: {
     type: String,
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["male", "female", "other"],
-    required: false, // Not required during signup
+    required: false,
   },
   email: {
     type: String,
@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: false, // optional
-    index: { unique: true, sparse: true }, // Use a sparse unique index
+    required: false,
+    index: { unique: true, sparse: true },
   },
   password: {
     type: String,
@@ -36,8 +36,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin", "seller"], // Include 'seller' as a possible role
-    default: "user", // Default role is 'user'
+    enum: ["user", "admin", "seller"],
+    default: "user",
   },
   seller: {
     type: Schema.Types.ObjectId,
@@ -47,7 +47,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // Add these fields for email verification
   emailVerificationToken: {
     type: String,
     required: false,
@@ -58,7 +57,17 @@ const userSchema = new mongoose.Schema({
   },
   emailVerificationTokenExpiresAt: {
     type: Date,
-    required: false, // Not required until the token is created
+    required: false,
+  },
+  
+  // Soft delete fields
+  deleted: {
+    type: Boolean,
+    default: false,  // Default to false, meaning the user is not deleted
+  },
+  deletedAt: {
+    type: Date,
+    required: false, // This will be populated when the user is marked as deleted
   },
 });
 
@@ -78,11 +87,27 @@ userSchema.methods.isSeller = function () {
   return this.role === "seller";
 };
 
+// Soft delete method
+userSchema.methods.softDelete = function () {
+  this.deleted = true;
+  this.deletedAt = new Date();  // Record the time of deletion
+  return this.save();
+};
+
+// Method to restore a soft-deleted user
+userSchema.methods.restoreUser = function () {
+  this.deleted = false;
+  this.deletedAt = null;  // Clear the deletion timestamp
+  return this.save();
+};
+
+// Method to block the user
 userSchema.methods.blockUser = function () {
   this.blocked = true;
   return this.save();
 };
 
+// Method to unblock the user
 userSchema.methods.unblockUser = function () {
   this.blocked = false;
   return this.save();

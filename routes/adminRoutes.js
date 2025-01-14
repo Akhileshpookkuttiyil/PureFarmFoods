@@ -79,8 +79,9 @@ router.delete(
 );
 
 // Use POST for blocking and unblocking users
-router.post("/users/block/:userId", adminController.blockUser);
-router.post("/users/unblock/:userId", adminController.unblockUser);
+router.post("/admin/users/block/:userId", adminController.blockUser);
+router.post("/admin/users/unblock/:userId", adminController.unblockUser);
+router.delete("/admin/users/delete/:userId", adminController.deleteUser);
 router.post("/admin/products/approve/:id", adminController.approveProducts);
 router.delete("/admin/products/delete/:id", adminController.deleteProducts);
 

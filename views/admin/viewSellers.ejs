@@ -1,104 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Sellers</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS for additional styling -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
+      body {
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+      }
+
+      .table th,
+      .table td {
+        padding: 15px;
+      }
+
+      .img-fluid {
+        height: 60px;
+        width: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .table th,
+      .table td {
+        vertical-align: middle;
+        padding: 15px;
+      }
+
+      .table thead {
+        background-color: #f1f1f1;
+        color: #555;
+        font-weight: bold;
+      }
+
+      .table-bordered td,
+      .table-bordered th {
+        border: 1px solid #ddd;
+      }
+
+      /* Style for action buttons */
+      .block-btn,
+      .unblock-btn,
+      .delete-btn {
+        background-color: transparent;
+        border: 2px solid;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        width: 150px; /* Set a fixed width for uniformity */
+        height: 40px; /* Set a fixed height */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Block button */
+      .block-btn {
+        border-color: #ffc107;
+        color: #ffc107;
+      }
+
+      .block-btn:hover {
+        background-color: #ffc107;
+        color: #fff;
+      }
+
+      /* Unblock button */
+      .unblock-btn {
+        border-color: #28a745;
+        color: #28a745;
+      }
+
+      .unblock-btn:hover {
+        background-color: #28a745;
+        color: #fff;
+      }
+
+      /* Delete button */
+      .delete-btn {
+        border-color: #dc3545;
+        color: #dc3545;
+        margin-left: 10px;
+      }
+
+      .delete-btn:hover {
+        background-color: #dc3545;
+        color: #fff;
+      }
+
+      .table-responsive {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      /* Mobile-First Adjustments */
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
         }
-        .containers {
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            padding-bottom: 0px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        table thead {
+          display: none;
         }
-        .btn-actions {
-            white-space: nowrap;
+
+        table tbody tr {
+          display: block;
+          margin-bottom: 15px;
         }
-        .table img {
-            width: 50px;
-            height: auto;
+
+        table tbody td {
+          display: block;
+          text-align: right;
+          font-size: 14px;
+          border-bottom: 1px solid #ddd;
         }
-        /* Ensure responsiveness */
-        @media (max-width: 768px) {
-            .containers {
-                padding: 10px;
-            }
-            table thead {
-                display: none;
-            }
-            table tbody tr {
-                display: block;
-                margin-bottom: 10px;
-            }
-            table tbody td {
-                display: block;
-                text-align: right;
-                border-bottom: 1px solid #ddd;
-                position: relative;
-                padding-left: 50%;
-                white-space: nowrap;
-            }
-            table tbody td:before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 50%;
-                padding-left: 10px;
-                font-weight: bold;
-                text-align: left;
-                white-space: nowrap;
-            }
-            .btn-actions {
-                justify-content: flex-start;
-            }
+
+        table tbody td:before {
+          content: attr(data-label);
+          float: left;
+          font-weight: bold;
+          color: #555;
         }
+
+        table tbody td:last-child {
+          border-bottom: 0;
+        }
+
+        .table .actions-column {
+          width: 100%;
+        }
+
+        .table .actions-column {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin: 0px;
+        }
+
+        .table .actions-column {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin: 0px;
+        }
+
+        .btn-actions .btn {
+          margin-bottom: 10px;
+        }
+      }
+
+      /* Small Devices (Mobile-First) */
+      @media (max-width: 576px) {
+        .container {
+          margin: 20px;
+          padding: 15px;
+        }
+
+        h2 {
+          font-size: 18px;
+        }
+
+        .img-fluid {
+          height: 50px;
+          width: 70px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        .container {
+          margin: 10px;
+          padding: 10px;
+        }
+
+        h2 {
+          font-size: 16px;
+        }
+      }
     </style>
-</head>
-<body>
-    <div class="containers">
-        <h2>Manage Sellers</h2>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% users.forEach((user, index) => { %>
-                    <tr>
-                        <td data-label="No"><%= index + 1 %></td>
-                        <td data-label="Image"><img src="<%= user.image %>" alt="User Image"></td>
-                        <td data-label="Username"><%= user.username %></td>
-                        <td data-label="Email"><%= user.email %></td>
-                        <td data-label="Actions" class="btn-actions">
-                            <% if (user.blocked) { %>
-                                <button class="btn btn-warning btn-sm unblock-btn" data-user-id="<%= user._id %>">Unblock</button>
-                            <% } else { %>
-                                <button class="btn btn-warning btn-sm block-btn" data-user-id="<%= user._id %>">Block</button>
-                            <% } %>
-                            <button class="btn btn-danger btn-sm delete-btn" data-user-id="<%= user._id %>">Delete</button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Manage Sellers</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Image</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% sellers.forEach((seller, index) => { %>
+            <tr class="<%= seller.blocked ? 'blocked' : 'active' %>">
+              <td data-label="No"><%= index + 1 %></td>
+              <td data-label="Image">
+                <img
+                  src="<%= seller.image %>"
+                  alt="Seller Image"
+                  class="img-fluid"
+                />
+              </td>
+              <td data-label="Username"><%= seller.firstName %></td>
+              <td data-label="Email"><%= seller.email %></td>
+              <td data-label="Actions" class="btn-actions">
+                <% if (seller.blocked) { %>
+                <button
+                  class="btn unblock-btn"
+                  data-user-id="<%= seller._id %>"
+                >
+                  Unblock
+                </button>
+                <% } else { %>
+                <button class="btn block-btn" data-user-id="<%= seller._id %>">
+                  Block
+                </button>
+                <% } %>
+                <button class="btn delete-btn" data-user-id="<%= seller._id %>">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <!-- Script for handling block/unblock actions -->
-    <script src="/js/admin-sellers.js"></script>
-</body>
+
+    <!-- jQuery and SweetAlert2 JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JavaScript for handling block/unblock actions -->
+    <script>
+      $(document).ready(function () {
+        function showLoading() {
+          Swal.fire({
+            title: "Processing...",
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+          });
+        }
+
+        $(".block-btn, .unblock-btn").click(function () {
+          const userId = $(this).data("user-id");
+          const isBlock = $(this).hasClass("block-btn");
+
+          showLoading();
+
+          $.ajax({
+            url: `/admin/users/${isBlock ? "block" : "unblock"}/${userId}`,
+            type: "POST",
+            success: function (response) {
+              Swal.fire(response.message, "", "success").then(() => {
+                location.reload();
+              });
+            },
+            error: function (xhr) {
+              Swal.fire("Error", xhr.responseJSON.message, "error");
+            },
+          });
+        });
+
+        $(".delete-btn").click(function () {
+          const userId = $(this).data("user-id");
+
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              showLoading();
+
+              $.ajax({
+                url: `/admin/users/delete/${userId}`,
+                type: "DELETE",
+                success: function (response) {
+                  Swal.fire("Deleted!", response.message, "success").then(
+                    () => {
+                      location.reload();
+                    }
+                  );
+                },
+                error: function (xhr) {
+                  Swal.fire("Error", xhr.responseJSON.message, "error");
+                },
+              });
+            }
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
