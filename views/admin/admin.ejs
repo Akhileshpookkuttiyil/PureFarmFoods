@@ -182,19 +182,19 @@
             </a>
             <ul class="collapse list-unstyled" id="dashboardSubmenu">
               <li>
-                <a href="/admin" id="homeLink"
-                  ><i class="fas fa-home"></i> Home</a
-                >
+                <a href="/admin" id="homeLink">
+                  <i class="fas fa-home"></i> Home
+                </a>
               </li>
               <li>
-                <a href="/admin/adminProfile" class="ajax-link"
-                  ><i class="fas fa-user"></i> Profile</a
-                >
+                <a href="/admin/adminProfile" class="ajax-link">
+                  <i class="fas fa-user"></i> Profile
+                </a>
               </li>
               <li>
-                <a href="#" class="users-link"
-                  ><i class="fas fa-user"></i> Users</a
-                >
+                <a href="#" class="users-link">
+                  <i class="fas fa-user"></i> Users
+                </a>
                 <ul
                   class="list-unstyled"
                   id="users-types"
@@ -202,31 +202,32 @@
                   class="toggle-element"
                 >
                   <li>
-                    <a href="/view-Users" class="ajax-link"
-                      ><i class="fas fa-users"></i> End Users</a
-                    >
+                    <a href="/view-Users" class="ajax-link">
+                      <i class="fas fa-users"></i> End Users
+                    </a>
                   </li>
                   <li>
-                    <a href="/view-Sellers" class="ajax-link"
-                      ><i class="fas fa-users"></i> Sellers</a
-                    >
+                    <a href="/view-Sellers" class="ajax-link">
+                      <i class="fas fa-users"></i> Sellers
+                    </a>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="/view-Products" class="ajax-link"
-                  ><i class="fas fa-box"></i> Products</a
-                >
+                <a href="/view-Products" class="ajax-link">
+                  <i class="fas fa-box"></i> Products
+                </a>
+              </li>
+              <!-- Orders Page Link -->
+              <li>
+                <a href="/orders" class="ajax-link">
+                  <i class="fas fa-shopping-cart"></i> Orders
+                </a>
               </li>
               <li>
-                <a href="orders.html" class="ajax-link"
-                  ><i class="fas fa-shopping-cart"></i> Orders</a
-                >
-              </li>
-              <li>
-                <a href="#" class="categories-link"
-                  ><i class="fas fa-list"></i> Categories</a
-                >
+                <a href="#" class="categories-link">
+                  <i class="fas fa-list"></i> Categories
+                </a>
                 <ul
                   class="list-unstyled"
                   id="categories-subcategories"
@@ -234,9 +235,9 @@
                   class="toggle-element"
                 >
                   <li>
-                    <a href="/categoriesPage" class="ajax-link"
-                      >Categories (<%= categoryCount %>)</a
-                    >
+                    <a href="/categoriesPage" class="ajax-link">
+                      Categories (<%= categoryCount %>)
+                    </a>
                   </li>
                   <li>
                     <a href="/add-Category" class="ajax-link">Add Category</a>
@@ -249,9 +250,9 @@
                 </ul>
               </li>
               <li>
-                <a href="reviews.html" class="ajax-link"
-                  ><i class="fas fa-star"></i> Reviews</a
-                >
+                <a href="reviews.html" class="ajax-link">
+                  <i class="fas fa-star"></i> Reviews
+                </a>
               </li>
             </ul>
           </li>
@@ -388,10 +389,12 @@
 
         $(".users-link").on("click", function () {
           $("#users-types").toggle("active");
+          $(this).toggleClass("active"); // Ensure the active class is added or removed correctly
         });
 
         $(".categories-link").on("click", function () {
           $("#categories-subcategories").toggle("active");
+          $(this).toggleClass("active"); // Ensure the active class is added or removed correctly
         });
 
         $(".ajax-link").on("click", function (e) {
