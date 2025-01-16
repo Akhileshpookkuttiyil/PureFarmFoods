@@ -27,6 +27,16 @@ router.get(
 router.get("/categories", isAuthenticated, adminController.getCategories);
 router.get("/view-Users", isAuthenticated, adminController.viewUsers);
 router.get("/view-Sellers", isAuthenticated, adminController.viewSellers);
+
+
+router.get("/admin/view-Orders", isAuthenticated, adminController.viewOrders);
+router.get('/admin/orders/:orderId', isAuthenticated, adminController.getOrderDetails);
+// Get tracking history
+router.get("/admin/orders/:orderId/tracking", isAuthenticated, adminController.getOrderTracking);
+// Update tracking information
+router.post("/admin/orders/:orderId/tracking", isAuthenticated, adminController.updateOrderTracking);
+
+
 router.get("/view-Products", isAuthenticated, adminController.viewProducts);
 router.get(
   "/admin/adminProfile",

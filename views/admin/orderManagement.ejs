@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Management</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- SweetAlert2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Arial", sans-serif;
+      }
+      .container {
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #343a40;
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .table th,
+      .table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+      .table thead th {
+        background-color: #f1f3f5;
+        font-weight: bold;
+      }
+      .btn {
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      @media (max-width: 768px) {
+        .table thead {
+          display: none;
+        }
+        .table tbody tr {
+          display: block;
+          margin-bottom: 10px;
+        }
+        .table tbody td {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 5px;
+          font-size: 14px;
+        }
+        .table tbody td:before {
+          content: attr(data-label);
+          font-weight: bold;
+          text-transform: capitalize;
+          color: #6c757d;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Order Management</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>User</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Order Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach((order) => { %>
+            <tr>
+              <td data-label="Order ID"><%= order._id %></td>
+              <td data-label="User"><%= order.user.firstName %></td>
+              <td data-label="Total">₹<%= order.totalAmount %></td>
+              <td data-label="Status"><%= order.orderStatus %></td>
+              <td data-label="Order Date">
+                <%= new Date(order.createdAt).toLocaleDateString("en-US", { day:
+                "2-digit", month: "short", year: "numeric", }) %>
+              </td>
+              <td data-label="Actions">
+                <button
+                  class="btn btn-primary btn-sm view-tracking-btn"
+                  data-order-id="<%= order._id %>"
+                >
+                  View Tracking
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm update-tracking-btn"
+                  data-order-id="<%= order._id %>"
+                >
+                  Update Tracking
+                </button>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View Tracking Modal -->
+    <div
+      class="modal fade"
+      id="viewTrackingModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="viewTrackingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="viewTrackingModalLabel">
+              Tracking History
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ul id="tracking-history-list" class="list-group">
+              <li class="list-group-item">Loading...</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Tracking Modal -->
+    <div
+      class="modal fade"
+      id="updateTrackingModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="updateTrackingModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateTrackingModalLabel">
+              Update Tracking
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="update-tracking-form">
+              <div class="form-group">
+                <label for="orderStatus">Order Status</label>
+                <select class="form-control" id="orderStatus" required>
+                  <option value="placed">Placed</option>
+                  <option value="processing">Processing</option>
+                  <option value="dispatched">Dispatched</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="out for delivery">Out for Delivery</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="returned">Returned</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="newLocation">Current Location</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="newLocation"
+                  placeholder="Enter current location"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">
+                Update Order
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      $(document).ready(function () {
+        // View Tracking
+        $(".view-tracking-btn").on("click", function () {
+          const orderId = $(this).data("order-id");
+          $("#tracking-history-list").html(
+            '<li class="list-group-item">Loading...</li>'
+          );
+
+          $.get(`/admin/orders/${orderId}/tracking`)
+            .done((response) => {
+              const historyItems = response.trackingHistory.map(
+                (entry) =>
+                  `<li class="list-group-item">
+              <strong>${new Date(entry.date).toLocaleString()}</strong>: 
+              ${entry.location} - ${entry.status}
+            </li>`
+              );
+              // Set current status in dropdown
+              $("#tracking-history-list").html(historyItems.join(""));
+
+              // Show modal
+              $("#viewTrackingModal").modal("show");
+            })
+            .fail(() => {
+              Swal.fire("Error", "Failed to load tracking history.", "error");
+            });
+        });
+
+        // Update Tracking
+        $(".update-tracking-btn").on("click", function () {
+          const orderId = $(this).data("order-id");
+
+          // Clear previous form values
+          $("#newLocation").val("");
+
+          // Fetch the current order details to get the current status
+          $.get(`/admin/orders/${orderId}`)
+            .done((response) => {
+              const currentStatus = response.order.orderStatus; // Default to 'dispatched' if no status
+              const currentLocation =
+                response.trackingInfo?.currentLocation || ""; // Default to empty if no location
+
+              // Set the current status in the dropdown
+              $("#orderStatus").val(currentStatus);
+              console.log(currentStatus);
+              $("#newLocation").val(currentLocation); // Set the current location if available
+
+              // Show the modal
+              $("#updateTrackingModal").modal("show");
+            })
+            .fail(() => {
+              Swal.fire("Error", "Failed to fetch order details.", "error");
+            });
+
+          // Handle form submission
+          $("#update-tracking-form")
+            .off("submit")
+            .on("submit", function (e) {
+              e.preventDefault();
+
+              const orderStatus = $("#orderStatus").val();
+              const newLocation = $("#newLocation").val().trim();
+
+              if (!newLocation || !orderStatus) {
+                Swal.fire("Error", "All fields are required.", "error");
+                return;
+              }
+
+              // Submit the updated status and location
+              $.post(`/admin/orders/${orderId}/tracking`, {
+                status: orderStatus,
+                location: newLocation,
+              })
+                .done(() => {
+                  Swal.fire(
+                    "Success",
+                    "Tracking updated successfully.",
+                    "success"
+                  ).then(() => {
+                    $("#updateTrackingModal").modal("hide");
+                  });
+                })
+                .fail(() => {
+                  Swal.fire("Error", "Failed to update tracking.", "error");
+                });
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

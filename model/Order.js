@@ -35,9 +35,19 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["placed", "dispatched", "delivered", "cancelled", "returned"],
-      default: "placed",
+      enum: [
+        "placed", // Order placed by the customer
+        "processing", // Order being prepared (payment verification, picking, packing)
+        "dispatched", // Order handed to the carrier, awaiting transit
+        "shipped", // Order is in transit (tracking info available)
+        "out for delivery", // Order is with the delivery driver
+        "delivered", // Order delivered successfully
+        "cancelled", // Order cancelled
+        "returned", // Customer returns the order
+      ],
+      default: "placed", // Default status when the order is placed
     },
+
     shippingAddress: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
@@ -71,8 +81,11 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Middleware to capture changes to order status and current location
-orderSchema.pre('save', function(next) {
-  if (this.isModified('orderStatus') || this.isModified('trackingInfo.currentLocation')) {
+orderSchema.pre("save", function (next) {
+  if (
+    this.isModified("orderStatus") ||
+    this.isModified("trackingInfo.currentLocation")
+  ) {
     // If orderStatus or currentLocation is modified, push the new event to trackingHistory
     const newEvent = {
       date: new Date(),
