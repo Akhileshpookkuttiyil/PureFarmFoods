@@ -3,6 +3,7 @@ const Product = require("../model/Product");
 const Category = require("../model/categories"); // Corrected model name
 const SubCategory = require("../model/subCategories"); // Corrected model name
 const bcrypt = require("bcrypt");
+const Order = require("../model/Order");
 
 module.exports = {
   // Utility function for error responses
@@ -393,13 +394,99 @@ module.exports = {
   // View all users with role "seller"
   viewSellers: async (req, res) => {
     try {
-      const sellers = await User.find({ role: "seller" , deleted: false });
+      const sellers = await User.find({ role: "seller", deleted: false });
       res.render("admin/viewSellers", {
         title: "View Sellers",
         sellers: sellers,
       });
     } catch (error) {
       this.handleErrorResponse(res, error, "Failed to fetch sellers");
+    }
+  },
+
+  viewOrders: async (req, res) => {
+    try {
+      // Fetch all orders and populate necessary details
+      const orders = await Order.find({})
+        .populate("user", "firstName lastName email") // Populate user details
+        .populate("products.product", "name") // Populate product details (e.g., name)
+        .sort({ createdAt: -1 }); // Sort by newest first
+
+      // Render the order management page with fetched data
+      res.render("admin/orderManagement", { orders });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  },
+
+  getOrderDetails : async (req, res) => {
+    const { orderId } = req.params; // Retrieve the orderId from the URL parameters
+    try {
+      // Find the order by orderId and populate user and product details
+      const order = await Order.findById(orderId)
+      console.log(order)
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" }); // Handle order not found
+      }
+  
+      // Send the order details as a response
+      res.json({
+        order,
+        message: "Order details retrieved successfully"
+      });
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  getOrderTracking: async (req, res) => {
+    const { orderId } = req.params;
+    try {
+      const order = await Order.findById(orderId).select("trackingHistory");
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+      console.log(order);
+      res.json({ trackingHistory: order.trackingHistory });
+    } catch (error) {
+      console.error("Error fetching tracking history:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
+  updateOrderTracking: async (req, res) => {
+    console.log("POST");
+    const { orderId } = req.params;
+    const { location, status } = req.body;
+
+    console.log({"orderId":orderId,"location, status":req.body});
+    
+
+    if (!location || !status) {
+      return res
+        .status(400)
+        .json({ error: "Location and status are required" });
+    }
+
+    try {
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      // Update the current location and status
+      order.trackingInfo.currentLocation = location;
+      order.orderStatus = status;
+
+      // Save the updated order (middleware will handle trackingHistory update)
+      await order.save();
+
+      res.json({ message: "Tracking updated successfully" });
+    } catch (error) {
+      console.error("Error updating tracking:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   },
 
