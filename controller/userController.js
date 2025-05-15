@@ -270,7 +270,7 @@ module.exports = {
         user: req.session.user._id,
         products: cartItems.map((item) => ({
           product: item.product.id,
-          size:item.product.size,
+          size: item.product.size,
           quantity: item.quantity,
           price: item.product.price,
         })),
@@ -423,48 +423,22 @@ module.exports = {
   },
 
   trackOrder: async (req, res) => {
-    const { orderId } = req.params;
-  
     try {
-      // Fetch the order by ID
-      const order = await Order.findById(orderId);
+      const { orderId } = req.params;
+
+      // Fetch the order details
+      const order = await Order.findById(orderId).lean();
+
       if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
+        return res.status(404).send("Order not found.");
       }
-  
-      // Calculate estimated delivery date (3 days from order creation date)
-      const estimatedDeliveryDate = new Date(order.createdAt);
-      estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 3);
-  
-      // Get the tracking details from the order
-      const trackingDetails = {
-        status: order.orderStatus, // Current status from order
-        currentLocation: order.trackingInfo.currentLocation, // Current location from trackingInfo
-        estimatedDelivery: estimatedDeliveryDate, // Estimated delivery date based on createdAt + 3 days
-        trackingHistory: order.trackingHistory.map(event => ({
-          date: event.date, 
-          location: event.location, 
-          status: event.status
-        })), // Map over the trackingHistory array to get the events
-      };
-  
-      // Send tracking details to the client
-      res.status(200).json({
-        orderId: order._id,
-        trackingDetails,
-      });
+
+      res.render("trackingPage", { order , title:"tracking"});
     } catch (error) {
-      console.error('Error fetching tracking details:', error);
-      // Return a more detailed error message
-      res.status(500).json({
-        message: 'Failed to fetch tracking details due to an internal error.',
-        error: error.message,
-      });
+      console.error(error);
+      res.status(500).send("Internal Server Error");
     }
-  }
-  ,
-  
-  
+  },
   fetchOrders: async (req, res) => {
     try {
       // Assuming the user is authenticated and their ID is available in req.user.id

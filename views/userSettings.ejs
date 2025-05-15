@@ -285,8 +285,9 @@
           fetch('/fetch-orders')
               .then(response => response.json())
               .then(data => {
+                const validStages = ["placed", "processing", "dispatched", "shipped", "out for delivery"];
                   const orders = data.orders;
-                  const dispatchedOrders = orders.filter(order => order.orderStatus === 'placed');
+                  const dispatchedOrders = orders.filter(order => validStages.includes(order.orderStatus));
                   const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
                   const initialOrderLimit = 2;
                   let showAllDispatched = false;

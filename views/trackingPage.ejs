@@ -1,174 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivery Progress Bar</title>
+    <style>
+      /* General Styling */
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f6f9;
+        color: #333;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Tracking</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 20px;
-    }
+      h2 {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+        font-weight: 500;
+      }
 
-    .order-tracking {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+      .progress-wrapper {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-    .order-tracking h2 {
-      margin: 0 0 20px;
-      font-size: 24px;
-      color: #333;
-      text-align: center;
-    }
+      .progress-container {
+        position: relative;
+        margin: 30px 0;
+        padding: 0 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    .timeline {
-      position: relative;
-      padding-left: 40px;
-      margin: 20px 0;
-    }
+      /* Progress Bar Styling */
+      .progress-bar {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: #e6e6e6;
+        border-radius: 5px;
+        z-index: 1;
+      }
 
-    .timeline-line {
-      position: absolute;
-      top: 0;
-      left: 30px;
-      width: 4px;
-      background-color: #ccc;
-      z-index: 1;
-      height: 290px; /* Full height */
-    }
+      .progress-bar-filled {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #4caf50, #67d067);
+        border-radius: 5px;
+        width: 0;
+        transition: width 0.4s ease;
+        z-index: 2;
+      }
 
-    .timeline-step {
-      position: relative;
-      margin-bottom: 30px;
-    }
+      /* Stage Styling */
+      .stage {
+        position: relative;
+        text-align: center;
+        flex: 1;
+        z-index: 3;
+      }
 
-    .timeline-step.reached .step-indicator {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
+      .stage-circle {
+        height: 30px;
+        width: 30px;
+        background: #e6e6e6;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #555;
+        font-weight: bold;
+        transition: background 0.3s ease, color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-    .step-indicator {
-      position: absolute;
-      top: 30%;
-      left: -19px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background-color: #fff;
-      border: 4px solid #ccc;
-      z-index: 2;
-      transform: translateY(-50%);
-    }
+      .stage-circle.active {
+        background: #4caf50;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+      }
 
-    .step-content {
-      margin-left: 60px;
-    }
+      .stage-label {
+        font-size: 14px;
+        color: #666;
+      }
 
-    .step-content h3 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: bold;
-    }
+      .timestamp {
+        font-size: 12px;
+        color: #999;
+      }
 
-    .step-content p {
-      margin: 5px 0 0;
-      font-size: 14px;
-      color: #666;
-    }
+      /* Buttons */
+      .buttons {
+        text-align: center;
+        margin-top: 20px;
+      }
 
-    .step-content p.date {
-      color: #333;
-    }
+      .buttons button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background: #4caf50;
+        border: none;
+        border-radius: 5px;
+        margin: 0 10px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
 
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      color: #888;
-      font-size: 14px;
-    }
-  </style>
-</head>
+      .buttons button:hover {
+        background: #45a044;
+      }
 
-<body>
-  <div class="order-tracking">
-    <h2>Order Tracking</h2>
-    <div class="timeline">
-      <div class="timeline-line" id="timelineLine"></div>
-      <div class="timeline-step" id="orderPlaced">
-        <div class="step-indicator"></div>
-        <div class="step-content">
-          <h3>Order Placed</h3>
-          <p class="date"><%= orderPlacedDate %></p>
+      .buttons button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 600px) {
+        .stage-circle {
+          height: 25px;
+          width: 25px;
+          font-size: 12px;
+        }
+
+        .stage-label {
+          font-size: 12px;
+        }
+
+        .timestamp {
+          font-size: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Track Your Delivery</h2>
+
+    <div class="progress-wrapper">
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+        <div class="progress-bar-filled"></div>
+        <div class="stage">
+          <div class="stage-circle active" id="placed">1</div>
+          <div class="stage-label">Placed</div>
+          <div class="timestamp">Jan 20, 2025</div>
+        </div>
+        <div class="stage">
+          <div class="stage-circle" id="processing">2</div>
+          <div class="stage-label">Processing</div>
+          <div class="timestamp">Jan 21, 2025</div>
+        </div>
+        <div class="stage">
+          <div class="stage-circle" id="dispatched">3</div>
+          <div class="stage-label">Dispatched</div>
+          <div class="timestamp">Jan 22, 2025</div>
+        </div>
+        <div class="stage">
+          <div class="stage-circle" id="shipped">4</div>
+          <div class="stage-label">Shipped</div>
+          <div class="timestamp">Jan 23, 2025</div>
+        </div>
+        <div class="stage">
+          <div class="stage-circle" id="out-for-delivery">5</div>
+          <div class="stage-label">Out for Delivery</div>
+          <div class="timestamp">Jan 24, 2025</div>
+        </div>
+        <div class="stage">
+          <div class="stage-circle" id="delivered">6</div>
+          <div class="stage-label">Delivered</div>
+          <div class="timestamp">Jan 25, 2025</div>
         </div>
       </div>
-      <div class="timeline-step" id="orderConfirmed">
-        <div class="step-indicator"></div>
-        <div class="step-content">
-          <h3>Order Confirmed</h3>
-          <p class="date"><%= orderConfirmedDate %></p>
-        </div>
-      </div>
-      <div class="timeline-step" id="productPackaging">
-        <div class="step-indicator"></div>
-        <div class="step-content">
-          <h3>Product Packaging</h3>
-          <p class="date"><%= productPackagingDate %></p>
-        </div>
-      </div>
-      <div class="timeline-step" id="productShipped">
-        <div class="step-indicator"></div>
-        <div class="step-content">
-          <h3>Product Shipped</h3>
-          <p class="date"><%= productShippedDate %></p>
-        </div>
-      </div>
-      <div class="timeline-step" id="delivered">
-        <div class="step-indicator"></div>
-        <div class="step-content">
-          <h3>Delivered</h3>
-          <p class="date"><%= deliveredDate %></p>
-        </div>
+
+      <div class="buttons">
+        <button id="prev" disabled>Previous</button>
+        <button id="next">Next</button>
       </div>
     </div>
-    <div class="footer">Order Tracking System &copy; 2025</div>
-  </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Get the order status passed from the server
-      const orderStatus = "<%= orderStatus %>";
+    <script>
+      const stages = [
+        "placed",
+        "processing",
+        "dispatched",
+        "shipped",
+        "out-for-delivery",
+        "delivered",
+      ];
+      let currentStageIndex = 0;
 
-      const timelineLine = document.getElementById("timelineLine");
+      const progressBarFilled = document.querySelector(".progress-bar-filled");
+      const prevButton = document.getElementById("prev");
+      const nextButton = document.getElementById("next");
 
-      const steps = ["Order Placed", "Order Confirmed", "Product Packaging", "Product Shipped", "Delivered"];
-      let reached = false;
+      function updateProgress() {
+        // Highlight active stages
+        stages.forEach((stage, index) => {
+          const stageElement = document.getElementById(stage);
+          if (index <= currentStageIndex) {
+            stageElement.classList.add("active");
+          } else {
+            stageElement.classList.remove("active");
+          }
+        });
 
-      steps.forEach((step) => {
-        const stepElement = document.getElementById(step.toLowerCase().replace(/ /g, ""));
-        if (step === orderStatus) {
-          reached = true;
-        }
-        if (reached) {
-          stepElement.classList.add("reached");
+        // Update progress bar width
+        const progressPercentage =
+          (currentStageIndex / (stages.length - 1)) * 100;
+        progressBarFilled.style.width = `${progressPercentage}%`;
+
+        // Enable/Disable buttons
+        prevButton.disabled = currentStageIndex === 0;
+        nextButton.disabled = currentStageIndex === stages.length - 1;
+      }
+
+      nextButton.addEventListener("click", () => {
+        if (currentStageIndex < stages.length - 1) {
+          currentStageIndex++;
+          updateProgress();
         }
       });
 
-      const reachedSteps = document.querySelectorAll(".timeline-step.reached");
-      const reachedHeight = reachedSteps.length * 60;
-      const lineHeight = 290;
-      const percentage = (reachedHeight / lineHeight) * 100;
+      prevButton.addEventListener("click", () => {
+        if (currentStageIndex > 0) {
+          currentStageIndex--;
+          updateProgress();
+        }
+      });
 
-      timelineLine.style.background = `linear-gradient(to bottom, #28a745 ${percentage}%, #ccc ${percentage}%)`;
-    });
-  </script>
-</body>
-
+      // Initialize progress
+      updateProgress();
+    </script>
+  </body>
 </html>
