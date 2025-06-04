@@ -28,6 +28,7 @@ router.get("/search-results", userController.searchResults);
 router.get("/checkout", isAuthenticated, userController.getCheckOut);
 router.post("/checkout-items", isAuthenticated, userController.checkoutItems);
 router.post("/create-order", isAuthenticated, userController.createOrder);
+router.post("/pay-with-cod",isAuthenticated,userController.handleCod)
 router.post("/verify-payment", isAuthenticated, userController.verifyPayment);
 
 // router.get('/get-orders',isAuthenticated,userController.getOrdersByUser)

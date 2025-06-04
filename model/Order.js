@@ -4,14 +4,14 @@ const orderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to the User who placed the order
+      ref: "User",
       required: true,
     },
     products: [
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Product", // Reference to the Product model
+          ref: "Product",
           required: true,
         },
         size: { type: String, required: true },
@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema(
     ],
     totalAmount: {
       type: Number,
-      required: true, // Total amount of the order
+      required: true,
     },
     paymentMethod: {
       type: String,
@@ -36,18 +36,17 @@ const orderSchema = new mongoose.Schema(
     orderStatus: {
       type: String,
       enum: [
-        "placed", // Order placed by the customer
-        "processing", // Order being prepared (payment verification, picking, packing)
-        "dispatched", // Order handed to the carrier, awaiting transit
-        "shipped", // Order is in transit (tracking info available)
-        "out for delivery", // Order is with the delivery driver
-        "delivered", // Order delivered successfully
-        "cancelled", // Order cancelled
-        "returned", // Customer returns the order
+        "placed",
+        "processing",
+        "dispatched",
+        "shipped",
+        "out for delivery",
+        "delivered",
+        "cancelled",
+        "returned",
       ],
-      default: "placed", // Default status when the order is placed
+      default: "placed",
     },
-
     shippingAddress: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
@@ -55,56 +54,63 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       state: { type: String, required: true },
       postalCode: { type: String, required: true },
-      phone: {
-        type: String,
-        required: true,
-      },
+      phone: { type: String, required: true },
     },
     trackingInfo: {
       courierName: { type: String, default: "PureFarmFoods-TM" },
       trackingNumber: { type: String, default: null },
-      currentLocation: { type: String, default: "Warehouse" }, // Added currentLocation field
+      currentLocation: { type: String, default: "Warehouse" },
     },
     trackingHistory: [
       {
-        date: { type: Date, default: Date.now }, // Automatically capture date of update
+        date: { type: Date, default: Date.now },
         location: { type: String },
         status: { type: String },
       },
     ],
-    notes: { type: String }, // Optional notes or additional info
-    deletedAt: { type: Date, default: null }, // Soft delete field
-    razorpayOrderId: { type: String, required: true }, // Razorpay order ID
-    razorpayPaymentId: { type: String }, // Razorpay payment ID (to be updated post-payment verification)
+    notes: { type: String },
+    deletedAt: { type: Date, default: null },
+    razorpayOrderId: {
+      type: String,
+      required: function () {
+        // Required if payment method is UPI or CARD (online payment)
+        return this.paymentMethod === "UPI" || this.paymentMethod === "CARD";
+      },
+    },
+    razorpayPaymentId: {
+      type: String,
+      required: function () {
+        // Required if payment is completed and method is online payment
+        return (
+          (this.paymentMethod === "UPI" || this.paymentMethod === "CARD") &&
+          this.paymentStatus === "completed"
+        );
+      },
+    },
   },
-  { timestamps: true } // Automatically manage createdAt and updatedAt fields
+  { timestamps: true }
 );
 
-// Middleware to capture changes to order status and current location
+// Middleware to track order status and location changes
 orderSchema.pre("save", function (next) {
   if (
     this.isModified("orderStatus") ||
     this.isModified("trackingInfo.currentLocation")
   ) {
-    // If orderStatus or currentLocation is modified, push the new event to trackingHistory
-    const newEvent = {
-      date: new Date(),
-      location: this.trackingInfo.currentLocation,
-      status: this.orderStatus,
-    };
-
-    // Ensure trackingHistory exists, then push new event
     if (!this.trackingHistory) {
       this.trackingHistory = [];
     }
 
-    this.trackingHistory.push(newEvent);
+    this.trackingHistory.push({
+      date: new Date(),
+      location: this.trackingInfo.currentLocation,
+      status: this.orderStatus,
+    });
   }
-
   next();
 });
 
-// Indexing for quick lookups
+// Index for faster queries on user, order status, and recent orders
 orderSchema.index({ user: 1, orderStatus: 1, createdAt: -1 });
 
 const Order = mongoose.model("Order", orderSchema);

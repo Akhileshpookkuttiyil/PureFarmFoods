@@ -180,37 +180,24 @@ module.exports = {
     }
   },
 
+  // POST /create-order
   createOrder: async (req, res) => {
     try {
-      // Ensure user is authenticated
       if (!req.session.user || !req.session.user._id) {
         return res
-          .status(400)
-          .json({ success: false, message: "User is not authenticated." });
+          .status(401)
+          .json({ success: false, message: "Not authenticated." });
       }
 
       const {
         cartItems,
-        payment_Method: paymentMethod,
+        paymentMethod: paymentMethod,
         shippingAddress,
         shippingOption,
         totalPrice,
       } = req.body;
 
-      console.log(
-        "Received Cart Items:",
-        cartItems.map((item) => ({
-          product: item.product?.id || "Missing _id",
-          quantity: item.quantity || "Missing quantity",
-          price: item.product?.price || "Missing price",
-          size: item.product?.size || "Missing size",
-        }))
-      );
-
-      console.log("Shipping Address:", shippingAddress);
-      console.log("payment_Method:", paymentMethod);
-
-      // Validate cart items
+      // Validate inputs
       if (!Array.isArray(cartItems) || cartItems.length === 0) {
         return res
           .status(400)
@@ -218,54 +205,29 @@ module.exports = {
       }
 
       for (const item of cartItems) {
-        if (
-          !item.product ||
-          !item.product.id ||
-          !item.product.price ||
-          !item.quantity
-        ) {
+        if (!item.product?.id || !item.product?.price || !item.quantity) {
           return res
             .status(400)
             .json({ success: false, message: "Invalid cart item detected." });
         }
       }
 
-      // Validate phone number
-      const phonePattern = /^\+(\d{1,4})\d{10}$/; // Example: +919876543210
-      if (!phonePattern.test(shippingAddress.phone)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Invalid phone number format. Provide a valid phone number with country code.",
-        });
-      }
-
-      // Calculate total amount
-      const totalAmount = cartItems.reduce((sum, item) => {
-        return sum + item.product.price * item.quantity;
-      }, 0);
-
-      if (totalAmount <= 0) {
+      if (!/^\+(\d{1,4})\d{10}$/.test(shippingAddress.phone)) {
         return res
           .status(400)
-          .json({ success: false, message: "Invalid cart total amount." });
+          .json({ success: false, message: "Invalid phone format." });
       }
-
-      // Create Razorpay order
-      const options = {
-        amount: totalAmount * 100,
-        currency: "INR",
-        receipt: `order_rcptid_${Date.now()}`,
-      };
-
-      const razorpayOrder = await razorpayInstance.orders.create(options);
-      console.log("Razorpay Order Created:", razorpayOrder);
 
       const trackingNumber = `TRACK-${Date.now()}-${Math.random()
         .toString(36)
-        .substr(2, 9)}`;
+        .substring(2, 9)}`;
 
-      // Create a new order (No checking for existing orders)
+      const razorpayOrder = await razorpayInstance.orders.create({
+        amount: totalPrice * 100,
+        currency: "INR",
+        receipt: `order_rcptid_${Date.now()}`,
+      });
+
       const order = new Order({
         user: req.session.user._id,
         products: cartItems.map((item) => ({
@@ -274,33 +236,86 @@ module.exports = {
           quantity: item.quantity,
           price: item.product.price,
         })),
-        totalAmount,
+        totalAmount: totalPrice,
         paymentMethod,
         paymentStatus: "pending",
         orderStatus: "placed",
         shippingAddress,
+        shippingOption,
         trackingInfo: {
-          courierName: "PureFarmFoods-TM", // Fixed courier name
-          trackingNumber: trackingNumber, // Generate a new tracking number for each order
+          courierName: "PureFarmFoods-TM",
+          trackingNumber,
         },
         razorpayOrderId: razorpayOrder.id,
+      });
+
+      await order.save();
+
+      return res.json({ success: true, order: razorpayOrder });
+    } catch (error) {
+      console.error("Error in createOrder:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal server error." });
+    }
+  },
+  // POST /pay-with-cod
+  handleCod: async (req, res) => {
+    try {
+      let { cartItems, shippingAddress, paymentMethod, totalPrice } = req.body;
+
+      // Parse cartItems if it's a string
+      if (typeof cartItems === "string") {
+        try {
+          cartItems = JSON.parse(cartItems);
+        } catch {
+          return res
+            .status(400)
+            .json({ success: false, message: "Invalid cartItems JSON" });
+        }
+      }
+
+      if (!Array.isArray(cartItems)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "cartItems must be an array" });
+      }
+
+      // Now safe to use cartItems.map()
+      const order = new Order({
+        user: req.session.user._id,
+        products: cartItems.map((item) => ({
+          product: item.product.id,
+          size: item.product.size,
+          quantity: item.quantity,
+          price: item.product.price,
+        })),
+        totalAmount: totalPrice,
+        paymentMethod: "COD",
+        paymentStatus: "pending",
+        orderStatus: "placed",
+        shippingAddress,
+        trackingInfo: {
+          courierName: "PureFarmFoods-TM",
+          trackingNumber: `TRACK-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`,
+        },
+        razorpayOrderId: null,
         razorpayPaymentId: null,
       });
 
       await order.save();
-      console.log("Order saved to database:", order);
 
-      // Send response
-      return res.json({ success: true, order: razorpayOrder });
+      return res.json({
+        success: true,
+        message: "COD order placed successfully",
+      });
     } catch (error) {
-      console.error("Error creating Razorpay order:", error.message);
-
-      if (!res.headersSent) {
-        return res.status(500).json({
-          success: false,
-          message: "Unable to create Razorpay order.",
-        });
-      }
+      console.error("COD order error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to place COD order." });
     }
   },
   verifyPayment: async (req, res) => {
@@ -433,7 +448,7 @@ module.exports = {
         return res.status(404).send("Order not found.");
       }
 
-      res.render("trackingPage", { order , title:"tracking"});
+      res.render("trackingPage", { order, title: "tracking" });
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
