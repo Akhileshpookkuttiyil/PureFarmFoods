@@ -15,6 +15,24 @@
     color: red;
     -webkit-text-stroke: 0;
 }
+.description-container {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-y: auto; /* allows scrolling */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.description-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.description {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-height: 100px;
+}
+
 
 </style>
 
@@ -57,12 +75,12 @@
                                     <i class="fa fa-star <%= i <= product.rating ? 'text-secondary' : '' %>"></i>
                                     <% } %>
                             </div>
-                            <div class="description-container">
+                            <div class="description-container mb-3">
                                 <p class="mb-4 description">
                                     <%= product.description %>
                                 </p>
                             </div>
-                            <div class="d-flex align-items-center mb-5">
+                            <div class="d-flex align-items-center mb-3">
                                 <div class="input-group quantity me-3" style="width: 100px;">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-minus rounded-circle bg-light border">
