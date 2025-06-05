@@ -1,245 +1,235 @@
 /* General Container Styles */
 .containr {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Header Styles */
 h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
 .order-section {
-    margin-top: 30px;
-    margin-bottom: 30px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .order-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .order-header h2 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #444;
-    margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  margin: 0;
 }
 
 .status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 10px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .dispatched {
-    background-color: #4caf50;
+  background-color: #4caf50;
 }
 
 .delivered {
-    background-color: #2196f3;
+  background-color: #2196f3;
 }
 
 /* Order Card Styles */
 .order-card {
-    display: flex;
-    justify-content: space-between; /* Ensure even spacing */
-    align-items: center;
-    padding: 15px;
-    margin-bottom: 10px;
-    background-color: #f4f8fb;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    gap: 20px; /* Consistent spacing between items */
-    flex-wrap: wrap; /* Wrap items on smaller screens */
+  display: flex;
+  justify-content: space-between; /* Ensure even spacing */
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #f4f8fb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 20px; /* Consistent spacing between items */
+  flex-wrap: wrap; /* Wrap items on smaller screens */
 }
 
 /* Order Info Section */
 .order-info {
-    flex: 2; /* Occupies more space */
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Spacing between image and text */
+  flex: 2; /* Occupies more space */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between image and text */
 }
 
 .order-info img {
-    width: 60px;
-    height: 60px;
-    border-radius: 5px;
-    margin-right: 15px;
+  width: 60px;
+  height: 60px;
+  border-radius: 5px;
+  margin-right: 15px;
 }
 
 /* Product and Delivery Info Styles */
 .product-info,
 .delivery-info {
-    flex: 1; /* Equal space for both sections */
-    display: flex;
-    flex-direction: column; /* Stack content vertically */
-    justify-content: center; /* Center content */
-    align-items: flex-start; /* Align content to the left */
-    min-height: 100px; /* Consistent height */
-    padding: 10px; /* Add padding */
-    box-sizing: border-box; /* Include padding in size */
+  flex: 1; /* Equal space for both sections */
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  justify-content: center; /* Center content */
+  align-items: flex-start; /* Align content to the left */
+  min-height: 100px; /* Consistent height */
+  padding: 10px; /* Add padding */
+  box-sizing: border-box; /* Include padding in size */
 }
 
 .product-info p,
 .delivery-info p {
-    font-size: 1rem; /* Uniform font size */
-    margin: 0; /* No extra margins */
-    font-weight: bold;
-    line-height: 1.2; /* Adjusted for better alignment */
+  font-size: 1rem; /* Uniform font size */
+  margin: 0; /* No extra margins */
+  font-weight: bold;
+  line-height: 1.2; /* Adjusted for better alignment */
 }
 
 .product-info .product-details {
-    font-size: 1rem; /* Consistent font size for details */
-    color: #6c757d; /* Muted secondary color */
-    margin: 0; /* No extra margins */
+  font-size: 1rem; /* Consistent font size for details */
+  color: #6c757d; /* Muted secondary color */
+  margin: 0; /* No extra margins */
 }
 
 .delivery-info .order-time {
-    font-size: 1rem; /* Consistent font size for details */
-    color: #6c757d; /* Muted secondary color */
-    margin-left: 29px;
-    width: 100%; /* Ensure the text spans full width for centering */
+  font-size: 1rem; /* Consistent font size for details */
+  color: #6c757d; /* Muted secondary color */
+  margin-left: 29px;
+  width: 100%; /* Ensure the text spans full width for centering */
 }
 
 .delivery-info .order-title {
-    font-size: 0.95rem; /* Consistent font size for details */
-    color: #000000; /* Muted secondary color */
-    font-weight:600;
-    margin-left: 15px;
-    text-align: left;
-    width: 100%; /* Ensure the text spans full width for centering */
+  font-size: 0.95rem; /* Consistent font size for details */
+  color: #000000; /* Muted secondary color */
+  font-weight: 600;
+  margin-left: 15px;
+  text-align: left;
+  width: 100%; /* Ensure the text spans full width for centering */
 }
 
 .delivery-info .order_time {
-    font-size: 0.9rem; /* Consistent font size for details */
-    color: #000000; /* Muted secondary color */
-    font-weight:600;
-    margin-left: 15px;
-    text-align: left;
-    width: 100%; /* Ensure the text spans full width for centering */
+  font-size: 0.9rem; /* Consistent font size for details */
+  color: #000000; /* Muted secondary color */
+  font-weight: 600;
+  margin-left: 15px;
+  text-align: left;
+  width: 100%; /* Ensure the text spans full width for centering */
 }
 
 .toggle-btn {
-    margin: 10px 0;
-    padding: 8px 15px;
-    color: #83bb1a;
-    background-color: #f4f8fb;
-    border: 1px solid green ;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
+  margin: 10px 0;
+  padding: 8px 15px;
+  color: #83bb1a;
+  background-color: #f4f8fb;
+  border: 1px solid green;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .toggle-btn:hover {
-    background-color: #6c9422;
-    color:white;
-    border: 1px solid white ;
+  background-color: #6c9422;
+  color: white;
+  border: 1px solid white;
 }
 
 .delivery-info {
-    margin: 0;
+  margin: 0;
 }
 
 .product-details small {
-    margin-right: 5px; /* Space between size and quantity */
+  margin-right: 5px; /* Space between size and quantity */
 }
 
 .product-info .product-price {
-    font-size: 0.9rem; /* Larger font */
-    font-weight: bold; /* Emphasize price */
-    color: #4caf50; /* Green color */
-    margin-top: 5px; /* Space from other text */
+  font-size: 0.9rem; /* Larger font */
+  font-weight: bold; /* Emphasize price */
+  color: #4caf50; /* Green color */
+  margin-top: 5px; /* Space from other text */
 }
 
 .delivery-info p {
-    color: #000000e0; /* Clear and visible text */
+  color: #000000e0; /* Clear and visible text */
 }
 
 .delivery {
-    text-align: center; /* Center-align delivery info */
-    margin-bottom: 10px;
+  text-align: center; /* Center-align delivery info */
+  margin-bottom: 10px;
 }
 
 /* Order Actions Section */
 .order-actions {
-    display: flex;
-    flex-direction: column; /* Stack actions vertically */
-    align-items: flex-end; /* Align actions to the right */
-    justify-content: space-between; /* Even spacing */
-    gap: 10px; /* Spacing between actions */
-    min-width: 150px; /* Prevent the section from shrinking too much */
+  display: flex;
+  flex-direction: column; /* Stack actions vertically */
+  align-items: flex-end; /* Align actions to the right */
+  justify-content: space-between; /* Even spacing */
+  gap: 10px; /* Spacing between actions */
+  min-width: 150px; /* Prevent the section from shrinking too much */
 }
 
 .order-actions button {
-    padding: 8px 12px;
-    margin-bottom: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.track-button {
-    background-color: #83bb1a;
-    color: white;
-    width: 100%;
-}
-
-.track-button:hover {
-    background-color: #8ece17;
+  padding: 8px 12px;
+  margin-bottom: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .details-button {
-    background-color: #ffffff;
-    color: #83bb1a;
-    width: 100%;
+  background-color: #ffffff;
+  color: #83bb1a;
+  width: 100%;
 }
 
 .details-button:hover {
-    background-color: #f4f8fb;
+  background-color: #f4f8fb;
 }
 
 .order-actions a {
-    display: inline-block;
-    padding: 8px 12px;
-    margin-top: 5px;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    width: 100%;
-    background-color: #fff;
-    color: #83bb1a;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
+  display: inline-block;
+  padding: 8px 12px;
+  margin-top: 5px;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  background-color: #fff;
+  color: #83bb1a;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 .order-actions a:hover {
-    background-color: #f4f8fb;
+  background-color: #f4f8fb;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-    .order-card {
-        flex-direction: column; /* Stack items */
-        align-items: flex-start; /* Align to the left */
-        gap: 15px; /* Reduce gap for smaller layouts */
-    }
+  .order-card {
+    flex-direction: column; /* Stack items */
+    align-items: flex-start; /* Align to the left */
+    gap: 15px; /* Reduce gap for smaller layouts */
+  }
 
-    .order-actions {
-        align-items: flex-start; /* Align actions to the left */
-        width: 100%; /* Full-width actions */
-    }
+  .order-actions {
+    align-items: flex-start; /* Align actions to the left */
+    width: 100%; /* Full-width actions */
+  }
 
-    .order-actions button,
-    .order-actions a {
-        width: 100%; /* Full-width buttons and links */
-    }
+  .order-actions button,
+  .order-actions a {
+    width: 100%; /* Full-width buttons and links */
+  }
 }

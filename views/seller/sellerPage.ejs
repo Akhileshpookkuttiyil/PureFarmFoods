@@ -2,249 +2,242 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Seller Dashboard</title>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link rel="stylesheet" href="/css/sellerpage.css" />
     <link rel="stylesheet" href="/css/welcome_S.css" />
-    <!-- <link rel="stylesheet" href="/css/sellerProfile.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       .submenu {
         display: none;
         transition: all 0.3s ease;
       }
-
       .submenu.show {
         display: block;
       }
 
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Segoe UI", sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
         min-height: 100vh;
         flex-direction: row;
+        background-color: #f4f4f4;
+      }
+
+      .nav-link.active {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
       }
 
       .sidebar {
         width: 220px;
-        color: #fff;
+        background-color: #ffffff;
+        border-right: 1px solid #ddd;
+        color: #333;
         position: fixed;
         top: 0;
         bottom: 0;
         padding-top: 20px;
-        transition: all 0.3s ease;
-      }
-
-      .sidebar .logo {
-        text-align: center;
-        margin-bottom: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
       }
 
       .sidebar nav a {
         display: block;
-        padding: 10px 20px;
+        padding: 15px 25px;
         text-decoration: none;
-        transition: background 0.3s;
+        color: #333;
+        transition: background 0.2s, color 0.2s;
+      }
+
+      .sidebar nav a:hover {
+        background-color: #f0f0f0;
+        color: #007bff;
       }
 
       .submenu a {
         padding-left: 40px;
+        font-size: 14px;
       }
 
-      /* Add this to your CSS file */
-
       .user-details {
-        padding: 10px;
+        padding: 15px;
         text-align: center;
-        border-bottom: 1px solid #ddd;
-        /* Optional: Adds a border below the user details section */
+        border-bottom: 1px solid #eee;
       }
 
       .profile-image-frame {
         width: 80px;
-        /* Adjust width as needed */
         height: 80px;
-        /* Adjust height as needed */
-        border: 3px solid #ddd;
-        /* Border color and width */
+        border: 2px solid #ccc;
         border-radius: 50%;
-        /* Makes the frame circular */
         overflow: hidden;
-        /* Hides overflowed parts of the image */
         margin: 0 auto;
-        /* Centers the image */
         display: flex;
-        /* Centers the image */
         align-items: center;
         justify-content: center;
       }
 
       .profile-image-frame img {
         width: 100%;
-        /* Ensures the image fills the frame */
         height: 100%;
-        /* Ensures the image fills the frame */
         object-fit: cover;
-        /* Ensures the image covers the frame */
-        display: block;
-        /* Removes any default space below the image */
       }
 
       .user-info {
         margin-top: 10px;
-        color: #fff;
-        /* Text color */
+        color: #333;
       }
 
       .user-info .user-name {
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 16px;
         margin-bottom: 5px;
       }
 
       .user-info .user-email,
       .user-info .user-location {
-        font-size: 14px;
-        margin-bottom: 5px;
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 3px;
       }
 
       .user-details p {
-        color: #ddd;
+        color: #999;
+      }
+
+      main.container {
+        padding: 30px;
+        flex-grow: 1;
+        background-color: #fff;
+        min-height: 100vh;
+        color: #333;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
       }
     </style>
   </head>
-
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
-    <div class="sidebar" role="navigation">
-      <!-- EJS template file, e.g., views/layout.ejs -->
 
-      <!-- EJS template file, e.g., views/layout.ejs -->
-
+    <aside class="sidebar" role="navigation">
+      <% if (currentUser) { %>
       <div class="user-details">
         <div class="profile-image-frame">
           <img
-            src="/images/<%= currentUser.profileImage %>"
+            src="/images/<%= currentUser.profileImage ? currentUser.profileImage : 'default-profile.jpeg' %>"
             alt="Profile Image"
           />
         </div>
         <div class="user-info">
-          <p class="user-name"><%= currentUser.username %></p>
-          <p class="user-email"><%= currentUser.email %></p>
-          <p class="user-location"><%= currentUser.location %></p>
+          <p class="user-name"><%= currentUser.username || 'No Username' %></p>
+          <p class="user-email"><%= currentUser.email || 'No Email' %></p>
+          <p class="user-location">
+            <%= currentUser.location || 'No Location' %>
+          </p>
         </div>
       </div>
+      <% } else { %>
+      <p style="color: #ccc; text-align: center">
+        User information is not available.
+      </p>
+      <% } %>
 
       <nav style="padding-top: 20px">
-        <a href="/seller" aria-label="Home"><i class="fas fa-home"></i> Home</a>
-        <a href="#" onclick="loadPage('/seller/profile')" aria-label="Profile"
-          ><i class="fas fa-user"></i> Profile</a
-        >
         <a
           href="#"
-          onclick="toggleSubMenu('product-submenu')"
+          onclick="loadPage('/seller/homeContent', this)"
+          aria-label="Home"
+          class="nav-link active"
+          id="homeLink"
+        >
+          <i class="fas fa-home"></i> Home
+        </a>
+
+        <a
+          href="#"
+          class="nav-link"
+          onclick="loadPage('/seller/profile', this)"
+          aria-label="Profile"
+        >
+          <i class="fas fa-user"></i> Profile
+        </a>
+
+        <a
+          href="#"
+          class="nav-link"
+          onclick="toggleSubMenu('product-submenu', this)"
           aria-label="Product"
           aria-expanded="false"
-          ><i class="fas fa-box"></i> Product</a
         >
+          <i class="fas fa-box"></i> Product
+        </a>
+
         <div id="product-submenu" class="submenu">
           <a
             href="#"
-            onclick="loadPage('/seller/product')"
+            class="nav-link"
+            onclick="loadPage('/seller/product', this)"
             aria-label="Add Product"
-            ><i class="fas fa-plus-circle"></i> Add Product</a
           >
+            <i class="fas fa-plus-circle"></i> Add Product
+          </a>
           <a
             href="#"
-            onclick="loadPage('/seller/manageProducts')"
+            class="nav-link"
+            onclick="loadPage('/seller/manageProducts', this)"
             aria-label="View Products"
-            ><i class="fas fa-eye"></i> View Products</a
           >
+            <i class="fas fa-eye"></i> View Products
+          </a>
         </div>
 
-        <a href="#" onclick="confirmLogout(event)" aria-label="Logout"
-          ><i class="fas fa-sign-out-alt"></i> Logout</a
+        <a
+          href="#"
+          onclick="confirmLogout(event)"
+          aria-label="Logout"
+          class="nav-link"
         >
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
       </nav>
-    </div>
-    <main class="container" id="content">
-      <!-- Content will be loaded here -->
-      <div class="welcome">
-        <h1>Welcome, Seller!</h1>
-        <p>
-          We're glad to have you back. Here's a quick overview of your store's
-          performance.
-        </p>
-      </div>
-      <div class="quick-links">
-        <a href="#" onclick="loadPage('/seller/product')">
-          <i class="fas fa-plus-circle"></i>
-          <p>Add New Product</p>
-        </a>
-        <a href="#" onclick="loadPage('/sales')">
-          <i class="fas fa-chart-line"></i>
-          <p>View Sales</p>
-        </a>
-        <a href="#" onclick="loadPage('/notifications')">
-          <i class="fas fa-bell"></i>
-          <p>Check Notifications</p>
-        </a>
-      </div>
-      <div class="summary">
-        <div class="card">
-          <i class="fas fa-dollar-sign"></i>
-          <h3>Total Sales</h3>
-          <p>$12,345</p>
-        </div>
-        <div class="card">
-          <i class="fas fa-box"></i>
-          <h3>Total Products</h3>
-          <p>48</p>
-        </div>
-        <div class="card">
-          <i class="fas fa-shopping-cart"></i>
-          <h3>Total Orders</h3>
-          <p>123</p>
-        </div>
-        <div class="card">
-          <i class="fas fa-undo-alt"></i>
-          <h3>Pending Refunds</h3>
-          <p>5</p>
-        </div>
-        <div class="card">
-          <i class="fas fa-bell"></i>
-          <h3>Notifications</h3>
-          <p>8</p>
-        </div>
-      </div>
-    </main>
+    </aside>
+
+    <main class="container" id="content"><%- include('./homeContent') %></main>
+
     <script src="/js/addProduct.js"></script>
     <script src="/js/viewProducts.js"></script>
     <script src="/js/deleteProduct.js"></script>
     <script src="/js/getSubcategories.js"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const submenuToggle = document.querySelector(
           '[onclick^="toggleSubMenu"]'
         );
-        submenuToggle.addEventListener("click", () => {
+        submenuToggle?.addEventListener("click", () => {
           const isExpanded =
-            submenuToggle.getAttribute("aria-expanded") === "true" || false;
+            submenuToggle.getAttribute("aria-expanded") === "true";
           submenuToggle.setAttribute("aria-expanded", !isExpanded);
         });
       });
 
-      function loadPage(url) {
+      function loadPage(url, element) {
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((link) => link.classList.remove("active"));
+        if (element) element.classList.add("active");
+
         fetch(url)
           .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
+            if (!response.ok) throw new Error("Network response was not ok");
             return response.text();
           })
           .then((data) => {
@@ -255,19 +248,22 @@
                 .split("/")
                 .pop()
                 .replace(".ejs", "")
-                .replace("-", " ")
+                .replace(/[-_]/g, " ")
                 .toUpperCase();
           })
-          .catch((error) => {
-            console.error("Error loading page:", error);
+          .catch(() => {
             document.getElementById("content").innerHTML =
               "<p>Error loading page. Please try again later.</p>";
           });
       }
 
-      function toggleSubMenu(id) {
+      function toggleSubMenu(id, element) {
         const submenu = document.getElementById(id);
         submenu.classList.toggle("show");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((link) => link.classList.remove("active"));
+        if (element) element.classList.add("active");
       }
 
       function confirmLogout(event) {
@@ -283,7 +279,7 @@
           cancelButtonText: "Cancel",
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = "/seller/logout"; // Replace with your logout route
+            window.location.href = "/seller/logout";
           }
         });
       }

@@ -1,0 +1,50 @@
+<div class="welcome">
+  <h1>Welcome, Seller!</h1>
+  <p>
+    We're glad to have you back. Here's a quick overview of your store's
+    performance.
+  </p>
+</div>
+
+<div class="quick-links">
+  <a href="#" onclick="loadPage('/seller/product')">
+    <i class="fas fa-plus-circle"></i>
+    <p>Add New Product</p>
+  </a>
+  <a href="#" onclick="loadPage('/sales')">
+    <i class="fas fa-chart-line"></i>
+    <p>View Sales</p>
+  </a>
+  <a href="#" onclick="loadPage('/notifications')">
+    <i class="fas fa-bell"></i>
+    <p>Check Notifications</p>
+  </a>
+</div>
+
+<div class="summary">
+  <div class="card">
+    <i class="fas fa-indian-rupee-sign"></i>
+    <h3>Total Sales</h3>
+    <p>₹<%= totalRevenue %></p>
+  </div>
+  <div class="card">
+    <i class="fas fa-box"></i>
+    <h3>Total Products</h3>
+    <p><%= totalProducts %></p>
+  </div>
+  <div class="card">
+    <i class="fas fa-shopping-cart"></i>
+    <h3>Total Orders</h3>
+    <p><%= totalOrders %></p>
+  </div>
+  <div class="card">
+    <i class="fas fa-undo-alt"></i>
+    <h3>Pending Refunds</h3>
+    <p>5</p>
+  </div>
+  <div class="card">
+    <i class="fas fa-bell"></i>
+    <h3>Notifications</h3>
+    <p>8</p>
+  </div>
+</div>

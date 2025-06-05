@@ -5,6 +5,7 @@ const isAuthenticated = require('../middleware/sellerAuth');
 const router = express.Router();
 
 router.get('/seller',isAuthenticated, sellerController.getHome);
+router.get('/seller/homeContent',isAuthenticated,sellerController.getHomeContent);
 router.get('/seller/profile',isAuthenticated, sellerController.sellerProfile);
 router.get('/seller/product',isAuthenticated, sellerController.productInsert);
 router.get('/seller/edit-product/:id',isAuthenticated,sellerController.editProduct)

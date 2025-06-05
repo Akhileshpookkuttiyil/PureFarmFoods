@@ -316,10 +316,8 @@
                               </div>
                           </div>
                           <div class="order-actions">
-                              ${isDelivered ? '' : `<button class="track-button" data-order-id="${order._id}">Track Order</button>`}
-                              <button class="details-button">View Order Details</button>
-                              <a href="#">Get Invoice</a>
-                              <a href="#">Edit Order</a>
+                              ${isDelivered ? '' : `<a class="track-button" data-order-id="${order._id}">Track Order</a>`}
+                              <a href="#">Get Invoice</a
                           </div>
                       </div>
                   `;
