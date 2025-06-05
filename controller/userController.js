@@ -478,89 +478,98 @@ module.exports = {
     }
   },
 
-  createUser: async (req, res) => {
-    try {
-      // Initialize req.session.error as an object
-      req.session.error = {};
+createUser: async (req, res) => {
+  try {
+    // Initialize session error object
+    req.session.error = {};
 
-      function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-      }
-
-      function isStrongPassword(password) {
-        if (password.length < 8) {
-          return false;
-        }
-        const uppercaseRegex = /[A-Z]/;
-        const lowercaseRegex = /[a-z]/;
-        const numberRegex = /[0-9]/;
-        const specialCharacterRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-        return (
-          uppercaseRegex.test(password) &&
-          lowercaseRegex.test(password) &&
-          numberRegex.test(password) &&
-          specialCharacterRegex.test(password)
-        );
-      }
-
-      const { firstName, lastName, email, password, confirm_password } =
-        req.body;
-
-      // Ensure all fields are provided
-      if (!firstName || !lastName || !email || !password || !confirm_password) {
-        req.session.error.fieldError = "All fields are required";
-        return res.redirect("/signup");
-      }
-
-      // Check if passwords match
-      if (password !== confirm_password) {
-        req.session.error.passwordError = "Passwords do not match";
-        return res.redirect("/signup");
-      }
-
-      // Check if the email format is valid
-      if (!isValidEmail(email)) {
-        req.session.error.emailError = "Invalid email format";
-        return res.redirect("/signup");
-      }
-
-      // Check if the email already exists
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        req.session.error.userError = "Email already exists";
-        return res.redirect("/signup");
-      }
-
-      // Check if the password meets criteria
-      if (!isStrongPassword(password)) {
-        req.session.error.passwordError = "Password does not meet criteria";
-        return res.redirect("/signup");
-      }
-
-      // Hash the password before saving the user
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Create a new user and save it to the database
-      const newUser = await User.create({
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-      });
-
-      // Clear errors if user creation was successful
-      delete req.session.error;
-
-      // Respond with success message and the created user data
-      return res
-        .status(201)
-        .json({ message: "User created successfully", user: newUser });
-    } catch (error) {
-      console.error("Error creating user:", error);
-      return res.status(500).json({ message: "Internal server error" });
+    // Utility to validate email format
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     }
-  },
+
+    // Utility to validate password strength
+    function isStrongPassword(password) {
+      const minLength = 8;
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasLowercase = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      return (
+        password.length >= minLength &&
+        hasUppercase &&
+        hasLowercase &&
+        hasNumber &&
+        hasSpecialChar
+      );
+    }
+
+    const { firstName, lastName, email, password, confirm_password } = req.body;
+
+    // 1. Check if all fields are filled
+    if (!firstName || !lastName || !email || !password || !confirm_password) {
+      req.session.error.fieldError = "All fields are required.";
+      return res.redirect("/signup");
+    }
+
+    // 2. Check if passwords match
+    if (password !== confirm_password) {
+      req.session.error.passwordError = "Passwords do not match.";
+      return res.redirect("/signup");
+    }
+
+    // 3. Validate email format
+    if (!isValidEmail(email)) {
+      req.session.error.emailError = "Invalid email format.";
+      return res.redirect("/signup");
+    }
+
+    // 4. Check if email already exists in the database
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      req.session.error.userError = "Email already exists.";
+      return res.redirect("/signup");
+    }
+
+    // 5. Validate password strength
+    if (!isStrongPassword(password)) {
+      req.session.error.passwordError =
+        "Password must be at least 8 characters long and include: an uppercase letter, a lowercase letter, a number, and a special character.";
+      return res.redirect("/signup");
+    }
+
+    // 6. Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 7. Create the user
+    const newUser = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
+    // 8. Clear any error messages in session
+    delete req.session.error;
+
+    // 9. Send success response
+    return res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+      },
+    });
+
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+},
+
 
   checkUser: async (req, res) => {
     const { email, password } = req.body;

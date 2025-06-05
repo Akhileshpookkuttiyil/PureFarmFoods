@@ -22,18 +22,18 @@
       }
 
       .progress-wrapper {
-        max-width: 800px;
+        max-width: 900px;
         margin: 30px auto;
-        padding: 20px;
+        padding: 30px;
         background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       .progress-container {
         position: relative;
         margin: 30px 0;
-        padding: 0 10px;
+        padding: 0 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -45,7 +45,7 @@
         top: 50%;
         left: 0;
         right: 0;
-        height: 6px;
+        height: 8px;
         background: #e6e6e6;
         border-radius: 5px;
         z-index: 1;
@@ -55,11 +55,11 @@
         position: absolute;
         top: 50%;
         left: 0;
-        height: 6px;
+        height: 8px;
         background: linear-gradient(90deg, #4caf50, #67d067);
         border-radius: 5px;
         width: 0;
-        transition: width 0.4s ease;
+        transition: width 0.5s ease;
         z-index: 2;
       }
 
@@ -69,81 +69,116 @@
         text-align: center;
         flex: 1;
         z-index: 3;
+        transition: transform 0.3s ease;
       }
 
       .stage-circle {
-        height: 30px;
-        width: 30px;
+        height: 40px;
+        width: 40px;
         background: #e6e6e6;
         border-radius: 50%;
-        margin: 0 auto 10px;
+        margin: 0 auto 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        font-size: 16px;
         color: #555;
         font-weight: bold;
-        transition: background 0.3s ease, color 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
       .stage-circle.active {
         background: #4caf50;
         color: #fff;
         box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        transform: scale(1.2);
+      }
+
+      .stage-circle:hover {
+        transform: scale(1.1);
       }
 
       .stage-label {
-        font-size: 14px;
+        font-size: 16px;
         color: #666;
+        font-weight: 600;
+        margin-bottom: 8px;
       }
 
       .timestamp {
         font-size: 12px;
         color: #999;
+        font-style: italic;
       }
 
       /* Buttons */
       .buttons {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 30px;
       }
 
       .buttons button {
-        padding: 10px 20px;
-        font-size: 16px;
+        padding: 12px 24px;
+        font-size: 18px;
         color: #fff;
         background: #4caf50;
         border: none;
-        border-radius: 5px;
-        margin: 0 10px;
+        border-radius: 8px;
+        margin: 0 15px;
         cursor: pointer;
-        transition: background 0.2s ease;
+        transition: background 0.3s ease, transform 0.2s ease;
       }
 
       .buttons button:hover {
         background: #45a044;
+        transform: scale(1.05);
       }
 
       .buttons button:disabled {
         background: #ccc;
         cursor: not-allowed;
+        transform: none;
       }
 
       /* Responsive Design */
-      @media (max-width: 600px) {
+      @media (max-width: 768px) {
+        .progress-wrapper {
+          padding: 20px;
+        }
+
+        .progress-container {
+          flex-direction: column;
+        }
+
         .stage-circle {
-          height: 25px;
-          width: 25px;
-          font-size: 12px;
+          height: 35px;
+          width: 35px;
+          font-size: 14px;
         }
 
         .stage-label {
-          font-size: 12px;
+          font-size: 14px;
         }
 
         .timestamp {
-          font-size: 10px;
+          font-size: 11px;
+        }
+      }
+
+      /* Mobile-Friendly Progress Bar */
+      @media (max-width: 600px) {
+        .progress-bar {
+          height: 6px;
+        }
+
+        .progress-bar-filled {
+          height: 6px;
+        }
+
+        .stage-circle {
+          height: 30px;
+          width: 30px;
         }
       }
     </style>
@@ -220,8 +255,7 @@
         });
 
         // Update progress bar width
-        const progressPercentage =
-          (currentStageIndex / (stages.length - 1)) * 100;
+        const progressPercentage = (currentStageIndex / (stages.length - 1)) * 100;
         progressBarFilled.style.width = `${progressPercentage}%`;
 
         // Enable/Disable buttons
@@ -245,6 +279,4 @@
 
       // Initialize progress
       updateProgress();
-    </script>
-  </body>
-</html>
+    </script

@@ -270,8 +270,12 @@
                   <td class="py-5"></td>
                   <td class="py-5">
                     <div class="py-3 border-bottom border-top">
-                      <p class="mb-0 text-dark total-amount">
-                        ₹<%= cart.totalPrice %>
+                      <p
+                        class="mb-0 text-dark total-amount"
+                        id="cartTotalAmount"
+                        data-subtotal="<%= cart.totalPrice.toFixed(2) %>"
+                      >
+                        ₹<%= cart.totalPrice.toFixed(2) %>
                       </p>
                     </div>
                   </td>
@@ -342,11 +346,11 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("paymentForm");
-    const totalPriceElement = document.querySelector(".total-amount");
+    const totalPriceElement = document.getElementById("cartTotalAmount");
     const subtotal = parseFloat(totalPriceElement.dataset.subtotal || "0");
     const razorpayKey = "rzp_test_nS7Wuqp4MppDIA";
 
-    // 🚚 Update total when shipping option changes
+    // Update total when shipping option changes
     document
       .querySelectorAll('input[name="shippingOption"]')
       .forEach((option) => {
@@ -368,7 +372,7 @@
         });
       });
 
-    // 🛒 Handle Place Order
+    // Handle Place Order
     document
       .getElementById("placeOrderButton")
       .addEventListener("click", async (event) => {
@@ -383,7 +387,7 @@
 
         if (!paymentMethod) return alert("Please select a payment method.");
 
-        // ✅ Field validation
+        // Field validation
         const fields = [
           { id: "firstName", msg: "First name is required." },
           { id: "lastName", msg: "Last name is required." },
