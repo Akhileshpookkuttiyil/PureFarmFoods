@@ -1,4 +1,6 @@
 <%- include('layout') %>
+    <!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <style>
 
 .hearts-icon {
@@ -673,6 +675,17 @@
             </div>
         </div>
     </div>
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+  <% if (success) { %>
+    toastr.success("<%= success %>");
+  <% } %>
+</script>
     <script src="/js/populateProducts.js"></script>
     <script src="/js/fetchCategories.js"></script>
     

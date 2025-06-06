@@ -420,20 +420,20 @@ module.exports = {
     }
   },
 
-  getOrderDetails : async (req, res) => {
+  getOrderDetails: async (req, res) => {
     const { orderId } = req.params; // Retrieve the orderId from the URL parameters
     try {
       // Find the order by orderId and populate user and product details
-      const order = await Order.findById(orderId)
-      console.log(order)
+      const order = await Order.findById(orderId);
+      console.log(order);
       if (!order) {
         return res.status(404).json({ error: "Order not found" }); // Handle order not found
       }
-  
+
       // Send the order details as a response
       res.json({
         order,
-        message: "Order details retrieved successfully"
+        message: "Order details retrieved successfully",
       });
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -461,8 +461,7 @@ module.exports = {
     const { orderId } = req.params;
     const { location, status } = req.body;
 
-    console.log({"orderId":orderId,"location, status":req.body});
-    
+    console.log({ orderId: orderId, "location, status": req.body });
 
     if (!location || !status) {
       return res
@@ -532,18 +531,15 @@ module.exports = {
   deleteUser: async (req, res) => {
     try {
       const { userId } = req.params;
-      // Soft delete: set a 'deleted' flag or timestamp
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { deleted: true, deletedAt: new Date() }, // Add a deletion timestamp
-        { new: true }
-      );
+
+      // Hard delete: permanently remove the user by ID
+      const user = await User.findByIdAndDelete(userId);
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
 
-      res.status(200).json({ message: "User marked as deleted" });
+      res.status(200).json({ message: "User permanently deleted" });
     } catch (error) {
       this.handleErrorResponse(res, error, "Failed to delete user");
     }
