@@ -1,105 +1,263 @@
-<%- include('layout') %> 
+<%- include('layout') %>
+
+<!-- Font Awesome for eye icons -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
 
 <style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+  }
 
-    .input-large {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #d1d5db;
-        border-radius: 5px;
-        outline: none;
-        transition: border-color 0.3s;
-    }
+  .signup-container-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.7);
+    margin-top: 30vh;
+    padding: 20px;
+    overflow: hidden;
+  }
 
-    .error-message {
-        color: red;
-        font-size: 0.875rem;
-        margin-top: 5px;
-    }
+  .signup-container-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("/img/bg-log.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(6px);
+    opacity: 0.4;
+    z-index: 1;
+  }
 
-    .signup-container-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f3f4f6;
-        min-height: 100vh;
-        width: 100%; /* Ensure it takes full width */
-        padding: 10vh 0; /* Add padding for top/bottom spacing */
-        margin-top: 20vh;
-    }
+  .signup-container-wrapper > * {
+    position: relative;
+    z-index: 2;
+  }
 
-    .signup-container {
-        background-color: #ffffff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
-        width: calc(100% - 40px); /* Allows responsiveness without specific screen adjustments */
-    }
+  .signup-container {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    width: 100%;
+  }
 
+  .signup-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #374151;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: #374151;
+    margin-bottom: 5px;
+  }
+
+  .input-large {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .input-large:focus {
+    border-color: #81c408;
+    box-shadow: 0 0 0 3px rgba(129, 196, 8, 0.2);
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+  }
+
+  .form-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #6b7280;
+    user-select: none;
+  }
+
+  button[type="submit"] {
+    background-color: #81c408;
+    color: #ffffff;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #66a30d;
+  }
+
+  @media (max-width: 480px) {
     .signup-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #374151;
-        margin-bottom: 20px;
-        text-align: center;
+      font-size: 1.3rem;
     }
+    button[type="submit"] {
+      font-size: 0.95rem;
+    }
+  }
 </style>
 
 <div class="signup-container-wrapper">
-    <div class="signup-container">
-        <h2 class="signup-title">Sign Up</h2>
-        <% if (error && error.fieldError) { %>
-            <p class="error-message"><%= error.fieldError %></p>
+  <div class="signup-container">
+    <h2 class="signup-title">Sign Up</h2>
+
+    <% if (error && error.fieldError) { %>
+    <p class="error-message"><%= error.fieldError %></p>
+    <% } %>
+
+    <form
+      action="/users"
+      method="POST"
+      style="display: flex; flex-direction: column; gap: 15px"
+    >
+      <!-- First Name -->
+      <div class="form-group">
+        <label for="firstName" class="form-label">First Name</label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          class="input-large"
+          required
+          autocomplete="given-name"
+        />
+        <% if (error && error.firstNameError) { %>
+        <p class="error-message"><%= error.firstNameError %></p>
         <% } %>
-        <form action="/users" method="POST" style="display: flex; flex-direction: column; gap: 15px;" onsubmit="return validateForm()">
-            <div style="display: flex; flex-direction: column;">
-                <label for="firstname" style="font-size: 0.875rem; font-weight: bold; color: #374151;">First Name</label>
-                <input type="text" id="firstName" name="firstName" class="input-large">
-                <% if (error && error.firstNameError) { %>
-                    <p class="error-message"><%= error.firstNameError %></p>
-                <% } %>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="secondname" style="font-size: 0.875rem; font-weight: bold; color: #374151;">Last Name</label>
-                <input type="text" id="lastName" name="lastName" class="input-large">
-                <% if (error && error.lastNameError) { %>
-                    <p class="error-message"><%= error.lastNameError %></p>
-                <% } %>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="email" style="font-size: 0.875rem; font-weight: bold; color: #374151;">Email</label>
-                <input type="text" id="email" name="email" class="input-large">
-                <% if (error && error.emailError) { %>
-                    <p class="error-message"><%= error.emailError %></p>
-                <% } %>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="password" style="font-size: 0.875rem; font-weight: bold; color: #374151;">Password</label>
-                <input type="password" id="password" name="password" class="input-large">
-                <% if (error && error.passwordError) { %>
-                    <p class="error-message"><%= error.passwordError %></p>
-                <% } %>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="confirm_password" style="font-size: 0.875rem; font-weight: bold; color: #374151;">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" class="input-large">
-                <% if (error && error.confirmPasswordError) { %>
-                    <p class="error-message"><%= error.confirmPasswordError %></p>
-                <% } %>
-            </div>
-            <button type="submit" style="background-color: #81c408; color: #ffffff; padding: 10px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">Sign Up</button>
-        </form>
-        <p style="text-align: center; margin-top: 25px;">Already have an account? <a href="/login">Login</a></p>
-    </div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          class="input-large"
+          required
+          autocomplete="family-name"
+        />
+        <% if (error && error.lastNameError) { %>
+        <p class="error-message"><%= error.lastNameError %></p>
+        <% } %>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="input-large"
+          required
+          autocomplete="email"
+        />
+        <% if (error && error.emailError) { %>
+        <p class="error-message"><%= error.emailError %></p>
+        <% } %>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="input-large"
+          required
+        />
+        <span
+          class="password-toggle"
+          onclick="toggleVisibility('password', 'toggleIcon1')"
+        >
+          <i id="toggleIcon1" class="fas fa-eye"></i>
+        </span>
+        <% if (error && error.passwordError) { %>
+        <p class="error-message"><%= error.passwordError %></p>
+        <% } %>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirm_password" class="form-label"
+          >Confirm Password</label
+        >
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          class="input-large"
+          required
+        />
+        <span
+          class="password-toggle"
+          onclick="toggleVisibility('confirm_password', 'toggleIcon2')"
+        >
+          <i id="toggleIcon2" class="fas fa-eye"></i>
+        </span>
+        <% if (error && error.confirmPasswordError) { %>
+        <p class="error-message"><%= error.confirmPasswordError %></p>
+        <% } %>
+      </div>
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 25px">
+      Already have an account? <a href="/login">Login</a>
+    </p>
+  </div>
 </div>
 
-<%- include('footer') %> 
-</body>
-</html>
+<script>
+  function toggleVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    const isHidden = input.type === "password";
+    input.type = isHidden ? "text" : "password";
+    icon.classList.toggle("fa-eye");
+    icon.classList.toggle("fa-eye-slash");
+  }
+</script>
+
+<%- include('footer') %>

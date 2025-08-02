@@ -411,8 +411,6 @@ module.exports = {
         .populate("user", "firstName lastName email") // Populate user details
         .populate("products.product", "name") // Populate product details (e.g., name)
         .sort({ createdAt: -1 }); // Sort by newest first
-
-      // Render the order management page with fetched data
       res.render("admin/orderManagement", { orders });
     } catch (error) {
       console.error("Error fetching orders:", error);
