@@ -69,6 +69,7 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     notes: { type: String },
+    deleted: { type: Boolean, default: false },
     deletedAt: { type: Date, default: null },
     razorpayOrderId: {
       type: String,

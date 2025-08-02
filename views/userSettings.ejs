@@ -1,51 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/userSettings.css" />
-    <link rel="stylesheet" href="/css/order_page.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
-    />
-  </head>
 
-  <body>
-    <%- include('layout') %>
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/userSettings.css" />
+  <link rel="stylesheet" href="/css/order_page.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+  <style>
+    .product-item {
+      display: flex;
+      flex-direction: column;
+      /* Stack content vertically */
+      gap: 6px;
+
+      border-bottom: 1px solid #eee;
+    }
+
+    .product-item:last-child {
+      border-bottom: none;
+    }
+
+    .product-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-left: 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      align-self: flex-start;
+    }
+
+    .product-info {
+      font-size: 14px;
+    }
+
+    .product-info p {
+      margin: 0px 0;
+      font-weight: bold;
+    }
+
+    .product-details {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .order-card {
+      border: 1px solid #ddd;
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .product-price {
+      font-weight: bold;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .delivery-info {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .order-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .track-button {
+      background-color: #007bff;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .track-button:hover {
+      background-color: #0056b3;
+    }
+
+    .toggle-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #f1f1f1;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+
+</head>
+
+<body>
+  <%- include('layout') %>
     <!-- Include your header -->
 
     <div class="containers">
       <div class="side-nav">
         <h2>Settings</h2>
         <!-- Add dynamic classes based on active page -->
-        <a
-          href="/public-profile"
-          class="<%= activePage === 'public-profile' ? 'active' : '' %>"
-        >
+        <a href="/public-profile" class="<%= activePage === 'public-profile' ? 'active' : '' %>">
           Public Profile
         </a>
-        <a
-          href="/account-settings"
-          class="<%= activePage === 'account-settings' ? 'active' : '' %>"
-        >
+        <a href="/account-settings" class="<%= activePage === 'account-settings' ? 'active' : '' %>">
           Account Settings
         </a>
-        <a
-          href="/notifications"
-          class="<%= activePage === 'notifications' ? 'active' : '' %>"
-        >
+        <a href="/notifications" class="<%= activePage === 'notifications' ? 'active' : '' %>">
           Notifications
         </a>
-        <a
-          href="/manage-addresses"
-          class="<%= activePage === 'manage-addresses' ? 'active' : '' %>"
-        >
+        <a href="/manage-addresses" class="<%= activePage === 'manage-addresses' ? 'active' : '' %>">
           Manage Addresses
         </a>
-        <a
-          href="/my-orders"
-          class="<%= activePage === 'my-orders' ? 'active' : '' %>"
-        >
+        <a href="/my-orders" class="<%= activePage === 'my-orders' ? 'active' : '' %>">
           My Orders
         </a>
       </div>
@@ -53,11 +124,8 @@
       <!-- Main content sections for different settings -->
       <div class="main-contents">
         <!-- Account Settings Section -->
-        <div
-          id="account-settings-content"
-          class="settings-content"
-          style="display: <%= activePage === 'account-settings' ? 'block' : 'none' %>"
-        >
+        <div id="account-settings-content" class="settings-content"
+          style="display: <%= activePage === 'account-settings' ? 'block' : 'none' %>">
           <h2>Account settings</h2>
           <div class="form-group">
             <label for="email">Email address</label>
@@ -66,64 +134,23 @@
               <strong id="current-email">emailis@private.com</strong>
               <a href="#" id="change-email-link">Change</a>
             </p>
-            <form
-              id="update-email-form"
-              action="/update-email"
-              method="POST"
-              style="display: none"
-            >
-              <input
-                type="email"
-                name="new-email"
-                id="new-email"
-                placeholder="New email address"
-                required
-              />
-              <button
-                type="button"
-                id="update-email-btn"
-                class="btn btn-primary"
-              >
+            <form id="update-email-form" action="/update-email" method="POST" style="display: none">
+              <input type="email" name="new-email" id="new-email" placeholder="New email address" required />
+              <button type="button" id="update-email-btn" class="btn btn-primary">
                 Update Email
               </button>
             </form>
-            <input
-              type="text"
-              id="otp"
-              placeholder="Enter OTP"
-              style="display: none"
-              required
-            />
-            <button
-              id="verify-otp-btn"
-              class="btn btn-secondary"
-              style="display: none"
-            >
+            <input type="text" id="otp" placeholder="Enter OTP" style="display: none" required />
+            <button id="verify-otp-btn" class="btn btn-secondary" style="display: none">
               Verify OTP
             </button>
           </div>
           <div class="form-group">
             <label for="new-password">New password</label>
-            <form
-              id="update-password-form"
-              action="/user/change-password"
-              method="POST"
-            >
-              <input
-                type="password"
-                name="newPassword"
-                id="new-password"
-                placeholder="New password"
-                required
-              />
+            <form id="update-password-form" action="/user/change-password" method="POST">
+              <input type="password" name="newPassword" id="new-password" placeholder="New password" required />
               <label for="current-password">Current password</label>
-              <input
-                type="password"
-                name="oldPassword"
-                id="current-password"
-                placeholder="Current password"
-                required
-              />
+              <input type="password" name="oldPassword" id="current-password" placeholder="Current password" required />
               <button type="submit" class="btn btn-primary">
                 Save password
               </button>
@@ -146,133 +173,119 @@
               To proceed, please confirm your intention to delete your account:
             </p>
             <p>
-              <a
-                href="/user/delete-Account"
-                class="remove-hover"
-                id="delete-account-link"
-                style="color: red; cursor: pointer"
-                >I want to delete my account</a
-              >
+              <a href="/user/delete-Account" class="remove-hover" id="delete-account-link"
+                style="color: red; cursor: pointer">I want to delete my account</a>
             </p>
           </div>
         </div>
 
         <!-- Public Profile Section -->
-        <div
-          id="public-profile-content"
-          class="settings-content"
-          style="display: <%= activePage === 'public-profile' ? 'block' : 'none' %>"
-        >
-        <h2>Public profile</h2>
-        <form id="public-profile-form" enctype="multipart/form-data">
+        <div id="public-profile-content" class="settings-content"
+          style="display: <%= activePage === 'public-profile' ? 'block' : 'none' %>">
+          <h2>Public profile</h2>
+          <form id="public-profile-form" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="first-name">First Name</label>
-                <div class="input-container">
-                    <input type="text" id="first-name" name="firstName" placeholder="First Name" value="<%= user.firstName %>" required>
-                    <span class="edit-icon" onclick="editField('first-name')"><i class="fas fa-edit"></i></span>
-                </div>
+              <label for="first-name">First Name</label>
+              <div class="input-container">
+                <input type="text" id="first-name" name="firstName" placeholder="First Name"
+                  value="<%= user.firstName %>" required>
+                <span class="edit-icon" onclick="editField('first-name')"><i class="fas fa-edit"></i></span>
+              </div>
             </div>
             <div class="form-group">
-                <label for="last-name">Last Name</label>
-                <div class="input-container">
-                    <input type="text" id="last-name" name="lastName" placeholder="Last Name" value="<%= user.lastName %>" required>
-                    <span class="edit-icon" onclick="editField('last-name')"><i class="fas fa-edit"></i></span>
-                </div>
+              <label for="last-name">Last Name</label>
+              <div class="input-container">
+                <input type="text" id="last-name" name="lastName" placeholder="Last Name" value="<%= user.lastName %>"
+                  required>
+                <span class="edit-icon" onclick="editField('last-name')"><i class="fas fa-edit"></i></span>
+              </div>
             </div>
             <div class="form-group">
-                <label for="gender">Gender</label>
-                <div class="input-container">
-                    <select id="gender" name="gender" required>
-                        <option value="" disabled>Select Gender</option>
-                        <option value="male" <% if (user.gender === 'male') { %>selected<% } %>>Male</option>
-                        <option value="female" <% if (user.gender === 'female') { %>selected<% } %>>Female</option>
-                        <option value="other" <% if (user.gender === 'other') { %>selected<% } %>>Other</option>
-                    </select>
-                    <span class="edit-icon" onclick="editField('gender')"><i class="fas fa-edit"></i></span>
-                </div>
+              <label for="gender">Gender</label>
+              <div class="input-container">
+                <select id="gender" name="gender" required>
+                  <option value="" disabled>Select Gender</option>
+                  <option value="male" <% if (user.gender==='male' ) { %>selected<% } %>>Male</option>
+                  <option value="female" <% if (user.gender==='female' ) { %>selected<% } %>>Female</option>
+                  <option value="other" <% if (user.gender==='other' ) { %>selected<% } %>>Other</option>
+                </select>
+                <span class="edit-icon" onclick="editField('gender')"><i class="fas fa-edit"></i></span>
+              </div>
             </div>
             <div class="form-group">
-                <label for="profile-picture">Profile Picture</label>
-                <div class="input-container">
-                    <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
-                    <span class="edit-icon" onclick="editField('profile-picture')"><i class="fas fa-edit"></i></span>
-                </div>
+              <label for="profile-picture">Profile Picture</label>
+              <div class="input-container">
+                <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+                <span class="edit-icon" onclick="editField('profile-picture')"><i class="fas fa-edit"></i></span>
+              </div>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <div class="input-container">
-                    <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>" required>
-                    <span><i class="fas fa-check-circle" style="color: rgb(55, 247, 55); font-size: 1.2em;margin-left: 10px;"></i>
-                    </span>
-                </div>
+              <label for="email">Email</label>
+              <div class="input-container">
+                <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email %>" required>
+                <span><i class="fas fa-check-circle"
+                    style="color: rgb(55, 247, 55); font-size: 1.2em;margin-left: 10px;"></i>
+                </span>
+              </div>
             </div>
             <div class="form-group">
-                <label for="phone">Phone</label>
-                <div class="input-container">
-                    <input type="tel" id="phone" name="phone" placeholder="Phone" value="<%= user.phone %>" required>
-                    <span class="edit-icon" id="phone-edit-icon" onclick="editField('phone')">
-                        <% if (!user.phone) { %>
-                            <i class="fas fa-edit"></i>
-                        <% } else { %>
-                            <i class="fas fa-check-circle" style="color: rgb(55, 247, 55);"></i>
-                        <% } %>
-                    </span>                  
-                </div>
+              <label for="phone">Phone</label>
+              <div class="input-container">
+                <input type="tel" id="phone" name="phone" placeholder="Phone" value="<%= user.phone %>" required>
+                <span class="edit-icon" id="phone-edit-icon" onclick="editField('phone')">
+                  <% if (!user.phone) { %>
+                    <i class="fas fa-edit"></i>
+                    <% } else { %>
+                      <i class="fas fa-check-circle" style="color: rgb(55, 247, 55);"></i>
+                      <% } %>
+                </span>
+              </div>
             </div>
             <button type="submit" id="updatebtn" class="btn btn-primary">Update Profile</button>
-        </form>
+          </form>
         </div>
 
         <!-- Notifications Section -->
-        <div
-          id="notifications-content"
-          class="settings-content"
-          style="display: <%= activePage === 'notifications' ? 'block' : 'none' %>"
-        >
+        <div id="notifications-content" class="settings-content"
+          style="display: <%= activePage === 'notifications' ? 'block' : 'none' %>">
           <h3>Notifications</h3>
           <p>Set your notification preferences here.</p>
         </div>
 
         <!-- Manage Addresses Section -->
-        <div
-          id="manage-addresses-content"
-          class="settings-content"
-          style="display: <%= activePage === 'manage-addresses' ? 'block' : 'none' %>"
-        >
+        <div id="manage-addresses-content" class="settings-content"
+          style="display: <%= activePage === 'manage-addresses' ? 'block' : 'none' %>">
           <h3>Manage Addresses</h3>
           <p>Manage your saved addresses here.</p>
         </div>
 
         <!-- My Orders Section -->
-        <div
-          id="my-orders-content"
-          class="settings-content"
-          style="display: <%= activePage === 'my-orders' ? 'block' : 'none' %>"
-        >
-        <div class="container">
-          <h2>Order History</h2>
-        
-          <!-- Dispatched Section -->
-          <div id="dispatched-orders" class="order-section">
-            <!-- Dynamically populated dispatched orders will appear here -->
+        <div id="my-orders-content" class="settings-content"
+          style="display: <%= activePage === 'my-orders' ? 'block' : 'none' %>">
+          <div class="container">
+            <h2>Order History</h2>
+
+            <!-- Dispatched Section -->
+            <div id="dispatched-orders" class="order-section">
+              <!-- Dynamically populated dispatched orders will appear here -->
+            </div>
+
+            <!-- Delivered Section -->
+            <div id="delivered-orders" class="order-section">
+              <!-- Dynamically populated delivered orders will appear here -->
+            </div>
+
           </div>
-        
-          <!-- Delivered Section -->
-          <div id="delivered-orders" class="order-section">
-            <!-- Dynamically populated delivered orders will appear here -->
-          </div>
-      
-        </div>
-        </div>
         </div>
       </div>
     </div>
+    </div>
 
     <%- include('footer') %>
-    <!-- Include your footer -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      <!-- Include your footer -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
           // Initialize variables and elements
           const links = document.querySelectorAll(".side-nav a");
           const passwordForm = document.getElementById('update-password-form');
@@ -280,257 +293,272 @@
           const publicProfileForm = document.getElementById('public-profile-form');
           const allFields = document.querySelectorAll('#public-profile-form input, #public-profile-form select');
           const updatedFields = {};
-      
+
           // Fetch orders from the server
           fetch('/fetch-orders')
-              .then(response => response.json())
-              .then(data => {
-                const validStages = ["placed", "processing", "dispatched", "shipped", "out for delivery"];
-                  const orders = data.orders;
-                  const dispatchedOrders = orders.filter(order => validStages.includes(order.orderStatus));
-                  const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
-                  const initialOrderLimit = 2;
-                  let showAllDispatched = false;
-                  let showAllDelivered = false;
-      
-                  // Function to render an order card (with adjustments for delivered orders)
-                  const renderOrder = (order, isDelivered) => `
-                      <div class="order-card">
-                          <div class="order-info">
-                              <img 
-                                  src="${order.products[0].product.images[0] ? '/images/' + order.products[0].product.images[0] : '/default-image.jpg'}" 
-                                  alt="Item Image">
-                              <div class="product-info">
-                                  <p>${order.products[0].product.name}</p>
-                                  <div class="product-details">
-                                      <small>Size: ${order.products[0].product.size}</small> | 
-                                      <small>Quantity: ${order.products[0].quantity}</small>
-                                  </div>
-                                  <p class="product-price">Price: ₹${order.totalAmount}</p>
-                              </div>
-                              <div class="delivery-info">
-                                  <p class="order-title">
-                                    ${isDelivered ? `Delivered on ${new Date(order.updatedAt).toISOString().split('T')[0]}` : (order.deliveryDate || 'Arrives tomorrow')}
-                                  </p>
-                                  <small class="order-time">${isDelivered ? '' : '| 7am - 7pm |'}</small>
-                              </div>
-                          </div>
-                          <div class="order-actions">
-                              ${isDelivered ? '' : `<a class="track-button" data-order-id="${order._id}">Track Order</a>`}
-                              <a href="#">Get Invoice</a
-                          </div>
-                      </div>
-                  `;
-      
-                  // Function to render dispatched orders
-                  const renderDispatchedOrders = () => {
-                      const dispatchedSection = document.getElementById('dispatched-orders');
-                      let visibleOrders = showAllDispatched ? dispatchedOrders : dispatchedOrders.slice(0, initialOrderLimit);
-      
-                      if (dispatchedOrders.length > 0) {
-                          let dispatchedHTML = `
+            .then(response => response.json())
+            .then(data => {
+              const validStages = ["placed", "processing", "dispatched", "shipped", "out for delivery"];
+              const orders = data.orders;
+              const dispatchedOrders = orders.filter(order => validStages.includes(order.orderStatus));
+              const deliveredOrders = orders.filter(order => order.orderStatus === 'delivered');
+              const initialOrderLimit = 2;
+              let showAllDispatched = false;
+              let showAllDelivered = false;
+
+              // Function to render an order card (with adjustments for delivered orders)
+              const renderOrder = (order, isDelivered) => {
+                const productsHTML = order.products.map(item => `
+         <div class="product-item">
+              <img 
+                src="${item.product.images[0] ? '/images/' + item.product.images[0] : '/default-image.jpg'}"
+                alt="Item Image"
+                onclick="window.location.href='/product-detail/${item.product.name}'"
+                style="cursor: pointer;"
+              >
+              <div class="product-info">
+                <p>${item.product.name}</p>
+                  <div class="product-details">
+                    <small>Size: ${item.product.size}</small>
+                    <small>Quantity: ${item.quantity}</small>
+                  </div>
+             </div>
+        </div>
+
+        `).join('');
+
+                return `
+        <div class="order-card">
+            <div class="order-info">
+                ${productsHTML}
+                <p class="product-price">Total Price: ₹${order.totalAmount}</p>
+                <div class="delivery-info">
+                    <p class="order-title">
+                        ${isDelivered ? `Delivered on ${new Date(order.updatedAt).toISOString().split('T')[0]}` : (order.deliveryDate || 'Arrives tomorrow')}
+                    </p>
+                    <small class="order-time">${isDelivered ? '' : ' 7am - 7pm '}</small>
+                </div>
+            </div>
+            <div class="order-actions">
+                ${isDelivered ? '' : `<a class="track-button" data-order-id="${order._id}">Track Order</a>`}
+                <a href="#">Get Invoice</a>
+            </div>
+        </div>
+    `;
+              };
+
+
+
+              // Function to render dispatched orders
+              const renderDispatchedOrders = () => {
+                const dispatchedSection = document.getElementById('dispatched-orders');
+                let visibleOrders = showAllDispatched ? dispatchedOrders : dispatchedOrders.slice(0, initialOrderLimit);
+
+                if (dispatchedOrders.length > 0) {
+                  let dispatchedHTML = `
                               <div class="order-header">
                                   <span class="status-dot dispatched"></span>
                                   <h2>Dispatched</h2>
                               </div>
                           `;
-                          visibleOrders.forEach(order => dispatchedHTML += renderOrder(order, false));
-      
-                          if (dispatchedOrders.length > initialOrderLimit) {
-                              dispatchedHTML += `
+                  visibleOrders.forEach(order => dispatchedHTML += renderOrder(order, false));
+
+                  if (dispatchedOrders.length > initialOrderLimit) {
+                    dispatchedHTML += `
                                   <button class="toggle-btn" onclick="toggleDispatchedOrders()">
                                       ${showAllDispatched ? 'Show Less Orders' : 'Show More Orders'}
                                   </button>
                               `;
-                          }
-                          dispatchedSection.innerHTML = dispatchedHTML;
-      
-                          // Now add the event listeners to the track buttons
-                          document.querySelectorAll('.track-button').forEach(button => {
-                              button.addEventListener('click', function () {
-                                  const orderId = this.getAttribute('data-order-id');
-                                  console.log("Order ID: " + orderId);
-                                  alert("Tracking Order ID: " + orderId);
-                                  window.location.href = `/track-order/${orderId}`;
-                              });
-                          });
-                      } else {
-                          dispatchedSection.innerHTML = '<p>No dispatched orders.</p>';
-                      }
-                  };
-      
-                  // Function to render delivered orders
-                  const renderDeliveredOrders = () => {
-                      const deliveredSection = document.getElementById('delivered-orders');
-                      let visibleOrders = showAllDelivered ? deliveredOrders : deliveredOrders.slice(0, initialOrderLimit);
-      
-                      if (deliveredOrders.length > 0) {
-                          let deliveredHTML = `
+                  }
+                  dispatchedSection.innerHTML = dispatchedHTML;
+
+                  // Now add the event listeners to the track buttons
+                  document.querySelectorAll('.track-button').forEach(button => {
+                    button.addEventListener('click', function () {
+                      const orderId = this.getAttribute('data-order-id');
+                      console.log("Order ID: " + orderId);
+                      alert("Tracking Order ID: " + orderId);
+                      window.location.href = `/track-order/${orderId}`;
+                    });
+                  });
+                } else {
+                  dispatchedSection.innerHTML = '<p>No dispatched orders.</p>';
+                }
+              };
+
+              // Function to render delivered orders
+              const renderDeliveredOrders = () => {
+                const deliveredSection = document.getElementById('delivered-orders');
+                let visibleOrders = showAllDelivered ? deliveredOrders : deliveredOrders.slice(0, initialOrderLimit);
+
+                if (deliveredOrders.length > 0) {
+                  let deliveredHTML = `
                               <div class="order-header">
                                   <span class="status-dot delivered"></span>
                                   <h2>Delivered</h2>
                               </div>
                           `;
-                          visibleOrders.forEach(order => deliveredHTML += renderOrder(order, true));
-      
-                          if (deliveredOrders.length > initialOrderLimit) {
-                              deliveredHTML += `
+                  visibleOrders.forEach(order => deliveredHTML += renderOrder(order, true));
+
+                  if (deliveredOrders.length > initialOrderLimit) {
+                    deliveredHTML += `
                                   <button class="toggle-btn" onclick="toggleDeliveredOrders()">
                                       ${showAllDelivered ? 'Show Less Orders' : 'Show More Orders'}
                                   </button>
                               `;
-                          }
-                          deliveredSection.innerHTML = deliveredHTML;
-                      } else {
-                          deliveredSection.innerHTML = '<p>No delivered orders.</p>';
-                      }
-                  };
-      
-                  // Toggle functions for showing more or fewer orders
-                  window.toggleDispatchedOrders = () => {
-                      showAllDispatched = !showAllDispatched;
-                      renderDispatchedOrders();
-                  };
-      
-                  window.toggleDeliveredOrders = () => {
-                      showAllDelivered = !showAllDelivered;
-                      renderDeliveredOrders();
-                  };
-      
-                  // Display the dispatched and delivered orders
-                  renderDispatchedOrders();
-                  renderDeliveredOrders();
-              })
-              .catch(error => {
-                  console.error('Error fetching orders:', error);
-                  document.getElementById('dispatched-orders').innerHTML = '<p>Error loading orders.</p>';
-                  document.getElementById('delivered-orders').innerHTML = '<p>Error loading orders.</p>';
-              });
-      
+                  }
+                  deliveredSection.innerHTML = deliveredHTML;
+                } else {
+                  deliveredSection.innerHTML = '<p>No delivered orders.</p>';
+                }
+              };
+
+              // Toggle functions for showing more or fewer orders
+              window.toggleDispatchedOrders = () => {
+                showAllDispatched = !showAllDispatched;
+                renderDispatchedOrders();
+              };
+
+              window.toggleDeliveredOrders = () => {
+                showAllDelivered = !showAllDelivered;
+                renderDeliveredOrders();
+              };
+
+              // Display the dispatched and delivered orders
+              renderDispatchedOrders();
+              renderDeliveredOrders();
+            })
+            .catch(error => {
+              console.error('Error fetching orders:', error);
+              document.getElementById('dispatched-orders').innerHTML = '<p>Error loading orders.</p>';
+              document.getElementById('delivered-orders').innerHTML = '<p>Error loading orders.</p>';
+            });
+
           // Set click events on all tabs for navigation
           links.forEach((link) => {
-              link.addEventListener("click", function (event) {
-                  event.preventDefault();
-                  window.location.href = link.getAttribute("href");
-              });
+            link.addEventListener("click", function (event) {
+              event.preventDefault();
+              window.location.href = link.getAttribute("href");
+            });
           });
-      
+
           // Show email update form
           document.getElementById('change-email-link').addEventListener('click', function (event) {
-              event.preventDefault();
-              document.getElementById('update-email-form').style.display = 'block';
+            event.preventDefault();
+            document.getElementById('update-email-form').style.display = 'block';
           });
-      
+
           // Handle password update form submission
           passwordForm.addEventListener('submit', async function (event) {
-              event.preventDefault();
-              const newPassword = document.getElementById('new-password').value;
-              const oldPassword = document.getElementById('current-password').value;
-      
-              try {
-                  const response = await fetch('/user/change-password', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ newPassword, oldPassword })
-                  });
-      
-                  const result = await response.json();
-                  if (result.success) {
-                      Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
-                      passwordForm.reset();
-                  } else {
-                      showError(result.message);
-                  }
-              } catch (error) {
-                  console.error('Error changing password:', error);
-                  showError('An error occurred while changing your password. Please try again.');
+            event.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const oldPassword = document.getElementById('current-password').value;
+
+            try {
+              const response = await fetch('/user/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPassword, oldPassword })
+              });
+
+              const result = await response.json();
+              if (result.success) {
+                Swal.fire('Success!', 'Your password has been changed successfully.', 'success');
+                passwordForm.reset();
+              } else {
+                showError(result.message);
               }
+            } catch (error) {
+              console.error('Error changing password:', error);
+              showError('An error occurred while changing your password. Please try again.');
+            }
           });
-      
+
           // Handle account deletion
           document.getElementById('delete-account-link').addEventListener('click', async function (event) {
-              event.preventDefault();
-              const result = await Swal.fire({
-                  title: 'Are you sure?',
-                  text: "Deleting your account will remove all associated content and cannot be undone.",
-                  icon: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#d33',
-                  cancelButtonColor: '#3085d6',
-                  confirmButtonText: 'Yes, delete it!',
-                  cancelButtonText: 'No, cancel'
-              });
-      
-              if (result.isConfirmed) {
-                  await deleteAccount();
-              }
+            event.preventDefault();
+            const result = await Swal.fire({
+              title: 'Are you sure?',
+              text: "Deleting your account will remove all associated content and cannot be undone.",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              confirmButtonText: 'Yes, delete it!',
+              cancelButtonText: 'No, cancel'
+            });
+
+            if (result.isConfirmed) {
+              await deleteAccount();
+            }
           });
-      
+
           // Function to delete account
           async function deleteAccount() {
-              try {
-                  const response = await fetch('/user/delete-Account', {
-                      method: 'DELETE',
-                      headers: { 'Content-Type': 'application/json' }
-                  });
-      
-                  const result = await response.json();
-      
-                  if (result.success) {
-                      Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
-                          window.location.href = '/'; // Redirect to home page or login page after deletion
-                      });
-                  } else {
-                      showError(result.message);
-                  }
-              } catch (error) {
-                  console.error('Error deleting account:', error);
-                  showError('An error occurred while trying to delete your account. Please try again later.');
+            try {
+              const response = await fetch('/user/delete-Account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                Swal.fire('Deleted!', 'Your account has been deleted.', 'success').then(() => {
+                  window.location.href = '/'; // Redirect to home page or login page after deletion
+                });
+              } else {
+                showError(result.message);
               }
+            } catch (error) {
+              console.error('Error deleting account:', error);
+              showError('An error occurred while trying to delete your account. Please try again later.');
+            }
           }
-      
+
           // Function to show error messages
           function showError(message) {
-              Swal.fire({
-                  title: 'Error',
-                  text: message,
-                  icon: 'error',
-                  confirmButtonText: 'OK'
-              });
+            Swal.fire({
+              title: 'Error',
+              text: message,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
           }
-      
+
           // Disable all input fields on page load
           allFields.forEach(input => input.disabled = true);
           saveButton.style.display = 'none'; // Hide the save changes button initially
-      
+
           // Function to handle field editing
           window.editField = function (fieldId) {
-              const field = document.getElementById(fieldId);
-              allFields.forEach(input => {
-                  if (input.id !== fieldId) input.disabled = true; // Disable all other fields
-              });
-      
-              field.disabled = false; // Enable the clicked field
-              field.focus(); // Focus the input field
-              field.addEventListener('change', handleChange); // Attach change event to the field
+            const field = document.getElementById(fieldId);
+            allFields.forEach(input => {
+              if (input.id !== fieldId) input.disabled = true; // Disable all other fields
+            });
+
+            field.disabled = false; // Enable the clicked field
+            field.focus(); // Focus the input field
+            field.addEventListener('change', handleChange); // Attach change event to the field
           };
-      
+
           // Function to handle change events
           function handleChange() {
-              saveButton.style.display = 'block'; // Show the button when a change is detected
-              const fieldId = this.id;
-              updatedFields[fieldId] = this.value; // Store the updated value
+            saveButton.style.display = 'block'; // Show the button when a change is detected
+            const fieldId = this.id;
+            updatedFields[fieldId] = this.value; // Store the updated value
           }
-      
+
           // Update the profile form submission logic
           publicProfileForm.addEventListener('submit', function (event) {
-              event.preventDefault();
-              allFields.forEach(input => input.disabled = false); // Ensure all fields are enabled before submission
+            event.preventDefault();
+            allFields.forEach(input => input.disabled = false); // Ensure all fields are enabled before submission
           });
-      });
+        });
       </script>
-       
-<script src="/js/user/updateProfile.js"></script>
-<script src="/js/user/updateEmail.js"></script>
-  </body>
+
+      <script src="/js/user/updateProfile.js"></script>
+      <script src="/js/user/updateEmail.js"></script>
+</body>
+
 </html>

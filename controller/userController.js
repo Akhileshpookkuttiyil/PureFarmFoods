@@ -595,6 +595,11 @@ module.exports = {
         return res.redirect("/login");
       }
 
+      // Restore only after successful password match
+      if (user.deleted) {
+        await user.restoreUser();
+      }   
+
       req.session.user = user;
       req.session.success = "Login successful"; // <-- Add this
 
@@ -806,7 +811,7 @@ module.exports = {
           .json({ success: false, message: "Unauthorized access" });
       }
 
-      const userId = req.session.user._id; // Get user ID from session
+      const userId = req.session.user._id;
 
       // Find the user by ID
       const user = await User.findById(userId);
@@ -816,29 +821,23 @@ module.exports = {
           .json({ success: false, message: "User not found" });
       }
 
-      // Delete the user's cart and wishlist
-      await Cart.deleteOne({ user: userId });
-      await Wishlist.deleteOne({ user: userId });
+      // Soft delete the user using schema method
+      await user.softDelete();
 
-      // Delete the user
-      const deleteResult = await User.deleteOne({ _id: userId });
-
-      if (deleteResult.deletedCount > 0) {
-        // Clear session data after deletion
-        req.session.destroy((err) => {
-          if (err) {
-            console.error("Error destroying session:", err);
-            return res
-              .status(500)
-              .json({ success: false, message: "Internal server error" });
-          }
-          res
-            .status(200)
-            .json({ success: true, message: "Account deleted successfully" });
+      // Destroy session after soft delete
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Error destroying session:", err);
+          return res
+            .status(500)
+            .json({ success: false, message: "Internal server error" });
+        }
+        res.status(200).json({
+          success: true,
+          message:
+            "Account scheduled for deletion in 7 days. You can restore it within this period.",
         });
-      } else {
-        res.status(404).json({ success: false, message: "User not found" });
-      }
+      });
     } catch (error) {
       console.error("Error deleting account:", error);
       res
