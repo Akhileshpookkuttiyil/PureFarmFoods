@@ -1,133 +1,148 @@
 <%- include('layout') %>
 
-    <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6">Cart</h1>
-        <ol class="breadcrumb justify-content-center mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active text-white">Cart</li>
-        </ol>
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+  <h1 class="text-center text-white display-6">Cart</h1>
+  <ol class="breadcrumb justify-content-center mb-0">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active text-white">Cart</li>
+  </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="table-responsive">
+      <table class="table text-center">
+        <thead>
+          <tr>
+            <th scope="col" class="col-width">Products</th>
+            <th scope="col" class="col-width">Name</th>
+            <th scope="col" class="col-width">Price</th>
+            <th scope="col" class="col-width">Quantity</th>
+            <th scope="col" class="col-width">Total</th>
+            <th scope="col" class="col-width">Handle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Cart items will be dynamically injected here -->
+        </tbody>
+      </table>
     </div>
-    <!-- Single Page Header End -->
-
-    <!-- Cart Page Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="table-responsive">
-                <table class="table text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col-width">Products</th>
-                            <th scope="col" class="col-width">Name</th>
-                            <th scope="col" class="col-width">Price</th>
-                            <th scope="col" class="col-width">Quantity</th>
-                            <th scope="col" class="col-width">Total</th>
-                            <th scope="col" class="col-width">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Cart items will be dynamically injected here -->
-                    </tbody>
-                </table>
+    <div class="mt-5 text-center">
+      <input
+        type="text"
+        class="border-0 border-bottom rounded me-5 py-3 mb-4"
+        placeholder="Coupon Code"
+      />
+      <button
+        class="btn border-secondary rounded-pill px-4 py-3 text-primary"
+        type="button"
+      >
+        Apply Coupon
+      </button>
+    </div>
+    <div class="row g-4 justify-content-end">
+      <div class="col-8"></div>
+      <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+        <div class="bg-light rounded">
+          <div class="p-4 text-center">
+            <h1 class="display-6 mb-4">
+              Cart <span class="fw-normal">Total</span>
+            </h1>
+            <div class="d-flex justify-content-between mb-4">
+              <h5 class="mb-0 me-4">Subtotal:</h5>
+              <p class="mb-0 cart-subtotal">₹0.00</p>
             </div>
-            <div class="mt-5 text-center">
-                <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
-                <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply
-                    Coupon</button>
+            <div class="d-flex justify-content-between">
+              <h5 class="mb-0 me-4">Shipping</h5>
+              <div class="">
+                <p class="mb-0">Flat rate: ₹3.00</p>
+              </div>
             </div>
-            <div class="row g-4 justify-content-end">
-                <div class="col-8"></div>
-                <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-                    <div class="bg-light rounded">
-                        <div class="p-4 text-center">
-                            <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="mb-0 me-4">Subtotal:</h5>
-                                <p class="mb-0 cart-subtotal">₹0.00</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <h5 class="mb-0 me-4">Shipping</h5>
-                                <div class="">
-                                    <p class="mb-0">Flat rate: ₹3.00</p>
-                                </div>
-                            </div>
-                            <p class="mb-0 text-end">Shipping to Ukraine.</p>
-                        </div>
-                        <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                            <h5 class="mb-0 ps-4 me-4">Total</h5>
-                            <p class="mb-0 pe-4 cart-total">₹3.00</p>
-                        </div>
-                        <button
-                            class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
-                            type="button" onclick="window.location.href='/checkout';">
-                            Proceed Checkout
-                        </button>
-
-                    </div>
-                </div>
-            </div>
+            <p class="mb-0 text-end">Shipping to Ukraine.</p>
+          </div>
+          <div
+            class="py-4 mb-4 border-top border-bottom d-flex justify-content-between"
+          >
+            <h5 class="mb-0 ps-4 me-4">Total</h5>
+            <p class="mb-0 pe-4 cart-total">₹3.00</p>
+          </div>
+          <button
+            class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+            type="button"
+            onclick="window.location.href='/checkout';"
+          >
+            Proceed Checkout
+          </button>
         </div>
+      </div>
     </div>
-    <!-- Cart Page End -->
+  </div>
+</div>
+<!-- Cart Page End -->
 
-    <%- include('footer') %>
+<%- include('footer') %>
 
-        <style>
-            .col-width {
-                width: 16.68%;
-            }
+<style>
+  .col-width {
+    width: 16.68%;
+  }
 
-            .quantity {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding-left: 21px;
-                /* Adjust this value to add padding to the left */
-            }
+  .quantity {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 21px;
+    /* Adjust this value to add padding to the left */
+  }
 
-            .quantity .input-group-btn {
-                flex: 1;
-                display: flex;
-                justify-content: center;
-            }
+  .quantity .input-group-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
 
-            .quantity input {
-                flex: 1;
-                text-align: center;
-                margin: 0 5px;
-                /* Adjust the margin as needed */
-            }
+  .quantity input {
+    flex: 1;
+    text-align: center;
+    margin: 0 5px;
+    /* Adjust the margin as needed */
+  }
 
-            .quantity .btn {
-                margin: 0 10px;
-                /* Adjust the margin as needed */
-            }
-        </style>
+  .quantity .btn {
+    margin: 0 10px;
+    /* Adjust the margin as needed */
+  }
+</style>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                fetch('/cart/cartByUserId')
-                    .then(response => response.json())
-                    .then(data => {
-                        const tbody = document.querySelector('table tbody');
-                        const shippingElement = document.querySelector('.shipping-cost');
-                        const cartTotalElement = document.querySelector('.cart-total');
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/cart/cartByUserId")
+      .then((response) => response.json())
+      .then((data) => {
+        const tbody = document.querySelector("table tbody");
+        const shippingElement = document.querySelector(".shipping-cost");
+        const cartTotalElement = document.querySelector(".cart-total");
 
-                        if (data.products && data.products.length > 0) {
-                            let rows = '';
-                            data.products.forEach(item => {
-                                rows += `
+        if (data.products && data.products.length > 0) {
+          let rows = "";
+          data.products.forEach((item) => {
+            rows += `
             <tr data-product-id="${item.product._id}">
               <th scope="row" class="col-width">
                 <div class="d-flex align-items-center justify-content-center">
-                  <img src="images/${item.product.images[0]}" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                  <img src="images/${
+                    item.product.images[0]
+                  }" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
                 </div>
               </th>
               <td class="col-width">
                 <p class="mb-0 mt-4">${item.product.name}</p>
               </td>
               <td class="col-width">
-                <p class="mb-0 mt-4 product-price">${item.product.price} ₹</p>
+                <p class="mb-0 mt-4 product-price">₹ ${item.product.price}</p>
               </td>
               <td class="col-width">
                 <div class="input-group quantity mt-4" style="width: 150px;">
@@ -136,7 +151,9 @@
                       <i class="fa fa-minus"></i>
                     </button>
                   </div>
-                  <input type="text" class="form-control form-control-sm text-center border-0" value="${item.quantity}">
+                  <input type="text" class="form-control form-control-sm text-center border-0" value="${
+                    item.quantity
+                  }">
                   <div class="input-group-btn">
                     <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                       <i class="fa fa-plus"></i>
@@ -145,7 +162,9 @@
                 </div>
               </td>
               <td class="col-width">
-                <p class="mb-0 mt-4 product-total">${(item.product.price * item.quantity).toFixed(2)} ₹</p>
+                <p class="mb-0 mt-4 product-total">₹ ${(
+                  item.product.price * item.quantity
+                ).toFixed(2)} </p>
               </td>
               <td class="col-width">
                 <button class="btn btn-md rounded-circle bg-light border mt-4 delete-button">
@@ -154,84 +173,105 @@
               </td>
             </tr>
           `;
-                            });
-                            tbody.innerHTML = rows;
+          });
+          tbody.innerHTML = rows;
 
-                            const updateCartDisplay = () => {
-                                const subtotal = data.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-                                document.querySelector('.cart-subtotal').innerText = `${subtotal.toFixed(2)} ₹`;
-                                document.querySelector('.cart-total').innerText = `${(subtotal + 3).toFixed(2)} ₹`; // assuming flat rate shipping of 3$
-                                updateCartItemCount();
-                            };
-                            const updateCartItemCount = () => {
-                                const itemCount = data.products.reduce((total, item) => total + item.quantity, 0);
-                                document.querySelector('.cart-item-count').innerText = itemCount;
-                            };
-                            tbody.addEventListener('click', function (event) {
-                                const button = event.target.closest('button');
-                                if (!button) return;
+          const updateCartDisplay = () => {
+            const subtotal = data.products.reduce(
+              (sum, item) => sum + item.product.price * item.quantity,
+              0
+            );
+            document.querySelector(
+              ".cart-subtotal"
+            ).innerText = `₹ ${subtotal.toFixed(2)} `;
+            document.querySelector(".cart-total").innerText = `₹ ${(
+              subtotal + 3
+            ).toFixed(2)} `; // assuming flat rate shipping of 3$
+            updateCartItemCount();
+          };
+          const updateCartItemCount = () => {
+            const itemCount = data.products.reduce(
+              (total, item) => total + item.quantity,
+              0
+            );
+            document.querySelector(".cart-item-count").innerText = itemCount;
+          };
+          tbody.addEventListener("click", function (event) {
+            const button = event.target.closest("button");
+            if (!button) return;
 
-                                const tr = button.closest('tr');
-                                const productId = tr.dataset.productId;
-                                const input = tr.querySelector('input');
-                                let quantity = parseInt(input.value, 10);
+            const tr = button.closest("tr");
+            const productId = tr.dataset.productId;
+            const input = tr.querySelector("input");
+            let quantity = parseInt(input.value, 10);
 
-                                if (button.classList.contains('delete-button')) {
-                                    fetch('/cart/delete', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ productId })
-                                    })
-                                        .then(response => response.json())
-                                        .then(deletedProduct => {
-                                            tr.remove();
-                                            // Remove the product from the data array
-                                            data.products = data.products.filter(item => item.product._id !== productId);
-                                            updateCartDisplay();
-                                            if (data.products.length === 0) {
-                                                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No items in the cart.</td></tr>';
-                                                document.querySelector('.cart-subtotal').innerText = '0.00 ₹';
-                                                document.querySelector('.cart-total').innerText = '0.00 ₹'; // assuming flat rate shipping of 3$
-                                                shippingElement.style.display = 'none'; // Hide shipping cost
-                                            }
-                                        })
-                                        .catch(error => console.error('Error deleting product from cart:', error));
-                                    return;
-                                }
+            if (button.classList.contains("delete-button")) {
+              fetch("/cart/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId }),
+              })
+                .then((response) => response.json())
+                .then((deletedProduct) => {
+                  tr.remove();
+                  // Remove the product from the data array
+                  data.products = data.products.filter(
+                    (item) => item.product._id !== productId
+                  );
+                  updateCartDisplay();
+                  if (data.products.length === 0) {
+                    tbody.innerHTML =
+                      '<tr><td colspan="6" class="text-center">No items in the cart.</td></tr>';
+                    document.querySelector(".cart-subtotal").innerText =
+                      "0.00 ₹";
+                    document.querySelector(".cart-total").innerText = "0.00 ₹"; // assuming flat rate shipping of 3$
+                    shippingElement.style.display = "none"; // Hide shipping cost
+                  }
+                })
+                .catch((error) =>
+                  console.error("Error deleting product from cart:", error)
+                );
+              return;
+            }
 
-                                if (button.classList.contains('btn-minus') && quantity > 1) {
-                                    quantity--;
-                                } else if (button.classList.contains('btn-plus')) {
-                                    quantity++;
-                                } else {
-                                    return;
-                                }
+            if (button.classList.contains("btn-minus") && quantity > 1) {
+              quantity--;
+            } else if (button.classList.contains("btn-plus")) {
+              quantity++;
+            } else {
+              return;
+            }
 
-                                fetch('/cart/update', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ productId, quantity })
-                                })
-                                    .then(response => response.json())
-                                    .then(updatedProduct => {
-                                        input.value = quantity;
-                                        const priceText = tr.querySelector('.product-price').innerText;
-                                        const price = parseFloat(priceText.replace('₹', '').trim());
-                                        tr.querySelector('.product-total').innerText = `${(price * quantity).toFixed(2)} ₹`;
-                                        data.products = data.products.map(item => item.product._id === productId ? { ...item, quantity } : item);
-                                        updateCartDisplay();
-                                    })
-                                    .catch(error => console.error('Error updating cart:', error));
-                            });
+            fetch("/cart/update", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productId, quantity }),
+            })
+              .then((response) => response.json())
+              .then((updatedProduct) => {
+                input.value = quantity;
+                const priceText = tr.querySelector(".product-price").innerText;
+                const price = parseFloat(priceText.replace("₹", "").trim());
+                tr.querySelector(".product-total").innerText = `${(
+                  price * quantity
+                ).toFixed(2)} ₹`;
+                data.products = data.products.map((item) =>
+                  item.product._id === productId ? { ...item, quantity } : item
+                );
+                updateCartDisplay();
+              })
+              .catch((error) => console.error("Error updating cart:", error));
+          });
 
-                            updateCartDisplay();
-                        } else {
-                            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No items in the cart.</td></tr>';
-                            document.querySelector('.cart-subtotal').innerText = '0.00 ₹';
-                            document.querySelector('.cart-total').innerText = '0.00 ₹'; // assuming flat rate shipping of 3$
-                            shippingElement.style.display = 'none'; // Hide shipping cost
-                        }
-                    })
-                    .catch(error => console.error('Error fetching cart data:', error));
-            });
-        </script>
+          updateCartDisplay();
+        } else {
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="text-center">No items in the cart.</td></tr>';
+          document.querySelector(".cart-subtotal").innerText = "0.00 ₹";
+          document.querySelector(".cart-total").innerText = "0.00 ₹"; // assuming flat rate shipping of 3$
+          shippingElement.style.display = "none"; // Hide shipping cost
+        }
+      })
+      .catch((error) => console.error("Error fetching cart data:", error));
+  });
+</script>
