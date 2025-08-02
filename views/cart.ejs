@@ -133,11 +133,15 @@
             <tr data-product-id="${item.product._id}">
               <th scope="row" class="col-width">
                 <div class="d-flex align-items-center justify-content-center">
-                  <img src="images/${
-                    item.product.images[0]
-                  }" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                    <a href="/product-detail/${item.product.name}">
+                        <img src="images/${item.product.images[0]}" 
+                        class="img-fluid me-5 rounded-circle" 
+                        style="width: 80px; height: 80px;" 
+                        alt="${item.product.name}">
+                    </a>
                 </div>
-              </th>
+               </th>
+
               <td class="col-width">
                 <p class="mb-0 mt-4">${item.product.name}</p>
               </td>
