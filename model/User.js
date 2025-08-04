@@ -104,31 +104,51 @@ userSchema.methods.isSeller = function () {
 
 // Soft delete modified to cleanup related data
 userSchema.methods.softDelete = async function () {
-  const deletedAt = new Date(); // Single consistent timestamp
+  const deletedAt = new Date();
 
   this.deleted = true;
   this.deletedAt = deletedAt;
 
-  await Promise.all([
-    Cart.updateMany({ user: this._id }, { deleted: true, deletedAt }),
-    Wishlist.updateMany({ user: this._id }, { deleted: true, deletedAt }),
-    Order.updateMany({ user: this._id }, { deleted: true, deletedAt }),
-  ]);
+  try {
+    await Promise.all([
+      Cart.updateMany({ user: this._id }, { deleted: true, deletedAt }),
+      Wishlist.updateMany({ user: this._id }, { deleted: true, deletedAt }),
+      Order.updateMany({ user: this._id }, { deleted: true, deletedAt }),
+    ]);
 
-  return this.save();
+    return await this.save();
+  } catch (err) {
+    console.error("Soft delete failed:", err);
+    throw err;
+  }
 };
 
-userSchema.methods.hardDelete = async function () {
-  await Promise.all([
-    Cart.deleteMany({ user: this._id }),
-    Wishlist.deleteMany({ user: this._id }),
-    Order.deleteMany({ user: this._id }), // optional
-  ]);
-  return this.deleteOne();
+userSchema.methods.hardDelete = async function (deleteOrders = true) {
+  try {
+    const deletions = [
+      Cart.deleteMany({ user: this._id }),
+      Wishlist.deleteMany({ user: this._id }),
+    ];
+
+    if (deleteOrders) {
+      deletions.push(Order.deleteMany({ user: this._id }));
+    }
+
+    await Promise.all(deletions);
+
+    return await this.deleteOne();
+  } catch (err) {
+    console.error("Hard delete failed:", err);
+    throw err;
+  }
 };
 
 // Restore user
 userSchema.methods.restoreUser = async function () {
+  if (!this.deleted) {
+    throw new Error("User is not deleted.");
+  }
+
   this.deleted = false;
   this.deletedAt = null;
 
@@ -141,6 +161,11 @@ userSchema.methods.restoreUser = async function () {
       { user: this._id, deleted: true },
       { deleted: false, deletedAt: null }
     ),
+    Order.updateMany(
+      // Optional
+      { user: this._id, deleted: true },
+      { deleted: false, deletedAt: null }
+    ),
   ]);
 
   return this.save();
@@ -148,12 +173,14 @@ userSchema.methods.restoreUser = async function () {
 
 // Block user
 userSchema.methods.blockUser = function () {
+  if (this.blocked) return this;
   this.blocked = true;
   return this.save();
 };
 
 // Unblock user
 userSchema.methods.unblockUser = function () {
+  if (!this.blocked) return this;
   this.blocked = false;
   return this.save();
 };
