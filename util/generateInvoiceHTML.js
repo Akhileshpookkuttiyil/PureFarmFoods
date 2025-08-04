@@ -1,31 +1,105 @@
-// util/generateInvoiceHTML.js
 module.exports = async function generateInvoiceHTML(order) {
   return `
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Invoice ${order._id}</title>
-    <style>
-      body { font-family: Arial, sans-serif; padding: 20px; }
-      h1 { text-align: center; }
-      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-      th { background-color: #f2f2f2; }
-      .total { text-align: right; font-weight: bold; }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Invoice #${order._id}</title>
+   <style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    padding: 40px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header h1 {
+    color: #81c408; 
+    margin: 0;
+    font-size: 28px;
+  }
+
+  .company-details {
+    text-align: right;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 2px solid #ddd;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .customer-details p {
+    margin: 4px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  th {
+    background-color: #f4f4f4;
+  }
+
+  .total-line {
+    text-align: right;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+</style>
+
   </head>
   <body>
-    <h1>Invoice</h1>
-    <p><strong>Order ID:</strong> ${order._id}</p>
-    <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
-    <p><strong>Customer:</strong> ${order.shippingAddress.firstName} ${
+    <div class="header">
+        <h1>PureFarmFoods</h1>
+      <div class="company-details">
+        1429 Netus Rd, Brooklyn, NY 48247<br />
+        support@purefarmfoods.com<br />
+        +1 (555) 123-4567
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="section-title">Invoice Details</div>
+    <div class="customer-details">
+      <p><strong>Order ID:</strong> ${order._id}</p>
+      <p><strong>Date:</strong> ${new Date(
+        order.createdAt
+      ).toLocaleDateString()}</p>
+      <p><strong>Customer:</strong> ${order.shippingAddress.firstName} ${
     order.shippingAddress.lastName
   }</p>
-    <p><strong>Address:</strong> ${order.shippingAddress.address}, ${
+      <p><strong>Address:</strong> ${order.shippingAddress.address}, ${
     order.shippingAddress.city
   }, ${order.shippingAddress.state} - ${order.shippingAddress.postalCode}</p>
+    </div>
 
+    <div class="section-title">Order Summary</div>
     <table>
       <thead>
         <tr>
@@ -38,12 +112,13 @@ module.exports = async function generateInvoiceHTML(order) {
       </thead>
       <tbody>
         ${order.products
-          .map((item) => {
-            const name = item.product?.name || "N/A";
-            const size = item.size || "-";
-            const quantity = item.quantity;
-            const price = item.price;
-            const total = quantity * price;
+          .map(function (item) {
+            var name =
+              item.product && item.product.name ? item.product.name : "N/A";
+            var size = item.size || "-";
+            var quantity = item.quantity;
+            var price = item.price;
+            var total = quantity * price;
             return `
               <tr>
                 <td>${name}</td>
@@ -58,7 +133,7 @@ module.exports = async function generateInvoiceHTML(order) {
       </tbody>
     </table>
 
-    <p class="total">Total Amount: ₹${order.totalAmount.toFixed(2)}</p>
+    <p class="total-line">Total Amount: ₹${order.totalAmount.toFixed(2)}</p>
   </body>
   </html>
   `;
